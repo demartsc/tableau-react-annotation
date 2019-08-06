@@ -1,3 +1,8 @@
+html {
+  pointer-events: none;
+  background: none transparent;
+}
+
 body {
   margin: 0;
   padding: 0;
