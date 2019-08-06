@@ -1,15 +1,15 @@
 {
-  "main.css": "/tableau-react-annotation/static/css/main.e92bbc39.chunk.css",
-  "main.js": "/tableau-react-annotation/static/js/main.1ef21049.chunk.js",
-  "main.js.map": "/tableau-react-annotation/static/js/main.1ef21049.chunk.js.map",
+  "main.css": "/tableau-react-annotation/static/css/main.44ccd4db.chunk.css",
+  "main.js": "/tableau-react-annotation/static/js/main.ae951ddc.chunk.js",
+  "main.js.map": "/tableau-react-annotation/static/js/main.ae951ddc.chunk.js.map",
   "runtime~main.js": "/tableau-react-annotation/static/js/runtime~main.c484e4a2.js",
   "runtime~main.js.map": "/tableau-react-annotation/static/js/runtime~main.c484e4a2.js.map",
   "static/js/2.98b8c243.chunk.js": "/tableau-react-annotation/static/js/2.98b8c243.chunk.js",
   "static/js/2.98b8c243.chunk.js.map": "/tableau-react-annotation/static/js/2.98b8c243.chunk.js.map",
   "index.html": "/tableau-react-annotation/index.html",
-  "precache-manifest.06eebd0c3595d27ba84775eb8fa98cf8.js": "/tableau-react-annotation/precache-manifest.06eebd0c3595d27ba84775eb8fa98cf8.js",
+  "precache-manifest.25222286741db6d51ad40259bf1f6e26.js": "/tableau-react-annotation/precache-manifest.25222286741db6d51ad40259bf1f6e26.js",
   "service-worker.js": "/tableau-react-annotation/service-worker.js",
-  "static/css/main.e92bbc39.chunk.css.map": "/tableau-react-annotation/static/css/main.e92bbc39.chunk.css.map",
+  "static/css/main.44ccd4db.chunk.css.map": "/tableau-react-annotation/static/css/main.44ccd4db.chunk.css.map",
   "static/media/dblogo.png": "/tableau-react-annotation/static/media/dblogo.4533e587.png",
   "static/media/logo.png": "/tableau-react-annotation/static/media/logo.e2a8dd89.png"
 }
