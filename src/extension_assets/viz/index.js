@@ -36,23 +36,28 @@ const Viz = (props) => {
         {
           ({tableauExt}) => {
             return (
-                <React.Fragment>
-                  {/* <AnnotationCalloutCircle
-                    x={150}
-                    y={170}
-                    dy={117}
-                    dx={162}
-                    color={"#9610ff"}
-                    editMode={true}
-                    note={{"title":"Annotations :)",
-                      "label":"Longer text to show text wrapping",
-                      "lineType":"horizontal"}}
-                    subject={{"radius":50,"radiusPadding":5}}
-                  /> */}
-                  <div>
-                    <h2>Viz</h2>
-                    <p>Now you can use <i>contextValue.tableauSettings</i> to retrieve the saved configuration.</p>
-                  </div>
+              <React.Fragment>
+                <div>
+                  <h2>Viz</h2>
+                  <p>Now you can use <i>contextValue.tableauSettings</i> to retrieve the saved configuration.</p>
+                </div>
+                <svg
+                    height={300}
+                    width={600}
+                  >
+                    <AnnotationCalloutCircle
+                      x={100}
+                      y={100}
+                      dy={117}
+                      dx={162}
+                      color={"#9610ff"}
+                      editMode={true}
+                      note={{"title":"Annotations :)",
+                        "label":"Longer text to show text wrapping",
+                        "lineType":"horizontal"}}
+                      subject={{"radius":50,"radiusPadding":5}}
+                    />
+                  </svg>
                 </React.Fragment>
               );
             }
