@@ -65,15 +65,12 @@ const CustomSplash = (props) => (
       >
         React Annotation
       </a><br/>
-      by{" "}
-      <a
-        href="https://react-annotation.susielu.com/"
+      Made with <img alt="A picture of a heart" src="img/heart.png" /> by
+      <a 
+        href="http://www.susielu.com"
         target="_blank"
         rel="noopener noreferrer"
-        style={{ color: "RGB(150, 16, 255)" }}
-      >
-        Susie Lu
-      </a>
+      > Susie Lu</a>
     </p>
   </div>
 );
