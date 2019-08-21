@@ -18,7 +18,8 @@ const Viz = (props) => {
 
   const extensionName = window.name;
   const extensionParent = window.parent;
-  console.log(window, extensionName, extensionParent);
+  const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
+  console.log(window, extensionName, extensionParent, extensionParent.document.getElementById("tabZoneId" + extensionZoneId).style.pointerEvents = 'none');
 
   const getSummaryData = () => {
     let sheetObject = contextValue.sheetNames.find(worksheet => worksheet.name === contextValue.tableauSettings.selectedSheet1);
