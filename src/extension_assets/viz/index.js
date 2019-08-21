@@ -16,6 +16,10 @@ const options = {
 const Viz = (props) => {
   const contextValue = useContext(ExtensionContext);
 
+  const extensionName = window.name;
+  const extensionParent = window.parent;
+  console.log(window, extensionName, extensionParent);
+
   const getSummaryData = () => {
     let sheetObject = contextValue.sheetNames.find(worksheet => worksheet.name === contextValue.tableauSettings.selectedSheet1);
 
@@ -42,11 +46,7 @@ const Viz = (props) => {
             ({tableauExt}) => {
               return (
                 <React.Fragment>
-                  <div>
-                    <h2>Viz</h2>
-                    <p>Now you can use <i>contextValue.tableauSettings</i> to retrieve the saved configuration.</p>
-                  </div>
-                  <TypesUI />
+                  {/* <TypesUI /> */}
                   <svg
                       height={300}
                       width={600}

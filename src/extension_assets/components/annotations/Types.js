@@ -332,7 +332,7 @@ export default class Types extends React.Component {
       <div>
         <Card className="types-ui" initiallyExpanded={true}>
           <CardHeader
-            title="Presets"
+            title="Presets (adapted from Susie Lu's Docs Site)"
             style={{ fontWeight: "bold", borderBottom: "1px solid #d6daea" }}
           >
             <Toggle

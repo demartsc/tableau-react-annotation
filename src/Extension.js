@@ -62,12 +62,14 @@ class App extends Component {
       this.setState({
         config: {
           dashboardName: tableauExt.dashboardContent.dashboard.name,
+          dashboardObjects: tableauExt.dashboardContent.dashboard.objects,
           sheetNames: tableauExt.dashboardContent.dashboard.worksheets,
           tableauSettings: tableauExt.settings.getAll(),
           tableauExt: tableauExt
         },
         extensionReady: true
       })
+      console.log('extension state', this.state);
     }, (err) => {
       // Something went wrong in initialization
       console.log('Error while Initializing: ' + err.toString());
