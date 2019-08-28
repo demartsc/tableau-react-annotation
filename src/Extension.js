@@ -57,11 +57,36 @@ class App extends Component {
     });
   };
 
+  configureAnnotation () {
+    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
+    const popUpOptions = {
+      height: 600,
+      width: 850,
+    };
+
+    tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+      if (closePayload === 'false') {
+        this.props.history.push('/viz')
+      }
+    }).catch((error) => {
+      // One expected error condition is when the popup is closed by the user (meaning the user
+      // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+      switch(error.errorCode) {
+        case window.tableau.ErrorCodes.DialogClosedByUser:
+          // log("closed by user")
+          break;
+        default:
+          console.error(error.message);
+      }
+    });
+  };
+
   componentDidMount () {
     tableauExt.initializeAsync({'configure': this.configure}).then(() => {
       this.setState({
         config: {
           dashboardName: tableauExt.dashboardContent.dashboard.name,
+          dashboardSize: tableauExt.dashboardContent.dashboard.size,
           dashboardObjects: tableauExt.dashboardContent.dashboard.objects,
           sheetNames: tableauExt.dashboardContent.dashboard.worksheets,
           tableauSettings: tableauExt.settings.getAll(),
@@ -93,9 +118,23 @@ class App extends Component {
                     stepperConfig={this.props.stepperConfig} 
                     tableauExt={tableauExt}
                     saveAsync={true}
-                  />} /
-                >
-                <Route exact path="/viz" render={(props) => <Viz sheetNames={this.state.config.sheetNames} />} />
+                  />}
+                />
+                <Route exact path="/annotation" render={(props) => 
+                  <Configuration 
+                    extensionIcons={this.props.extensionIcons} 
+                    colors={this.props.colors} 
+                    stepperConfig={this.props.annotationConfig} 
+                    tableauExt={tableauExt}
+                    saveAsync={true}
+                  />} 
+                />
+                <Route exact path="/viz" render={(props) =>
+                  <Viz
+                    sheetNames={this.state.config.sheetNames}
+                    onConfig={this.configureAnnotation}
+                  />}
+                />
               </div>
             </ExtensionContext.Provider>
           </SettingsContext.Provider>

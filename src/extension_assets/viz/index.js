@@ -19,8 +19,78 @@ const Viz = (props) => {
   const extensionName = window.name;
   const extensionParent = window.parent;
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
-  console.log(window, extensionName, extensionParent, extensionZoneId);
-    //  extensionParent.document.getElementById("tabZoneId" + extensionZoneId).style.pointerEvents = 'none');
+  console.log('window', window, extensionName, extensionParent, extensionZoneId, contextValue.config);
+  // this goes across iframe to parent and triggers a CORS error
+  // extensionParent.document.getElementById("tabZoneId" + extensionZoneId).style.pointerEvents = 'none');
+
+
+  // annotation callbacks from hierarchy example
+  /*
+  editAnnotationCallBack = () => {
+    console.log('edit annotations enabled');
+    if ((this.state.tableauSettings || {}).clickAnnotations) {
+      const newAnnotations = JSON.parse(this.state.tableauSettings.clickAnnotations);
+      newAnnotations.map(d => {
+        d.editMode = !d.editMode
+      })
+
+      console.log('editable annotations', newAnnotations);
+
+      if (TableauSettings.ShouldUse) {
+        TableauSettings.updateAndSave({
+          // ['is' + field]: true,
+          clickAnnotations: JSON.stringify(newAnnotations),
+        }, settings => {
+          this.setState({
+            tableauSettings: settings,
+          });
+        });
+    
+      } else {
+        tableauExt.settings.set('clickAnnotations', JSON.stringify(newAnnotations));
+        tableauExt.settings.saveAsync().then(() => {
+          this.setState({
+            tableauSettings: tableauExt.settings.getAll()
+          });
+        });
+      }
+    }
+  }
+
+  annotationDragCallBack = annotationInfo => {
+    if ((this.state.tableauSettings || {}).clickAnnotations) {
+      const newAnnotations = JSON.parse(this.state.tableauSettings.clickAnnotations);
+      newAnnotations.map(d => {
+        if (annotationInfo.originalSettings.annotationID === d.annotationID) {
+          d.dx = annotationInfo.updatedSettings.dx;
+          d.dy = annotationInfo.updatedSettings.dy;
+          d.radius = annotationInfo.updatedSettings.radius;
+          d.height = annotationInfo.updatedSettings.height;
+          d.width = annotationInfo.updatedSettings.width;
+        }
+      })
+      
+      console.log('annotation drag ended', annotationInfo, newAnnotations);
+      if (TableauSettings.ShouldUse) {
+        TableauSettings.updateAndSave({
+          clickAnnotations: JSON.stringify(newAnnotations),
+        }, settings => {
+          this.setState({
+            tableauSettings: settings,
+          });
+        });
+    
+      } else {
+        tableauExt.settings.set('clickAnnotations', JSON.stringify(newAnnotations));
+        tableauExt.settings.saveAsync().then(() => {
+          this.setState({
+            tableauSettings: tableauExt.settings.getAll()
+          });
+        });
+      }
+    }
+  }
+  */
 
   const getSummaryData = () => {
     let sheetObject = contextValue.sheetNames.find(worksheet => worksheet.name === contextValue.tableauSettings.selectedSheet1);
@@ -50,22 +120,23 @@ const Viz = (props) => {
                 <React.Fragment>
                   {/* <TypesUI /> */}
                   <svg
-                      height={300}
-                      width={600}
-                    >
-                      <AnnotationCalloutCircle
-                        x={100}
-                        y={100}
-                        dy={117}
-                        dx={162}
-                        color={"#9610ff"}
-                        editMode={true}
-                        note={{"title":"Annotations :)",
-                          "label":"Longer text to show text wrapping",
-                          "lineType":"horizontal"}}
-                        subject={{"radius":50,"radiusPadding":5}}
-                      />
-                    </svg>
+                    height={1000}
+                    width={1000}
+                    onClick={e => { props.onConfig(e) } }
+                  >
+                    <AnnotationCalloutCircle
+                      x={100}
+                      y={100}
+                      dy={117}
+                      dx={162}
+                      color={"#9610ff"}
+                      editMode={true}
+                      note={{"title":"Annotations :)",
+                        "label":"Longer text to show text wrapping",
+                        "lineType":"horizontal"}}
+                      subject={{"radius":50,"radiusPadding":5}}
+                    />
+                  </svg>
                   </React.Fragment>
                 );
               }

@@ -10,6 +10,7 @@ import './extension_assets/extension.css';
 import brandLogo from './extension_assets/logo.png';
 
 import stepperConfig from './extension_assets/stepperConfig';
+import annotationConfig from './extension_assets/annotationConfig';
 import { colors, extensionIcons } from './extension_assets/style'
 
 
@@ -18,6 +19,7 @@ ReactDOM.render(
     <Extension 
       logo={brandLogo}
       stepperConfig={stepperConfig}
+      annotationConfig={annotationConfig}
       colors={colors}
       extensionIcons={extensionIcons}
     />
