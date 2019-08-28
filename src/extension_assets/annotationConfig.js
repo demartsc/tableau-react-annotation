@@ -4,7 +4,7 @@ export default {
   "config": {
     "steps": [
       {
-        "name": "Select Type",
+        "name": "Select Annotation",
         "title": "Select Annotation Type",
         "type": "viz_options", 
         "groups": [
@@ -35,13 +35,38 @@ export default {
         "overwrites": {}
       },
       {
-        "name": "Viz Options",
-        "title": "Viz Options",
+        "name": "Annotation Options",
+        "title": "Annotation Options",
         "type": "viz_options",
         "groups": [
           {
-            "name": "Group 1",
+            "name": "Note",
             "inputs": [
+              {
+                "type": "dropdown",
+                "label": "Line Type",
+                "name": "selectedLineType",
+                "value": "none",
+                "tooltip": "include a line anchor on your annotation",
+                "values": [
+                  {"value": "none", "text": "None"},
+                  {"value": "left", "text": "Left Anchor"},
+                  {"value": "top", "text": "Top Anchor"}
+                ]
+              },
+              {
+                "type": "dropdown",
+                "label": "Alignment",
+                "name": "selectedLineAlignment",
+                "value": "none",
+                "tooltip": "how to align your annotation anchor",
+                "values": [
+                  {"value": "none", "text": "Default"},
+                  {"value": "left", "text": "Left"},
+                  {"value": "middle", "text": "Middle"},
+                  {"value": "right", "text": "Right"},
+                ]
+              },
               {
                 "type": "color",
                 "label": "Select color",
