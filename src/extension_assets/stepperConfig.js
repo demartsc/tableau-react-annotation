@@ -4,11 +4,6 @@ export default {
   "config": {
     "steps": [
       {
-        "name": "Select sheet",
-        "title": "Select Sheet",
-        "type": "sheet_selector"
-      },
-      {
         "name": "Viz Options",
         "title": "Viz Options",
         "type": "viz_options",
