@@ -57,12 +57,14 @@ class App extends Component {
     });
   };
 
-  configureAnnotation () {
+  configureAnnotation = e => {
     const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
     const popUpOptions = {
       height: 700,
       width: 800,
     };
+
+    console.log('checking event', e);
 
     tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
       if (closePayload === 'false') {

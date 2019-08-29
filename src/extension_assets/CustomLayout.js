@@ -28,13 +28,14 @@ function CustomLayout(props){
   }
 
   // Callback setter of dropdown input
-  function optionSelected(value) {
+  const optionSelected = value => {
     setAnnotationType(value)
     props.onOptionSelected('annotationType', value)
     console.log('annotationType', annotationType, value);
   }
 
   useEffect(() => {
+    console.log('checking effect', props);
     if (annotationType === "") {
       props.enableNext(false)
     } else {
@@ -74,7 +75,7 @@ function CustomLayout(props){
                 <div style={{height: "300px", width: "70%", display: "inline-block"}}>
                   <svg height="100%" width="100%">
                     {console.log('checking annotation type', annotationType)}
-                    <annotationType
+                    <AnnotationCalloutCircle
                       x={100}
                       y={150}
                       dy={100}

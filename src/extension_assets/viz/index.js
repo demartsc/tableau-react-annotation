@@ -122,7 +122,7 @@ const Viz = (props) => {
                   <svg
                     height={1000}
                     width={1000}
-                    onClick={e => { props.onConfig(e) } }
+                    onClick={props.onConfig}
                   >
                     <AnnotationCalloutCircle
                       x={100}

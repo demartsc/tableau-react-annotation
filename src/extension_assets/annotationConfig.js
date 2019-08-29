@@ -4,39 +4,8 @@ export default {
   "config": {
     "steps": [
       {
-        "name": "Select Annotation",
-        "title": "Select Annotation Type",
-        "type": "viz_options", 
-        "groups": [
-          {
-            "name": "Annotation Types",
-            "inputs": [
-              {
-                "type": "radio",
-                "name": "selectedAnnotationType",
-                "label": "Select an annotation type",
-                "value": "label",
-                "tooltip": "Select one of the annotations available in react-annotation",
-                "values": [
-                  {"value": "label", "text": "annotationLabel"},
-                  {"value": "callout", "text": "annotationCallout"},
-                  {"value": "calloutElbow", "text": "annotationCalloutElbow"},
-                  {"value": "calloutCurve", "text": "annotationCalloutCurve"},
-                  {"value": "calloutCircle", "text": "annotationCalloutCircle"},
-                  {"value": "calloutRect", "text": "annotationCalloutRect"},
-                  {"value": "calloutXYThreshold", "text": "annotationXYThreshold"},
-                  {"value": "bracket", "text": "annotationBracket"},
-                  {"value": "badge", "text": "annotationBadge"}
-                ]
-              }
-            ]
-          }
-        ],
-        "overwrites": {}
-      },
-      {
-        "name": "Custom layout",
-        "title": "Custom layout",
+        "name": "Annotation Types",
+        "title": "Annotation Types",
         "type": "custom",
         "component": CustomLayout,
         "props": {
@@ -50,19 +19,50 @@ export default {
         "type": "viz_options",
         "groups": [
           {
-            "name": "Note",
+            "name": "Color",
+            "inputs": [
+              {
+                "type": "color",
+                "label": "Select color",
+                "value": "#C123FA",
+                "name": "annotationColor",
+                "tooltip": "A color string that will be applied to the annotation."
+              }
+            ]
+          },
+          {
+            "name": "Connector",
             "inputs": [
               {
                 "type": "dropdown",
-                "label": "Line Type",
-                "name": "selectedLineType",
+                "label": "Type",
+                "name": "connectorType",
+                "value": "line",
+                "tooltip": "what kind of connector",
+                "values": [
+                  {"value": "line", "text": "Line"},
+                  {"value": "elbow", "text": "Elbow"},
+                  {"value": "curve", "text": "Curve"}
+                ]
+              },
+              {
+                "type": "dropdown",
+                "label": "End",
+                "name": "connectorEnd",
                 "value": "none",
-                "tooltip": "include a line anchor on your annotation",
+                "tooltip": "what kind of connector",
                 "values": [
                   {"value": "none", "text": "None"},
-                  {"value": "left", "text": "Left Anchor"},
-                  {"value": "top", "text": "Top Anchor"}
+                  {"value": "dot", "text": "Dot"},
+                  {"value": "arrow", "text": "Arrow"}
                 ]
+              },
+              {
+                "type": "text",
+                "label": "End Scale",
+                "name": "connectorEndScale",
+                "value": "1",
+                "tooltip": "A multiplying factor for sizing the connector end"
               },
               {
                 "type": "dropdown",
@@ -76,13 +76,6 @@ export default {
                   {"value": "middle", "text": "Middle"},
                   {"value": "right", "text": "Right"},
                 ]
-              },
-              {
-                "type": "color",
-                "label": "Select color",
-                "value": "#C123FA",
-                "name": "aColorThing",
-                "tooltip": "This is a tooltip"
               },
               {
                 "type": "text",
@@ -168,7 +161,57 @@ export default {
                 ]
               }
             ]
-          }
+          },
+          {
+            "name": "Note",
+            "inputs": [
+              {
+                "type": "color",
+                "label": "Note color",
+                "value": "#C123FA",
+                "name": "annotationColor",
+                "tooltip": "A color string that will be applied to the note, otherwise defaults to annotation."
+              },
+              {
+                "type": "text",
+                "label": "Title",
+                "placeholder": "Title",
+                "value": "",
+                "name": "annotationNoteTitle",
+                "tooltip": "The title of your annotation"
+              },
+              {
+                "type": "text",
+                "label": "Label",
+                "placeholder": "Label",
+                "value": "",
+                "name": "annotationNoteLabel",
+                "tooltip": "The label of your annotation"
+              },
+              {
+                "type": "radio",
+                "name": "Note Orientation",
+                "label": "Select the orientation of the note",
+                "value": "topBottom",
+                "tooltip": "How your note aligns to the annotation",
+                "values": [
+                  {"value": "topBottom", "text": "Top / Bottom"},
+                  {"value": "leftRight", "text": "Left / Right"}
+                ]
+              },
+              {
+                "type": "radio",
+                "name": "Note Line Type",
+                "label": "Select the line type for the note",
+                "value": "horizontal",
+                "tooltip": "Layout of the line in the annotation  ",
+                "values": [
+                  {"value": "horizontal", "text": "Horizontal"},
+                  {"value": "vertical", "text": "Vertical"}
+                ]
+              },
+            ]
+          },
         ],
         "overwrites": {}
       },
