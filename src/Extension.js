@@ -61,7 +61,7 @@ class App extends Component {
     const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
     const popUpOptions = {
       height: 700,
-      width: 750,
+      width: 800,
     };
 
     tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {

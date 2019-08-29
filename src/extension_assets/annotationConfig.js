@@ -35,6 +35,16 @@ export default {
         "overwrites": {}
       },
       {
+        "name": "Custom layout",
+        "title": "Custom layout",
+        "type": "custom",
+        "component": CustomLayout,
+        "props": {
+          "key": "value",
+          "name": "Abo"
+        }
+      },
+      {
         "name": "Annotation Options",
         "title": "Annotation Options",
         "type": "viz_options",
