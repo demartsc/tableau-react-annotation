@@ -11,10 +11,22 @@ import {
   AnnotationBadge
 } from 'react-annotation';
 
-var RadioCheckList = window.TableauExtension['components']['RadioCheckList'];
-var ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
+const RadioCheckList = window.TableauExtension['components']['RadioCheckList'];
+const ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
+const Annotations = {
+  AnnotationLabel: AnnotationLabel,
+  AnnotationCallout: AnnotationCallout,
+  AnnotationCalloutElbow: AnnotationCalloutElbow,
+  AnnotationCalloutCurve: AnnotationCalloutCurve,
+  AnnotationCalloutCircle: AnnotationCalloutCircle,
+  AnnotationCalloutRect: AnnotationCalloutRect,
+  AnnotationXYThreshold: AnnotationXYThreshold,
+  AnnotationBracket: AnnotationBracket,
+  AnnotationBadge: AnnotationBadge
+};
 
-function CustomLayout(props){
+
+const CustomLayout = props => {
   // Let's use the ExtensionContext to access Tableau settings
   let extensionContext = useContext(ExtensionContext);
 
@@ -41,8 +53,10 @@ function CustomLayout(props){
     } else {
       props.enableNext(true)
     }
-  });
-  
+  }, [annotationType]);
+
+  const Annotation = Annotations[annotationType];
+  console.log('checking annotation', annotationType, Annotations, Annotation);
   return (
     <div style={layoutStyle}>
       <h1>Select an Annotation Type</h1>
@@ -74,18 +88,17 @@ function CustomLayout(props){
                 </div>
                 <div style={{height: "300px", width: "70%", display: "inline-block"}}>
                   <svg height="100%" width="100%">
-                    {console.log('checking annotation type', annotationType)}
-                    <AnnotationCalloutCircle
-                      x={100}
-                      y={150}
-                      dy={100}
-                      dx={50}
+                    <Annotation
+                      x={150}
+                      y={50}
+                      dx={annotationType === "AnnotationBracket" ? 0 : annotationType === "AnnotationBadge" ? 0 : 150}
+                      dy={annotationType === "AnnotationBracket" ? 0 : annotationType === "AnnotationBadge" ? 0 : 150}
                       color={"#9610ff"}
-                      editMode={false}
+                      editMode={true}
                       note={{"title":"Annotations :)",
                         "label":"Longer text to show text wrapping",
                         "lineType":"horizontal"}}
-                      subject={{"radius":50,"radiusPadding":5}}
+                      subject={{"radius":50,"radiusPadding":5, "height": 100, "type": "curly", "width": 50, "x1": 0, "x2": 1000}}
                     />
                   </svg>
                 </div>
