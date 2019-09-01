@@ -6,6 +6,7 @@ import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { muiTheme } from "../components/annotations/Theme";
 
 var ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
+const CheckItem = window.TableauExtension['components']['CheckItem'];
 
 const options = {
   ignoreAliases: false,
@@ -19,7 +20,7 @@ const Viz = (props) => {
   const extensionName = window.name;
   const extensionParent = window.parent;
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
-  console.log('window', window, extensionName, extensionParent, extensionZoneId, contextValue.config);
+  console.log('window', window.TableauExtension['components'], window, extensionName, extensionParent, extensionZoneId, contextValue.config);
   // this goes across iframe to parent and triggers a CORS error
   // extensionParent.document.getElementById("tabZoneId" + extensionZoneId).style.pointerEvents = 'none');
 
@@ -119,6 +120,13 @@ const Viz = (props) => {
               return (
                 <React.Fragment>
                   {/* <TypesUI /> */}
+                  <CheckItem
+                    checked={false}
+                    onChange={(e) => console.log({checked: e.target.checked})}
+                  >
+                    Toggle Add Annotations
+                  </CheckItem>
+                  <br/>
                   <svg
                     height={1000}
                     width={1000}
@@ -135,6 +143,15 @@ const Viz = (props) => {
                         "label":"Longer text to show text wrapping",
                         "lineType":"horizontal"}}
                       subject={{"radius":50,"radiusPadding":5}}
+                      events={{
+                        // we can use this event to handle when the annotation is clicked
+                        // and then when clicked we can update the annotation vs create a new one
+                        onClick: (props, state, event) => {
+                          console.log('annotation onClick event', props, state, event)
+                        }
+                      }}
+                      onDragStart={props.onConfigDisable}
+                      onDragEnd={props.onConfigEnable}
                     />
                   </svg>
                   </React.Fragment>
