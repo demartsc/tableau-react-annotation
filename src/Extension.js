@@ -11,9 +11,9 @@ import { withRouter } from 'react-router-dom'
 import Viz from './extension_assets/viz';
 import Splash from './extension_assets/splash';
 
-var Configuration = window.TableauExtension['Configuration'];
-var ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
-var SettingsContext = window.TableauExtension['contexts']['SettingsContext'];
+const Configuration = window.TableauExtension['Configuration'];
+const ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
+const SettingsContext = window.TableauExtension['contexts']['SettingsContext'];
 const tableauExt = window.tableau.extensions;
 
 
@@ -31,10 +31,9 @@ class App extends Component {
       extensionReady: false
     }
 
-    this.configure = this.configure.bind(this);
   }
 
-  configure () {
+  configure = () => {
     const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/configure';
     const popUpOptions = {
       height: 625,
@@ -114,6 +113,8 @@ class App extends Component {
                 <Route exact path="/viz" render={(props) =>
                   <Viz
                     sheetNames={this.state.config.sheetNames}
+                    tableauSettings={this.state.tableauSettings}
+                    props={props}
                   />}
                 />
               </div>
