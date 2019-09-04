@@ -94,7 +94,7 @@ const Viz = (props) => {
 
   const configureAnnotation = e => {
     console.log('checking disable config and drag state', disableConfig, dragState);
-    if ( !disableConfig && dragState) {
+    if ( !disableConfig && (dragState >= 0) ) {
       e.persist();
       const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
       const popUpOptions = {
