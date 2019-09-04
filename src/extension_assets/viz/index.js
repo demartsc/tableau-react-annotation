@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AnnotationCalloutCircle } from 'react-annotation';
 import TypesUI  from '../components/annotations/Types';
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
@@ -15,12 +15,83 @@ const options = {
 };
 
 const Viz = (props) => {
+  const tableauExt = window.tableau.extensions;
   const contextValue = useContext(ExtensionContext);
+
+  const [disableConfig, setDisableConfig] = useState(false);
 
   const extensionName = window.name;
   const extensionParent = window.parent;
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
   console.log('window', window.TableauExtension['components'], window, extensionName, extensionParent, extensionZoneId, contextValue.config);
+
+  const configureAnnotation = e => {
+    if ( !disableConfig ) {
+      e.persist();
+      const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
+      const popUpOptions = {
+        height: 700,
+        width: 800,
+      };
+
+      // next need to figure out drag functions (if we enable edit mode)
+      // let annotationsArray = this.state.tableauSettings.clickAnnotations ? JSON.parse(this.state.tableauSettings.clickAnnotations) : []; 
+
+      // now we check whether the annotation is new or exists
+      // let existingAnnotation = _.find(annotationsArray, (o) => { return o.annotationID === d.id });
+      console.log('checking state', ExtensionContext);
+
+      /*
+      // if this has something we have an existing annotation that we have to set to temp tableau settings
+      if ( existingAnnotation ) {
+        // update the settings
+        if (TableauSettings.ShouldUse) {
+          TableauSettings.updateAndSave({
+            annotationType: existingAnnotation.type,
+            annotationColor: existingAnnotation.color, 
+            annotationComment: existingAnnotation.label,
+            annotationPadding: existingAnnotation.padding,
+            annotationStrokeWidth: existingAnnotation.strokeWidth
+          }, settings => {
+            console.log('update and save', settings);
+            this.setState({
+                tableauSettings: settings,
+            });
+          });    
+        } else {
+          tableauExt.settings.set("annotationType", existingAnnotation.type);
+          tableauExt.settings.set("annotationColor", existingAnnotation.color);
+          tableauExt.settings.set("annotationComment", existingAnnotation.label);
+          tableauExt.settings.set("annotationPadding", existingAnnotation.padding);
+          tableauExt.settings.set("annotationStrokeWidth", existingAnnotation.strokeWidth);
+          tableauExt.settings.saveAsync().then(() => {
+            console.log('direct save', tableauExt.settings.getAll());
+            this.setState({
+                tableauSettings: tableauExt.settings.getAll()
+              })
+          });
+        }
+      }
+      */
+
+      tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+        if (closePayload === 'false') {
+          props.history.push('/viz')
+        }
+      }).catch((error) => {
+        // One expected error condition is when the popup is closed by the user (meaning the user
+        // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+        switch(error.errorCode) {
+          case window.tableau.ErrorCodes.DialogClosedByUser:
+            // log("closed by user")
+            break;
+          default:
+            console.error(error.message);
+        }
+      });
+    }
+  };
+
   // this goes across iframe to parent and triggers a CORS error
   // extensionParent.document.getElementById("tabZoneId" + extensionZoneId).style.pointerEvents = 'none');
 
@@ -121,8 +192,9 @@ const Viz = (props) => {
                 <React.Fragment>
                   {/* <TypesUI /> */}
                   <CheckItem
-                    checked={false}
-                    onChange={(e) => console.log({checked: e.target.checked})}
+                    isChecked={disableConfig}
+                    text={`Toggle SVG onClick()`}
+                    onChange={() => setDisableConfig(!disableConfig)}
                   >
                     Toggle Add Annotations
                   </CheckItem>
@@ -130,7 +202,7 @@ const Viz = (props) => {
                   <svg
                     height={1000}
                     width={1000}
-                    onClick={props.onConfig}
+                    onClick={(e) => configureAnnotation(e)}
                   >
                     <AnnotationCalloutCircle
                       x={100}
