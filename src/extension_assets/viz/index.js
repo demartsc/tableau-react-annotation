@@ -271,37 +271,80 @@ const Viz = (props) => {
             {annotationState.map((note, i) => {
               const NoteType = Annotations[note.annotationType];
               return (
-                <NoteType
-                  events={{
-                    // we can use this event to handle when the annotation is clicked
-                    // and then when clicked we can update the annotation vs create a new one
-                    onClick: (props, state, event) => {
-                      console.log('annotation onClick event', props, state, event)
-                    }
-                  }}
-                  onDragStart={() => setDragState(i)}
-                  onDragEnd={(dragProps) => {
-                    const { events, onDrag, onDragEnd, onDragStart, children, ...noFunctionProps} = dragProps;
-                    const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}))(dragProps);
-                    const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
-                    console.log('checking newNoteState', newNoteState);
-                    const newAnnotationState = annotationState.filter(n => { console.log('checking drag state', dragState); return n.id !== dragState })
-                    newAnnotationState.splice(dragState, 0, newNoteState);
-                    setAnnotationState(newAnnotationState);
-                    
-                    // save to tableau settings
-                    console.log('drag ended - we are going to stringify', newAnnotationState, JSON.stringify(newAnnotationState));
-                    contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
-                    contextValue.tableauExt.settings.saveAsync().then(() => {});
-                    //   console.log('checking tableau settings', props.tableauSettings);
-                    // });
+                <React.Fragment key={`fragment-${i}`}>
+                  <NoteType
+                    events={{
+                      // we can use this event to handle when the annotation is clicked
+                      // and then when clicked we can update the annotation vs create a new one
+                      onClick: (props, state, event) => {
+                        console.log('annotation onClick event', props, state, event);
+                      }
+                    }}
+                    onDragStart={() => setDragState(i)}
+                    onDragEnd={(dragProps) => {
+                      const { events, onDrag, onDragEnd, onDragStart, children, ...noFunctionProps} = dragProps;
+                      const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}))(dragProps);
+                      const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
+                      console.log('checking newNoteState', newNoteState);
+                      const newAnnotationState = annotationState.filter(n => { console.log('checking drag state', dragState); return n.id !== dragState })
+                      newAnnotationState.splice(dragState, 0, newNoteState);
+                      setAnnotationState(newAnnotationState);
+                      
+                      // save to tableau settings
+                      console.log('drag ended - we are going to stringify', newAnnotationState, JSON.stringify(newAnnotationState));
+                      contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
+                      contextValue.tableauExt.settings.saveAsync().then(() => {});
+                      //   console.log('checking tableau settings', props.tableauSettings);
+                      // });
 
-                    setDragState(null);
-                    console.log('dragProps', annotationState, dragProps, newNoteState, newAnnotationState);
-                  }}
-                  editMode={true}
-                  {...note}
-                />
+                      setDragState(null);
+                      console.log('dragProps', annotationState, dragProps, newNoteState, newAnnotationState);
+                    }}
+                    editMode={true}
+                    {...note}
+                  />
+                  { // edit icon obtained from material ui
+                    note.editMode && <React.Fragment>
+                    <svg 
+                      viewBox="0 0 24 24"
+                      key={`edit-button-${note.id}`}
+                      style={{
+                        cursor: 'pointer'
+                      }}
+                      fill={note.color || "#767676"}
+                      width="18"
+                      height="18"
+                      x={note.x+15}
+                      y={note.y-11}
+                      onClick={(e) => {
+                        console.log('you clicked on edit', Number(e.target.id.replace('edit-button-','')));
+                      }}
+                    >
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                      <path d="M0 0h24v24H0z" fill="none"/>
+                    </svg>
+                    <svg
+                      viewBox="0 0 24 24"
+                      key={`delete-button-${note.id}`}
+                      style={{
+                        cursor: 'pointer'
+                      }}
+                      fill={note.color || "#767676"}
+                      width="18"
+                      height="18"
+                      x={note.x-32}
+                      y={note.y-10}
+                      onClick={(e) => {
+                        console.log('you clicked on delete', Number(e.target.id.replace('edit-button-','')));
+                      }}
+                    >
+                      <path fill="none" d="M0 0h24v24H0V0z"/>
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
+                      <path fill="none" d="M0 0h24v24H0z"/>
+                    </svg>
+                    </React.Fragment>
+                  }
+                </React.Fragment>
               );
             })}
           </svg>

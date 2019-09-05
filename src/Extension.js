@@ -70,7 +70,6 @@ class App extends Component {
         },
         extensionReady: true
       })
-      console.log('extension state', this.state);
     }, (err) => {
       // Something went wrong in initialization
       console.log('Error while Initializing: ' + err.toString());
@@ -78,7 +77,7 @@ class App extends Component {
   }
 
   render() {
-    console.log('checking state', this.state);
+    console.log('checking state', this.state, this.props.extensionIcons);
     return (
       <div className="App">
         {
@@ -113,6 +112,7 @@ class App extends Component {
                 />
                 <Route exact path="/viz" render={(props) =>
                   <Viz
+                    extensionIcons={this.props.extensionIcons} 
                     sheetNames={this.state.config.sheetNames}
                     tableauSettings={this.state.config.tableauSettings}
                   />}
