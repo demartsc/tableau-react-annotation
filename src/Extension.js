@@ -78,6 +78,7 @@ class App extends Component {
   }
 
   render() {
+    console.log('checking state', this.state);
     return (
       <div className="App">
         {
@@ -113,8 +114,7 @@ class App extends Component {
                 <Route exact path="/viz" render={(props) =>
                   <Viz
                     sheetNames={this.state.config.sheetNames}
-                    tableauSettings={this.state.tableauSettings}
-                    props={props}
+                    tableauSettings={this.state.config.tableauSettings}
                   />}
                 />
               </div>

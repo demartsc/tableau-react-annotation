@@ -37,7 +37,7 @@ const Annotations = {
 };
 const annotationStarter = [
   {
-    type: "AnnotationCalloutRect",
+    annotationType: "AnnotationCalloutRect",
     key: 0,
     id: 0,
     className: 'id-000',
@@ -46,18 +46,16 @@ const annotationStarter = [
     dy: 117,
     dx: 162,
     color: "#9610ff",
+    width:-50,
+    height:100,
     note: {
-      "title":"Annotations :)",
-      "label":"Longer text to show text wrapping",
-      "lineType":"horizontal"
-    },
-    subject: {
-      "width":-50,
-      "height":100
-    }
+        "title":"Annotations :)",
+        "label":"Longer text to show text wrapping",
+        "lineType":"horizontal"
+      },
   },
   {
-    type: "AnnotationCalloutCircle",
+    annotationType: "AnnotationCalloutCircle",
     key: 1,
     id: 1,
     className: 'id-001',
@@ -66,25 +64,26 @@ const annotationStarter = [
     dy: 117,
     dx: 162,
     color: "#4682b4",
+    radius: 50,
+    radiusPadding: 5,
     note: {
       "title":"Annotations :)",
       "label":"Longer text to show text wrapping",
       "lineType":"horizontal"
     },
-    subject: {
-      "radius":50,
-      "radiusPadding":5
-    }
   }
 ]
 
 const Viz = (props) => {
+  console.log('checking props', props);
   const tableauExt = window.tableau.extensions;
   const contextValue = useContext(ExtensionContext);
+  const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || '[]'); // annotationStarter
 
   const [disableConfig, setDisableConfig] = useState(false);
   const [dragState, setDragState] = useState(null);
-  const [annotationState, setAnnotationState] = useState(annotationStarter);
+  const [annotationState, setAnnotationState] = useState(annotationProps);
+
 
   const extensionName = window.name;
   const extensionParent = window.parent;
@@ -270,7 +269,7 @@ const Viz = (props) => {
             onClick={(e) => configureAnnotation(e)}
           >
             {annotationState.map((note, i) => {
-              const NoteType = Annotations[note.type];
+              const NoteType = Annotations[note.annotationType];
               return (
                 <NoteType
                   events={{
@@ -282,11 +281,21 @@ const Viz = (props) => {
                   }}
                   onDragStart={() => setDragState(i)}
                   onDragEnd={(dragProps) => {
-                    const { events, onDrag, onDragEnd, onDragStart, ...noFunctionProps} = dragProps;
-                    const newNoteState = {...note, ...noFunctionProps}
+                    const { events, onDrag, onDragEnd, onDragStart, children, ...noFunctionProps} = dragProps;
+                    const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}))(dragProps);
+                    const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
+                    console.log('checking newNoteState', newNoteState);
                     const newAnnotationState = annotationState.filter(n => { console.log('checking drag state', dragState); return n.id !== dragState })
                     newAnnotationState.splice(dragState, 0, newNoteState);
                     setAnnotationState(newAnnotationState);
+                    
+                    // save to tableau settings
+                    console.log('drag ended - we are going to stringify', newAnnotationState, JSON.stringify(newAnnotationState));
+                    contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
+                    contextValue.tableauExt.settings.saveAsync().then(() => {});
+                    //   console.log('checking tableau settings', props.tableauSettings);
+                    // });
+
                     setDragState(null);
                     console.log('dragProps', annotationState, dragProps, newNoteState, newAnnotationState);
                   }}
