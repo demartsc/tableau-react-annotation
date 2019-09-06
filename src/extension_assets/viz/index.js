@@ -141,8 +141,35 @@ const Viz = (props) => {
             console.log('existing annotations writter to settings', props.tableauSettings);
             tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
               if (closePayload === 'false') {
+                // we can now write the updates back to the annotation array and persist to tableau
+                existingAnnotation.annotationType = contextValue.tableauExt.settings.get('annotationType');
+                existingAnnotation.color = contextValue.tableauExt.settings.get('annotationColor');
+
+                // there might be a better way
+                if ( !existingAnnotation.connector ) {
+                  existingAnnotation.connector = {};
+                }
+                existingAnnotation.connector.type = contextValue.tableauExt.settings.get('connectorType');
+                existingAnnotation.connector.end = contextValue.tableauExt.settings.get('connectorEnd');
+                existingAnnotation.connector.endScale = parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'));
+
+                // this should be equal to existingAnnotation which is now updates
+                // const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
+                const newAnnotationState = annotationState.filter(n => { return n.id !== existingAnnotation.id });
+                newAnnotationState.splice(existingAnnotation.id, 0, existingAnnotation);
+                setAnnotationState(newAnnotationState);
+
+                console.log('do we get existing annotation', existingAnnotation, existingAnnotation.color, props.tableauSettings.annotationColor, props.tableauExt.settings.get('annotationColor'));
+
                 
-                props.history.push('/viz')
+                // save to tableau settings
+                contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
+                contextValue.tableauExt.settings.saveAsync().then(() => {
+                  // done we can close and move on
+                  props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+                  console.log('checking props', props, props.history);
+                  props.history.push('/viz')
+                });
               }
             }).catch((error) => {
               // One expected error condition is when the popup is closed by the user (meaning the user
@@ -161,9 +188,24 @@ const Viz = (props) => {
       } else {
         console.log('checking state and callback', typ, props.tableauSettings, annotationState, Number(e.target.id.replace('edit-button-','')), existingAnnotation);
 
-        tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+        tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload, props) => {
           if (closePayload === 'false') {
-            props.history.push('/viz')
+            // annotationsArray.push({
+            //   annotationID: d.id,
+            //   type: tableauExt.settings.get('annotationType'),
+            //   ids: [d.id],
+            //   color: tableauExt.settings.get('annotationColor'),
+            //   label: tableauExt.settings.get('annotationComment'),
+            //   padding: parseFloat(tableauExt.settings.get('annotationPadding')) + (Math.random()/1000), 
+            //   radiusPadding: parseFloat(tableauExt.settings.get('annotationPadding')) + (Math.random()/1000), 
+            //   editMode: false,
+            //   strokeWidth: parseFloat(tableauExt.settings.get('annotationStrokeWidth')),
+            //   dx: 0,
+            //   dy: 0,
+            // });
+  
+            // update the settings
+            (props.history || []).push('/viz')
           }
         }).catch((error) => {
           // One expected error condition is when the popup is closed by the user (meaning the user
@@ -317,18 +359,22 @@ const Viz = (props) => {
                     }}
                     onDragStart={() => setDragState(i)}
                     onDragEnd={(dragProps) => {
-                      const { events, onDrag, onDragEnd, onDragStart, children, ...noFunctionProps} = dragProps;
+                      const { className, events, onDrag, onDragEnd, onDragStart, children, ...noFunctionProps} = dragProps;
                       const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}))(dragProps);
                       const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
                       console.log('checking newNoteState', newNoteState);
                       const newAnnotationState = annotationState.filter(n => { console.log('checking drag state', dragState); return n.id !== dragState })
+                      console.log('before', newNoteState, newAnnotationState);
                       newAnnotationState.splice(dragState, 0, newNoteState);
+                      console.log('after', newAnnotationState);
                       setAnnotationState(newAnnotationState);
                       
                       // save to tableau settings
                       console.log('drag ended - we are going to stringify', newAnnotationState, JSON.stringify(newAnnotationState));
                       contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
-                      contextValue.tableauExt.settings.saveAsync().then(() => {});
+                      contextValue.tableauExt.settings.saveAsync().then(() => {
+                        props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+                      });
                       //   console.log('checking tableau settings', props.tableauSettings);
                       // });
 

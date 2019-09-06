@@ -57,6 +57,14 @@ class App extends Component {
     });
   };
 
+  updateTableauSettings = (newSettings) => {
+    this.setState({
+      config: {
+        tableauSettings: newSettings
+      }
+    });
+  }
+
   componentDidMount () {
     tableauExt.initializeAsync({'configure': this.configure}).then(() => {
       this.setState({
@@ -115,6 +123,8 @@ class App extends Component {
                     extensionIcons={this.props.extensionIcons} 
                     sheetNames={this.state.config.sheetNames}
                     tableauSettings={this.state.config.tableauSettings}
+                    tableauExt={this.state.config.tableauExt}
+                    updateTableauSettings={this.updateTableauSettings}
                   />}
                 />
               </div>
