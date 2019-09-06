@@ -166,19 +166,19 @@ export default {
             "name": "Note",
             "inputs": [
               {
-                "type": "color",
-                "label": "Note color",
-                "value": "#C123FA",
-                "name": "annotationColor",
-                "tooltip": "A color string that will be applied to the note, otherwise defaults to annotation."
-              },
-              {
                 "type": "text",
                 "label": "Title",
                 "placeholder": "Title",
                 "value": "",
                 "name": "annotationNoteTitle",
                 "tooltip": "The title of your annotation"
+              },
+              {
+                "type": "color",
+                "label": "Note title color",
+                "value": "#C123FA",
+                "name": "annotationNoteTitleColor",
+                "tooltip": "Color string, inherited from Annotation but can be customized by directly adding to Note as a prop, overrides color property."
               },
               {
                 "type": "text",
@@ -189,11 +189,34 @@ export default {
                 "tooltip": "The label of your annotation"
               },
               {
+                "type": "color",
+                "label": "Label color",
+                "value": "#C123FA",
+                "name": "annotationNoteLabelColor",
+                "tooltip": "Color string, inherited from Annotation but can be customized by directly adding to Note as a prop, overrides color property."
+              },
+              {
+                "type": "text",
+                "label": "Note Text Padding",
+                "placeholder": "Padding",
+                "value": "5",
+                "name": "annotationNotePadding",
+                "tooltip": "(Number) Allows for padding of the note within the annotation"
+              },
+              {
+                "type": "text",
+                "label": "Note Background Padding",
+                "placeholder": "Background Padding",
+                "value": "0",
+                "name": "annotationNoteBgPadding",
+                "tooltip": "(Number) This allows you to add more of a padding to the rectangle behind the text element, only available in version 1.3.0 and higher."
+              },
+              {
                 "type": "radio",
-                "name": "Note Orientation",
                 "label": "Select the orientation of the note",
                 "value": "topBottom",
-                "tooltip": "How your note aligns to the annotation",
+                "name": "annotationNoteOrientation",
+                "tooltip": "Determines based on the dx, and dy, which direction to orient the Note. Default is set to 'topBottom'",
                 "values": [
                   {"value": "topBottom", "text": "Top / Bottom"},
                   {"value": "leftRight", "text": "Left / Right"}
@@ -201,14 +224,52 @@ export default {
               },
               {
                 "type": "radio",
-                "name": "Note Line Type",
                 "label": "Select the line type for the note",
                 "value": "horizontal",
-                "tooltip": "Layout of the line in the annotation  ",
+                "tooltip": "Creates a line along the edge of the note text. Please Note if you set this to 'vertical' then orientation is fixed at 'leftRight' and vice versa if it is 'horizontal' then orientation is fixed at 'topBottom'",
+                "name": "annotationNoteLineType",
                 "values": [
+                  {"value": "null", "text": "none"},
                   {"value": "horizontal", "text": "Horizontal"},
                   {"value": "vertical", "text": "Vertical"}
                 ]
+              },
+              {
+                "type": "radio",
+                "label": "Select the alignment for the note",
+                "value": "dynamic",
+                "tooltip": "Should be left 'dynamic' most of the time. When the orientation is set to 'topBottom' or lineType is set to 'horiztonal' you can align the note with 'top', 'bottom', 'middle', or 'dynamic'. When the orientation is set to 'leftRight' or lineType is set to 'vertical' you can align the note with 'left', 'right', 'middle', or 'dynamic'.",
+                "name": "annotationNoteAlign",
+                "values": [
+                  {"value": "dynamic", "text": "Dynamic"},
+                  {"value": "top", "text": "Top"},
+                  {"value": "bottom", "text": "Bottom"},
+                  {"value": "middle", "text": "Middle"},
+                  {"value": "left", "text": "Left"},
+                  {"value": "right", "text": "Right"},
+                ]
+              },
+              {
+                "type": "radio",
+                "label": "Select the text alignment for the note",
+                "value": "null",
+                "tooltip": "Set the text alignment for text of the note, leverages inline css text-align.",
+                "name": "annotationNoteTextAlign",
+                "values": [
+                  {"value": "null", "text": "None"},
+                  {"value": "left", "text": "Left"},
+                  {"value": "right", "text": "Right"},
+                  {"value": "center", "text": "Center"},
+                  {"value": "justify", "text": "Justify"},
+                ]
+              },
+
+              {
+                "type": "color",
+                "label": "Note color",
+                "value": "#C123FA",
+                "name": "annotationColor",
+                "tooltip": "A color string that will be applied to the note, otherwise defaults to annotation."
               },
             ]
           },

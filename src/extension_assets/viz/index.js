@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import _ from 'lodash';
 import { 
   AnnotationLabel,
   AnnotationCallout,
@@ -92,9 +93,9 @@ const Viz = (props) => {
   // console.log('window', window.TableauExtension['components'], window, extensionName, extensionParent, extensionZoneId, contextValue.config);
   console.log('window', window.TableauExtension);
 
-  const configureAnnotation = e => {
+  const configureAnnotation = (e, typ) => {
     console.log('checking disable config and drag state', disableConfig, dragState);
-    if ( disableConfig && (dragState >= 0) ) {
+    if ( (disableConfig || typ !== "new") && (dragState >= 0) ) {
       e.persist();
       const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
       const popUpOptions = {
@@ -102,61 +103,80 @@ const Viz = (props) => {
         width: 800,
       };
 
-      // next need to figure out drag functions (if we enable edit mode)
-      // let annotationsArray = this.state.tableauSettings.clickAnnotations ? JSON.parse(this.state.tableauSettings.clickAnnotations) : []; 
-
       // now we check whether the annotation is new or exists
-      // let existingAnnotation = _.find(annotationsArray, (o) => { return o.annotationID === d.id });
-      console.log('checking state', props.tableauSettings);
+      let existingAnnotation;
+      if ( typ !== "new" ) {
+        existingAnnotation = _.find(annotationState, (o) => { return o.id === Number(e.target.id.replace('edit-button-','')) });
 
-      /*
-      // if this has something we have an existing annotation that we have to set to temp tableau settings
-      if ( existingAnnotation ) {
-        // update the settings
-        if (TableauSettings.ShouldUse) {
-          TableauSettings.updateAndSave({
-            annotationType: existingAnnotation.type,
-            annotationColor: existingAnnotation.color, 
-            annotationComment: existingAnnotation.label,
-            annotationPadding: existingAnnotation.padding,
-            annotationStrokeWidth: existingAnnotation.strokeWidth
-          }, settings => {
-            console.log('update and save', settings);
-            this.setState({
-                tableauSettings: settings,
-            });
-          });    
-        } else {
-          tableauExt.settings.set("annotationType", existingAnnotation.type);
-          tableauExt.settings.set("annotationColor", existingAnnotation.color);
-          tableauExt.settings.set("annotationComment", existingAnnotation.label);
-          tableauExt.settings.set("annotationPadding", existingAnnotation.padding);
-          tableauExt.settings.set("annotationStrokeWidth", existingAnnotation.strokeWidth);
-          tableauExt.settings.saveAsync().then(() => {
-            console.log('direct save', tableauExt.settings.getAll());
-            this.setState({
-                tableauSettings: tableauExt.settings.getAll()
-              })
+        // now if we have an annotation found we will pre-populate the settings linked to the config
+        if ( existingAnnotation ) { 
+          // first screen is annotation type
+          contextValue.tableauExt.settings.set('annotationType', existingAnnotation.annotationType);
+
+          // screen 2a is annotation color
+          contextValue.tableauExt.settings.set('annotationColor', existingAnnotation.color);
+
+          // screen 2b is connector props
+          contextValue.tableauExt.settings.set('connectorType', (existingAnnotation.connector || {}).type || "line");
+          contextValue.tableauExt.settings.set('connectorEnd', (existingAnnotation.connector || {}).end || "none");
+          contextValue.tableauExt.settings.set('connectorEndScale', (existingAnnotation.connector || {}).endScale || "1");
+
+          // screen 2c is note props
+          contextValue.tableauExt.settings.set('annotationNoteTitle', (existingAnnotation.note || {}).title || "");
+          contextValue.tableauExt.settings.set('annotationNoteTitleColor', (existingAnnotation.note || {}).titleColor || existingAnnotation.color);
+
+          contextValue.tableauExt.settings.set('annotationNoteLabel', (existingAnnotation.note || {}).label || "");
+          contextValue.tableauExt.settings.set('annotationNoteLabelColor', (existingAnnotation.note || {}).labelColor || existingAnnotation.color);
+
+          contextValue.tableauExt.settings.set('annotationNotePadding', (existingAnnotation.note || {}).padding || "5");
+          contextValue.tableauExt.settings.set('annotationNoteBgPadding', (existingAnnotation.note || {}).bgPadding || "0");
+
+          // note alignment props
+          contextValue.tableauExt.settings.set('annotationNoteOrientation', (existingAnnotation.note || {}).orientation || "topBottom");
+          contextValue.tableauExt.settings.set('annotationNoteLineType', (existingAnnotation.note || {}).lineType || "null");
+          contextValue.tableauExt.settings.set('annotationNoteAlign', (existingAnnotation.note || {}).align || "dynamic");
+          contextValue.tableauExt.settings.set('annotationNoteTextAlign', (existingAnnotation.note || {}).textAlign || "null");
+          
+          contextValue.tableauExt.settings.saveAsync().then(() => {
+            console.log('existing annotations writter to settings', props.tableauSettings);
+            tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+              if (closePayload === 'false') {
+                
+                props.history.push('/viz')
+              }
+            }).catch((error) => {
+              // One expected error condition is when the popup is closed by the user (meaning the user
+              // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+              switch(error.errorCode) {
+                case window.tableau.ErrorCodes.DialogClosedByUser:
+                  // log("closed by user")
+                  break;
+                default:
+                  console.error(error.message);
+              }
+            });      
           });
-        }
-      }
-      */
 
-      tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
-        if (closePayload === 'false') {
-          props.history.push('/viz')
         }
-      }).catch((error) => {
-        // One expected error condition is when the popup is closed by the user (meaning the user
-        // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
-        switch(error.errorCode) {
-          case window.tableau.ErrorCodes.DialogClosedByUser:
-            // log("closed by user")
-            break;
-          default:
-            console.error(error.message);
-        }
-      });
+      } else {
+        console.log('checking state and callback', typ, props.tableauSettings, annotationState, Number(e.target.id.replace('edit-button-','')), existingAnnotation);
+
+        tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+          if (closePayload === 'false') {
+            props.history.push('/viz')
+          }
+        }).catch((error) => {
+          // One expected error condition is when the popup is closed by the user (meaning the user
+          // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+          switch(error.errorCode) {
+            case window.tableau.ErrorCodes.DialogClosedByUser:
+              // log("closed by user")
+              break;
+            default:
+              console.error(error.message);
+          }
+        });  
+      }
     }
   };
 
@@ -281,7 +301,7 @@ const Viz = (props) => {
             style={{
               cursor: disableConfig ? "copy" : "default"
             }}
-            onClick={(e) => configureAnnotation(e)}
+            onClick={e => configureAnnotation(e,'new')}
           >
             {annotationState.map((note, i) => {
               const NoteType = Annotations[note.annotationType];
@@ -316,6 +336,10 @@ const Viz = (props) => {
                       console.log('dragProps', annotationState, dragProps, newNoteState, newAnnotationState);
                     }}
                     {...note}
+                    connector={{
+                      "type": "elbow", 
+                      "end": "dot"
+                    }}
                     editMode={editMode}
                   />
                   { // edit icon obtained from material ui
@@ -323,6 +347,7 @@ const Viz = (props) => {
                     <svg 
                       viewBox="0 0 24 24"
                       key={`edit-button-${note.id}`}
+                      id={`edit-button-${note.id}`}
                       style={{
                         cursor: 'pointer'
                       }}
@@ -332,15 +357,17 @@ const Viz = (props) => {
                       x={note.x+15}
                       y={note.y-11}
                       onClick={(e) => {
-                        console.log('you clicked on edit', Number(e.target.id.replace('edit-button-','')));
+                        configureAnnotation(e,'edit');
+                        console.log('you clicked on edit', e, e.target, Number(e.target.id.replace('edit-button-','')));
                       }}
                     >
-                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                      <path d="M0 0h24v24H0z" fill="none"/>
+                      <path id={`edit-button-${note.id}`} d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                      <path id={`edit-button-${note.id}`} d="M0 0h24v24H0z" fill="none"/>
                     </svg>
                     <svg
                       viewBox="0 0 24 24"
                       key={`delete-button-${note.id}`}
+                      id={`delete-button-${note.id}`}
                       style={{
                         cursor: 'pointer'
                       }}
@@ -353,9 +380,9 @@ const Viz = (props) => {
                         console.log('you clicked on delete', Number(e.target.id.replace('edit-button-','')));
                       }}
                     >
-                      <path fill="none" d="M0 0h24v24H0V0z"/>
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
-                      <path fill="none" d="M0 0h24v24H0z"/>
+                      <path id={`delete-button-${note.id}`} fill="none" d="M0 0h24v24H0V0z"/>
+                      <path id={`delete-button-${note.id}`} d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
+                      <path id={`delete-button-${note.id}`} fill="none" d="M0 0h24v24H0z"/>
                     </svg>
                     </React.Fragment>
                   }
