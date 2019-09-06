@@ -278,6 +278,9 @@ const Viz = (props) => {
           <svg
             height={1000}
             width={1000}
+            style={{
+              cursor: disableConfig ? "copy" : "default"
+            }}
             onClick={(e) => configureAnnotation(e)}
           >
             {annotationState.map((note, i) => {
