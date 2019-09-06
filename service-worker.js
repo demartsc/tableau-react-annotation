@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/tableau-react-annotation/precache-manifest.802dac7b23a8428968b6b2532c3d7255.js"
+  "/tableau-react-annotation/precache-manifest.454e09ae43d4ea6fe58cc83ebd4a3524.js"
 );
 
 workbox.clientsClaim();
