@@ -78,10 +78,11 @@ const Viz = (props) => {
   console.log('checking props', props);
   const tableauExt = window.tableau.extensions;
   const contextValue = useContext(ExtensionContext);
-  const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || '[]'); // annotationStarter
+  const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || JSON.stringify(annotationStarter)); // annotationStarter
 
   const [disableConfig, setDisableConfig] = useState(false);
   const [dragState, setDragState] = useState(null);
+  const [editMode, setEditMode] = useState(true);
   const [annotationState, setAnnotationState] = useState(annotationProps);
 
 
@@ -93,7 +94,7 @@ const Viz = (props) => {
 
   const configureAnnotation = e => {
     console.log('checking disable config and drag state', disableConfig, dragState);
-    if ( !disableConfig && (dragState >= 0) ) {
+    if ( disableConfig && (dragState >= 0) ) {
       e.persist();
       const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
       const popUpOptions = {
@@ -255,13 +256,24 @@ const Viz = (props) => {
       <div>
         <React.Fragment>
           {/* <TypesUI /> */}
-          <CheckItem
-            isChecked={disableConfig}
-            text={`Toggle SVG onClick()`}
-            onChange={() => setDisableConfig(!disableConfig)}
-          >
-            Toggle Add Annotations
-          </CheckItem>
+          <div style={{
+            display: "inline-block"
+          }}>
+            <CheckItem
+              isChecked={disableConfig}
+              text={`Toggle SVG onClick()`}
+              onChange={() => setDisableConfig(!disableConfig)}
+            >
+              Toggle Add Annotations
+            </CheckItem>
+            <CheckItem
+              isChecked={editMode}
+              text={`Toggle Edit Mode`}
+              onChange={() => setEditMode(!editMode)}
+            >
+              Toggle Edit Mode
+            </CheckItem>
+          </div>
           <br/>
           <svg
             height={1000}
@@ -300,11 +312,11 @@ const Viz = (props) => {
                       setDragState(null);
                       console.log('dragProps', annotationState, dragProps, newNoteState, newAnnotationState);
                     }}
-                    editMode={true}
                     {...note}
+                    editMode={editMode}
                   />
                   { // edit icon obtained from material ui
-                    note.editMode && <React.Fragment>
+                    editMode && <React.Fragment>
                     <svg 
                       viewBox="0 0 24 24"
                       key={`edit-button-${note.id}`}
