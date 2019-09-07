@@ -41,7 +41,6 @@ const annotationStarter = [
     annotationType: "AnnotationCalloutRect",
     key: 0,
     id: 0,
-    className: 'id-000',
     x: 100,
     y: 70,
     dy: 117,
@@ -59,7 +58,6 @@ const annotationStarter = [
     annotationType: "AnnotationCalloutCircle",
     key: 1,
     id: 1,
-    className: 'id-001',
     x: 350,
     y: 70,
     dy: 117,
@@ -146,13 +144,26 @@ const Viz = (props) => {
                 existingAnnotation.color = contextValue.tableauExt.settings.get('annotationColor');
 
                 // there might be a better way
-                if ( !existingAnnotation.connector ) {
-                  existingAnnotation.connector = {};
-                }
+                if ( !existingAnnotation.connector ) { existingAnnotation.connector = {}; }
                 existingAnnotation.connector.type = contextValue.tableauExt.settings.get('connectorType');
                 existingAnnotation.connector.end = contextValue.tableauExt.settings.get('connectorEnd');
                 existingAnnotation.connector.endScale = parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'));
 
+                // LEFT OFF HERE LEFT OFF HERE WORKING ON NOTE UPDATE
+                if ( !existingAnnotation.note ) { existingAnnotation.note = {}; }
+                existingAnnotation.note.title = contextValue.tableauExt.settings.get('annotationNoteTitle');
+                existingAnnotation.note.titleColor = contextValue.tableauExt.settings.get('annotationNoteTitleColor');
+                existingAnnotation.note.label = contextValue.tableauExt.settings.get('annotationNoteLabel');
+                existingAnnotation.note.labelColor = contextValue.tableauExt.settings.get('annotationNoteLabelColor');
+
+                existingAnnotation.note.padding = parseFloat(contextValue.tableauExt.settings.get('annotationNotePadding'));
+                existingAnnotation.note.bgPadding = parseFloat(contextValue.tableauExt.settings.get('annotationNoteBgPadding'));
+                
+                existingAnnotation.note.orientation = contextValue.tableauExt.settings.get('annotationNoteOrientation');
+                existingAnnotation.note.lineType = contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType');
+                existingAnnotation.note.align = contextValue.tableauExt.settings.get('annotationNoteAlign');
+                existingAnnotation.note.textAlign = contextValue.tableauExt.settings.get('annotationNoteTextAlign') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAlign');
+                
                 // this should be equal to existingAnnotation which is now updates
                 // const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
                 const newAnnotationState = annotationState.filter(n => { return n.id !== existingAnnotation.id });
@@ -186,24 +197,39 @@ const Viz = (props) => {
 
         }
       } else {
-        console.log('checking state and callback', typ, props.tableauSettings, annotationState, Number(e.target.id.replace('edit-button-','')), existingAnnotation);
+        console.log('checking state and callback', e, typ, props.tableauSettings, annotationState, Number(e.target.id.replace('edit-button-','')), existingAnnotation);
 
         tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload, props) => {
           if (closePayload === 'false') {
-            // annotationsArray.push({
-            //   annotationID: d.id,
-            //   type: tableauExt.settings.get('annotationType'),
-            //   ids: [d.id],
-            //   color: tableauExt.settings.get('annotationColor'),
-            //   label: tableauExt.settings.get('annotationComment'),
-            //   padding: parseFloat(tableauExt.settings.get('annotationPadding')) + (Math.random()/1000), 
-            //   radiusPadding: parseFloat(tableauExt.settings.get('annotationPadding')) + (Math.random()/1000), 
-            //   editMode: false,
-            //   strokeWidth: parseFloat(tableauExt.settings.get('annotationStrokeWidth')),
-            //   dx: 0,
-            //   dy: 0,
-            // });
-  
+            const newAnnotationArray = annotationState;
+            newAnnotationArray.push({
+              // we can now write the updates back to the annotation array and persist to tableau
+              annotationType: contextValue.tableauExt.settings.get('annotationType'),
+              color: contextValue.tableauExt.settings.get('annotationColor'),
+              key: annotationState.length + 1, 
+              id: annotationState.length + 1,
+              x: e.clientX,
+              y: e.clientY,
+              dx: 50,
+              dy: 50,
+              connector: {
+                type: contextValue.tableauExt.settings.get('connectorType'),
+                end: contextValue.tableauExt.settings.get('connectorEnd'),
+                endScale: parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'))
+              },
+              note: { 
+                title: contextValue.tableauExt.settings.get('annotationNoteTitle'), 
+                titleColor: contextValue.tableauExt.settings.get('annotationNoteTitleColor'),
+                label: contextValue.tableauExt.settings.get('annotationNoteLabel'),
+                labelColor: contextValue.tableauExt.settings.get('annotationNoteLabelColor'), 
+                padding: parseFloat(contextValue.tableauExt.settings.get('annotationNotePadding')),
+                bgPadding: parseFloat(contextValue.tableauExt.settings.get('annotationNoteBgPadding')),
+                orientation: contextValue.tableauExt.settings.get('annotationNoteOrientation'),
+                lineType: contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType'),
+                align: contextValue.tableauExt.settings.get('annotationNoteAlign'),
+                textAlign: contextValue.tableauExt.settings.get('annotationNoteTextAlign') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAlign')
+              }              
+            });  
             // update the settings
             (props.history || []).push('/viz')
           }
