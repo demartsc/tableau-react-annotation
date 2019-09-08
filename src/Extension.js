@@ -4,12 +4,14 @@ import React, { Component } from 'react';
 import './Extension.css';
 
 import { Route } from "react-router-dom";
+import _ from 'lodash';
 
 import {tableau} from './tableau-extensions-1.latest';
 
 import { withRouter } from 'react-router-dom'
 import Viz from './extension_assets/viz';
 import Splash from './extension_assets/splash';
+import DeleteAnnotation from './extension_assets/annotationDelete';
 
 const Configuration = window.TableauExtension['Configuration'];
 const ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
@@ -34,13 +36,15 @@ class App extends Component {
   }
 
   deleteAnnotation = annotationID => {
-    console.log('we are deleting an annotation', annotationID);
     // remove annotation from array
-    const newAnnotationArray = JSON.parse(this.state.config.tableauExt.settings.get('annotationArray'));
-    newAnnotationArray.splice(annotationID-1,1);
-    this.state.config.tableauExt.settings.set('annotationArray',JSON.stringify(newAnnotationArray));
-    this.state.config.tableauExt.saveAsync().then(()=>{
-      this.updateTableauSettings(this.state.tableauExt.settings.getAll());
+    const newAnnotationArray = _.remove(JSON.parse(this.state.config.tableauExt.settings.get('annotationData'),(o) => { return o.id === annotationID }));
+    console.log('we are deleting an annotation', annotationID, newAnnotationArray);
+
+    // set new array back to settings
+    this.state.config.tableauExt.settings.set('annotationData',JSON.stringify(newAnnotationArray));
+    this.state.config.tableauExt.settings.saveAsync().then(()=>{
+      // update internal settings with new tableau settings
+      this.updateTableauSettings(this.state.config.tableauExt.settings.getAll());
     });
   }
 
@@ -71,6 +75,7 @@ class App extends Component {
   updateTableauSettings = (newSettings) => {
     this.setState({
       config: {
+        ...this.state.config,
         tableauSettings: newSettings
       }
     });
@@ -104,7 +109,7 @@ class App extends Component {
           &&
           <SettingsContext.Provider value={this.state.settings}>
             <ExtensionContext.Provider value={this.state.config}>
-              <div>
+              <React.Fragment>
                 <Route exact path="/" render={(props) =>
                   <Splash
                     onClick={this.configure}
@@ -129,8 +134,8 @@ class App extends Component {
                     saveAsync={true}
                   />} 
                 />
-                <Route exact path="/confirmDelete" render={(props) => 
-                  <Splash
+                <Route exact path="/deleteAnnotation" render={(props) => 
+                  <DeleteAnnotation
                     onClick={this.deleteAnnotation}
                     logo={this.props.logo}
                   />}
@@ -142,9 +147,10 @@ class App extends Component {
                     tableauSettings={this.state.config.tableauSettings}
                     tableauExt={this.state.config.tableauExt}
                     updateTableauSettings={this.updateTableauSettings}
+                    deleteAnnotation={this.deleteAnnotation}
                   />}
                 />
-              </div>
+              </React.Fragment>
             </ExtensionContext.Provider>
           </SettingsContext.Provider>
         }
