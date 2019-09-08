@@ -33,6 +33,17 @@ class App extends Component {
 
   }
 
+  deleteAnnotation = annotationID => {
+    console.log('we are deleting an annotation', annotationID);
+    // remove annotation from array
+    const newAnnotationArray = JSON.parse(this.state.config.tableauExt.settings.get('annotationArray'));
+    newAnnotationArray.splice(annotationID-1,1);
+    this.state.config.tableauExt.settings.set('annotationArray',JSON.stringify(newAnnotationArray));
+    this.state.config.tableauExt.saveAsync().then(()=>{
+      this.updateTableauSettings(this.state.tableauExt.settings.getAll());
+    });
+  }
+
   configure = () => {
     const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/configure';
     const popUpOptions = {
@@ -118,6 +129,12 @@ class App extends Component {
                     saveAsync={true}
                   />} 
                 />
+                <Route exact path="/confirmDelete" render={(props) => 
+                  <Splash
+                    onClick={this.deleteAnnotation}
+                    logo={this.props.logo}
+                  />}
+              />
                 <Route exact path="/viz" render={(props) =>
                   <Viz
                     extensionIcons={this.props.extensionIcons} 

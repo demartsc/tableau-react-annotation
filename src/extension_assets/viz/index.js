@@ -91,6 +91,34 @@ const Viz = (props) => {
   // console.log('window', window.TableauExtension['components'], window, extensionName, extensionParent, extensionZoneId, contextValue.config);
   console.log('window', window.TableauExtension, annotationState);
 
+  const deleteAnnotation = e => {
+    console.log('checking delete annotation', e.target);
+    e.persist();
+    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/deleteAnnotation';
+    const popUpOptions = {
+      height: 400,
+      width: 600,
+    };
+
+
+    tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+      if (closePayload === 'false') {
+        props.deleteAnnotation(Number(e.target.id.replace('edit-button-','')));
+        this.props.history.push('/viz')
+      }
+    }).catch((error) => {
+      // One expected error condition is when the popup is closed by the user (meaning the user
+      // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+      switch(error.errorCode) {
+        case window.tableau.ErrorCodes.DialogClosedByUser:
+          // log("closed by user")
+          break;
+        default:
+          console.error(error.message);
+      }
+    });
+  };
+
   const configureAnnotation = (e, typ) => {
     console.log('checking disable config and drag state', disableConfig, dragState);
     if ( (disableConfig || typ !== "new") && (dragState >= 0) ) {
@@ -259,40 +287,7 @@ const Viz = (props) => {
   // this goes across iframe to parent and triggers a CORS error
   // extensionParent.document.getElementById("tabZoneId" + extensionZoneId).style.pointerEvents = 'none');
 
-
-  // annotation callbacks from hierarchy example
   /*
-  editAnnotationCallBack = () => {
-    console.log('edit annotations enabled');
-    if ((this.state.tableauSettings || {}).clickAnnotations) {
-      const newAnnotations = JSON.parse(this.state.tableauSettings.clickAnnotations);
-      newAnnotations.map(d => {
-        d.editMode = !d.editMode
-      })
-
-      console.log('editable annotations', newAnnotations);
-
-      if (TableauSettings.ShouldUse) {
-        TableauSettings.updateAndSave({
-          // ['is' + field]: true,
-          clickAnnotations: JSON.stringify(newAnnotations),
-        }, settings => {
-          this.setState({
-            tableauSettings: settings,
-          });
-        });
-    
-      } else {
-        tableauExt.settings.set('clickAnnotations', JSON.stringify(newAnnotations));
-        tableauExt.settings.saveAsync().then(() => {
-          this.setState({
-            tableauSettings: tableauExt.settings.getAll()
-          });
-        });
-      }
-    }
-  }
-
   annotationDragCallBack = annotationInfo => {
     if ((this.state.tableauSettings || {}).clickAnnotations) {
       const newAnnotations = JSON.parse(this.state.tableauSettings.clickAnnotations);
@@ -428,41 +423,57 @@ const Viz = (props) => {
                       viewBox="0 0 24 24"
                       key={`edit-button-${note.id}`}
                       id={`edit-button-${note.id}`}
-                      style={{
-                        cursor: 'pointer'
-                      }}
                       fill={note.color || "#767676"}
                       width="18"
                       height="18"
                       x={note.x+15}
                       y={note.y-11}
-                      onClick={(e) => {
-                        configureAnnotation(e,'edit');
-                        console.log('you clicked on edit', e, e.target, Number(e.target.id.replace('edit-button-','')));
-                      }}
                     >
-                      <path id={`edit-button-${note.id}`} d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                      <path id={`edit-button-${note.id}`} d="M0 0h24v24H0z" fill="none"/>
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                      <path d="M0 0h24v24H0z" fill="none"/>
+                      <rect 
+                        id={`edit-button-${note.id}`}
+                        style={{
+                          cursor: 'pointer',
+                          stroke: '#fff',
+                          fill: '#fff',
+                          fillOpacity: 0,
+                          strokeOpacity: 0
+                        }} 
+                        width="24" height="24" 
+                        onClick={e => {
+                          configureAnnotation(e,'edit');
+                          console.log('you clicked on edit', e, e.target, Number(e.target.id.replace('edit-button-','')));
+                        }}
+                      />      
                     </svg>
                     <svg
                       viewBox="0 0 24 24"
                       key={`delete-button-${note.id}`}
                       id={`delete-button-${note.id}`}
-                      style={{
-                        cursor: 'pointer'
-                      }}
                       fill={note.color || "#767676"}
                       width="18"
                       height="18"
                       x={note.x-32}
                       y={note.y-10}
-                      onClick={(e) => {
-                        console.log('you clicked on delete', Number(e.target.id.replace('edit-button-','')));
-                      }}
                     >
-                      <path id={`delete-button-${note.id}`} fill="none" d="M0 0h24v24H0V0z"/>
-                      <path id={`delete-button-${note.id}`} d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
-                      <path id={`delete-button-${note.id}`} fill="none" d="M0 0h24v24H0z"/>
+                      <path fill="none" d="M0 0h24v24H0V0z"/>
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
+                      <path fill="none" d="M0 0h24v24H0z"/>
+                      <rect 
+                        id={`delete-button-${note.id}`} 
+                        style={{
+                          cursor: 'pointer',
+                          stroke: '#fff',
+                          fill: '#fff',
+                          fillOpacity: 0,
+                          strokeOpacity: 0
+                        }} 
+                        width="24" height="24" 
+                        onClick={e => {
+                          console.log('you clicked on delete', e.target.id,  Number(e.target.id.replace('delete-button-','')));
+                        }}                        
+                      />
                     </svg>
                     </React.Fragment>
                   }
