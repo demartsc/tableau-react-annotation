@@ -89,7 +89,7 @@ const Viz = (props) => {
   const extensionParent = window.parent;
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
   // console.log('window', window.TableauExtension['components'], window, extensionName, extensionParent, extensionZoneId, contextValue.config);
-  console.log('window', window.TableauExtension);
+  console.log('window', window.TableauExtension, annotationState);
 
   const configureAnnotation = (e, typ) => {
     console.log('checking disable config and drag state', disableConfig, dragState);
@@ -179,7 +179,7 @@ const Viz = (props) => {
                   // done we can close and move on
                   props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
                   console.log('checking props', props, props.history);
-                  props.history.push('/viz')
+                  (props.history || []).push('/viz')
                 });
               }
             }).catch((error) => {
@@ -197,9 +197,8 @@ const Viz = (props) => {
 
         }
       } else {
-        console.log('checking state and callback', e, typ, props.tableauSettings, annotationState, Number(e.target.id.replace('edit-button-','')), existingAnnotation);
-
-        tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload, props) => {
+        const tableauSettings = contextValue.tableauExt.settings.getAll();
+        tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
           if (closePayload === 'false') {
             const newAnnotationArray = annotationState;
             newAnnotationArray.push({
@@ -229,10 +228,19 @@ const Viz = (props) => {
                 align: contextValue.tableauExt.settings.get('annotationNoteAlign'),
                 textAlign: contextValue.tableauExt.settings.get('annotationNoteTextAlign') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAlign')
               }              
-            });  
-            // update the settings
-            (props.history || []).push('/viz')
-          }
+            });
+            // update the state
+            setAnnotationState(newAnnotationArray);
+            
+            // save to tableau settings
+            contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationArray));
+            contextValue.tableauExt.settings.saveAsync().then(() => {
+              // done we can close and move on
+              props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+              console.log('checking props', props, props.history, annotationState, props.tableauSettings);
+              props.history.push('/viz')
+            });
+      }
         }).catch((error) => {
           // One expected error condition is when the popup is closed by the user (meaning the user
           // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
