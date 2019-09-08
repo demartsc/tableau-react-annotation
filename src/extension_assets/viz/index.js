@@ -192,6 +192,19 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('annotationNoteAlign', (existingAnnotation.note || {}).align || "dynamic");
           contextValue.tableauExt.settings.set('annotationNoteTextAlign', (existingAnnotation.note || {}).textAlign || "null");
           
+          // subject props
+          contextValue.tableauExt.settings.set('annotationSubjectRadius', (existingAnnotation.subject || {}).radius || "15");
+          contextValue.tableauExt.settings.set('annotationSubjectRadiusPadding', (existingAnnotation.subject || {}).radiusPadding || "0");
+          contextValue.tableauExt.settings.set('annotationSubjectInnerRadius', (existingAnnotation.subject || {}).innerRadius || "0");
+          contextValue.tableauExt.settings.set('annotationSubjectOuterRadius', (existingAnnotation.subject || {}).outerRadius || "0");
+
+          contextValue.tableauExt.settings.set('annotationSubjectWidth', (existingAnnotation.subject || {}).width || "50");
+          contextValue.tableauExt.settings.set('annotationSubjectHeight', (existingAnnotation.subject || {}).height || "50");
+          contextValue.tableauExt.settings.set('annotationSubjectDepth', (existingAnnotation.subject || {}).depth || "20");
+
+          contextValue.tableauExt.settings.set('annotationSubjectBracketType', (existingAnnotation.subject || {}).type || "curly");
+          contextValue.tableauExt.settings.set('annotationSubjectBadgeText', (existingAnnotation.subject || {}).text || "");
+
           contextValue.tableauExt.settings.saveAsync().then(() => {
             console.log('existing annotations writter to settings', props.tableauSettings);
             tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
@@ -206,7 +219,7 @@ const Viz = (props) => {
                 existingAnnotation.connector.end = contextValue.tableauExt.settings.get('connectorEnd');
                 existingAnnotation.connector.endScale = parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'));
 
-                // LEFT OFF HERE LEFT OFF HERE WORKING ON NOTE UPDATE
+                // update the note if we got new settings
                 if ( !existingAnnotation.note ) { existingAnnotation.note = {}; }
                 existingAnnotation.note.title = contextValue.tableauExt.settings.get('annotationNoteTitle');
                 existingAnnotation.note.titleColor = contextValue.tableauExt.settings.get('annotationNoteTitleColor');
@@ -221,6 +234,20 @@ const Viz = (props) => {
                 existingAnnotation.note.align = contextValue.tableauExt.settings.get('annotationNoteAlign');
                 existingAnnotation.note.textAlign = contextValue.tableauExt.settings.get('annotationNoteTextAlign') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAlign');
                 
+                // update the subject if we got new settings
+                if ( !existingAnnotation.subject ) { existingAnnotation.subject = {}; }
+                existingAnnotation.subject.radius = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadius'));
+                existingAnnotation.subject.radiusPadding = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadiusPadding'));
+                existingAnnotation.subject.innerRadius = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectInnerRadius'));
+                existingAnnotation.subject.outerRadius = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectOuterRadius'));
+
+                existingAnnotation.subject.width = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectWidth'));
+                existingAnnotation.subject.height = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectHeight'));
+                existingAnnotation.subject.depth = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectDepth'));
+
+                existingAnnotation.subject.type = contextValue.tableauExt.settings.get('annotationSubjectBracketType');
+                existingAnnotation.subject.text = contextValue.tableauExt.settings.get('annotationSubjectBadgeText');
+
                 // this should be equal to existingAnnotation which is now updates
                 // const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
                 const newAnnotationState = annotationProps.filter(n => { return n.id !== existingAnnotation.id });
@@ -253,7 +280,6 @@ const Viz = (props) => {
 
         }
       } else {
-        const tableauSettings = contextValue.tableauExt.settings.getAll();
         tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
           if (closePayload === 'false') {
             const newAnnotationArray = annotationProps;
@@ -284,7 +310,18 @@ const Viz = (props) => {
                 lineType: contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType'),
                 align: contextValue.tableauExt.settings.get('annotationNoteAlign'),
                 textAlign: contextValue.tableauExt.settings.get('annotationNoteTextAlign') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAlign')
-              }              
+              },
+              subject: {
+                radius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadius')),
+                radiusPadding: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadiusPadding')),
+                innerRadius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectInnerRadius')),
+                outerRadius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectOuterRadius')),
+                width: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectWidth')),
+                height: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectHeight')),
+                depth: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectDepth')),
+                type: contextValue.tableauExt.settings.get('annotationSubjectBracketType'),
+                text: contextValue.tableauExt.settings.get('annotationSubjectBadgeText')
+              }    
             });
             // save to tableau settings
             contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationArray));

@@ -167,7 +167,6 @@ export default {
                   {"value": "justify", "text": "Justify"},
                 ]
               },
-
               {
                 "type": "color",
                 "label": "Note color",
@@ -175,6 +174,78 @@ export default {
                 "name": "annotationColor",
                 "tooltip": "A color string that will be applied to the note, otherwise defaults to annotation."
               },
+            ]
+          },
+          {
+            "name": "Subject",
+            "inputs": [
+              {
+                "type": "text",
+                "label": "Radius (Callout Circle and Badge Only)",
+                "name": "annotationSubjectRadius",
+                "value": "15",
+                "tooltip": "(Number) Radius of circle"
+              },
+              {
+                "type": "text",
+                "label": "Radius Padding (Callout Circle Only)",
+                "name": "annotationSubjectRadiusPadding",
+                "value": "0",
+                "tooltip": "(Number) Padding outside of circle, affects spacing between the circle and the start of the connector"
+              },
+              {
+                "type": "text",
+                "label": "Inner Radius (Callout Circle Only)",
+                "name": "annotationSubjectInnerRadius",
+                "value": "0",
+                "tooltip": "(Number) Inner radius to make a ring annotation"
+              },
+              {
+                "type": "text",
+                "label": "Outer Radius (Callout Circle Only)",
+                "name": "annotationSubjectOuterRadius",
+                "value": "0",
+                "tooltip": "(Number) Outer radius to make a ring annotation"
+              },
+              {
+                "type": "text",
+                "label": "Width (Rect and Bracket Only)",
+                "name": "annotationSubjectWidth",
+                "value": "50",
+                "tooltip": "(Number) Width of rect or bracket, accepts negative and positive values"
+              },
+              {
+                "type": "text",
+                "label": "Height (Rect and Bracket Only)",
+                "name": "annotationSubjectHeight",
+                "value": "50",
+                "tooltip": "(Number) Height of rect or bracket, accepts negative and positive values"
+              },
+              {
+                "type": "text",
+                "label": "Depth (Bracket Only)",
+                "name": "annotationSubjectDepth",
+                "value": "20",
+                "tooltip": "(Number) How far the bracket pops out from the corners."
+              },
+              {
+                "type": "dropdown",
+                "label": "Bracket Type (Bracket Only)",
+                "name": "annotationSubjectBracketType",
+                "value": "curly",
+                "tooltip": "Type of bracket (square or curly).",
+                "values": [
+                  {"value": "square", "text": "Square"},
+                  {"value": "curly", "text": "Curly"}
+                ]
+              },
+              {
+                "type": "text",
+                "label": "Badge Text",
+                "name": "annotationSubjectBadgeText",
+                "value": "",
+                "tooltip": "Text placed in the center of the badge"
+              }
             ]
           },
         ],
