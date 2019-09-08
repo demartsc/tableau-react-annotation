@@ -31,7 +31,7 @@ const CustomLayout = props => {
   let extensionContext = useContext(ExtensionContext);
 
   // State and setter of the dropdown input
-  let [annotationType, setAnnotationType] = useState(extensionContext.tableauExt.settings.get('annotationType')  || "");
+  let [annotationType, setAnnotationType] = useState(extensionContext.tableauExt.settings.get('annotationType')  || "AnnotationLabel");
   
 
   const layoutStyle = {
@@ -56,7 +56,7 @@ const CustomLayout = props => {
   }, [annotationType]);
 
   const Annotation = Annotations[annotationType];
-  console.log('checking annotation', annotationType, Annotations, Annotation);
+  console.log('checking annotation in custom', annotationType, Annotations, Annotation);
   return (
     <div style={layoutStyle}>
       <h1>Select an Annotation Type</h1>

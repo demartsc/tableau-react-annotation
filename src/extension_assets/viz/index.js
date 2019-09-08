@@ -121,6 +121,7 @@ const Viz = (props) => {
   };
 
   const annotationDragCallback = (dragProps, note, hXw) => {
+    // fix placement of note or annotation if it is off screen
     if ( dragProps.x < 0 ) { dragProps.x = 10 }
     if ( dragProps.y < 0 ) { dragProps.y = 10 }
     if ( dragProps.x > hXw[1] ) { dragProps.x = hXw[1]-10 }
@@ -129,13 +130,13 @@ const Viz = (props) => {
     if ( dragProps.y + dragProps.dy < 0 ) { dragProps.dy = 50 }
     if ( dragProps.x + dragProps.dx > hXw[1] ) { dragProps.dx = 50 }
     if ( dragProps.y + dragProps.dy  > hXw[0] ) { dragProps.dy = 50 }
-    console.log('checking dragProps', dragProps, note);
+
+    // update the array object
     const { className, events, onDrag, onDragEnd, onDragStart, children, ...noFunctionProps} = dragProps;
     const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}))(dragProps);
     const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
     const newAnnotationState = annotationProps.filter(n => { return n.id !== dragState });
     newAnnotationState.push(newNoteState);
-    console.log('after', newAnnotationState);
     
     // save to tableau settings
     console.log('drag ended - we are going to stringify', newAnnotationState, JSON.stringify(newAnnotationState));
