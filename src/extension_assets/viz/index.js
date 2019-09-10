@@ -79,7 +79,7 @@ const annotationStarter = [
 const Viz = (props) => {
   const tableauExt = window.tableau.extensions;
   const contextValue = useContext(ExtensionContext);
-  const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
+  const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || "[]" !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
   console.log('checking initial props', props, annotationProps); 
 
   const [disableConfig, setDisableConfig] = useState(false);
