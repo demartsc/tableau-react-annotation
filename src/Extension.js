@@ -4,16 +4,18 @@ import React, { Component } from 'react';
 import './Extension.css';
 
 import { Route } from "react-router-dom";
+import _ from 'lodash';
 
 import {tableau} from './tableau-extensions-1.latest';
 
 import { withRouter } from 'react-router-dom'
 import Viz from './extension_assets/viz';
 import Splash from './extension_assets/splash';
+import DeleteAnnotation from './extension_assets/annotationDelete';
 
-var Configuration = window.TableauExtension['Configuration'];
-var ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
-var SettingsContext = window.TableauExtension['contexts']['SettingsContext'];
+const Configuration = window.TableauExtension['Configuration'];
+const ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
+const SettingsContext = window.TableauExtension['contexts']['SettingsContext'];
 const tableauExt = window.tableau.extensions;
 
 
@@ -23,6 +25,7 @@ class App extends Component {
 
     this.state = {
       config: {},
+      disableConfig: false,
       settings: {
         logo: props.logo,
         colors: props.colors,
@@ -30,10 +33,22 @@ class App extends Component {
       extensionReady: false
     }
 
-    this.configure = this.configure.bind(this);
   }
 
-  configure () {
+  deleteAnnotation = annotationID => {
+    // remove annotation from array
+    const newAnnotationArray = _.remove(JSON.parse(this.state.config.tableauExt.settings.get('annotationData'),(o) => { return o.id === annotationID }));
+    console.log('we are deleting an annotation', annotationID, newAnnotationArray);
+
+    // set new array back to settings
+    this.state.config.tableauExt.settings.set('annotationData',JSON.stringify(newAnnotationArray));
+    this.state.config.tableauExt.settings.saveAsync().then(()=>{
+      // update internal settings with new tableau settings
+      this.updateTableauSettings(this.state.config.tableauExt.settings.getAll());
+    });
+  }
+
+  configure = () => {
     const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/configure';
     const popUpOptions = {
       height: 625,
@@ -57,29 +72,14 @@ class App extends Component {
     });
   };
 
-  configureAnnotation () {
-    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
-    const popUpOptions = {
-      height: 700,
-      width: 750,
-    };
-
-    tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
-      if (closePayload === 'false') {
-        this.props.history.push('/viz')
-      }
-    }).catch((error) => {
-      // One expected error condition is when the popup is closed by the user (meaning the user
-      // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
-      switch(error.errorCode) {
-        case window.tableau.ErrorCodes.DialogClosedByUser:
-          // log("closed by user")
-          break;
-        default:
-          console.error(error.message);
+  updateTableauSettings = (newSettings) => {
+    this.setState({
+      config: {
+        ...this.state.config,
+        tableauSettings: newSettings
       }
     });
-  };
+  }
 
   componentDidMount () {
     tableauExt.initializeAsync({'configure': this.configure}).then(() => {
@@ -94,7 +94,6 @@ class App extends Component {
         },
         extensionReady: true
       })
-      console.log('extension state', this.state);
     }, (err) => {
       // Something went wrong in initialization
       console.log('Error while Initializing: ' + err.toString());
@@ -102,6 +101,7 @@ class App extends Component {
   }
 
   render() {
+    console.log('checking state', this.state);
     return (
       <div className="App">
         {
@@ -109,8 +109,13 @@ class App extends Component {
           &&
           <SettingsContext.Provider value={this.state.settings}>
             <ExtensionContext.Provider value={this.state.config}>
-              <div>
-                <Route exact path="/" render={(props) => <Splash onClick={this.configure} logo={this.props.logo} />}/>
+              <React.Fragment>
+                <Route exact path="/" render={(props) =>
+                  <Splash
+                    onClick={this.configure}
+                    logo={this.props.logo}
+                  />}
+                />
                 <Route exact path="/configure" render={(props) => 
                   <Configuration 
                     extensionIcons={this.props.extensionIcons} 
@@ -129,13 +134,23 @@ class App extends Component {
                     saveAsync={true}
                   />} 
                 />
+                <Route exact path="/deleteAnnotation" render={(props) => 
+                  <DeleteAnnotation
+                    onClick={this.deleteAnnotation}
+                    logo={this.props.logo}
+                  />}
+              />
                 <Route exact path="/viz" render={(props) =>
                   <Viz
+                    extensionIcons={this.props.extensionIcons} 
                     sheetNames={this.state.config.sheetNames}
-                    onConfig={this.configureAnnotation}
+                    tableauSettings={this.state.config.tableauSettings}
+                    tableauExt={this.state.config.tableauExt}
+                    updateTableauSettings={this.updateTableauSettings}
+                    deleteAnnotation={this.deleteAnnotation}
                   />}
                 />
-              </div>
+              </React.Fragment>
             </ExtensionContext.Provider>
           </SettingsContext.Provider>
         }

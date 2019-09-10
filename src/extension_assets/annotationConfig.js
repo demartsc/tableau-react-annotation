@@ -4,35 +4,14 @@ export default {
   "config": {
     "steps": [
       {
-        "name": "Select Annotation",
-        "title": "Select Annotation Type",
-        "type": "viz_options", 
-        "groups": [
-          {
-            "name": "Annotation Types",
-            "inputs": [
-              {
-                "type": "radio",
-                "name": "selectedAnnotationType",
-                "label": "Select an annotation type",
-                "value": "label",
-                "tooltip": "Select one of the annotations available in react-annotation",
-                "values": [
-                  {"value": "label", "text": "annotationLabel"},
-                  {"value": "callout", "text": "annotationCallout"},
-                  {"value": "calloutElbow", "text": "annotationCalloutElbow"},
-                  {"value": "calloutCurve", "text": "annotationCalloutCurve"},
-                  {"value": "calloutCircle", "text": "annotationCalloutCircle"},
-                  {"value": "calloutRect", "text": "annotationCalloutRect"},
-                  {"value": "calloutXYThreshold", "text": "annotationXYThreshold"},
-                  {"value": "bracket", "text": "annotationBracket"},
-                  {"value": "badge", "text": "annotationBadge"}
-                ]
-              }
-            ]
-          }
-        ],
-        "overwrites": {}
+        "name": "Annotation Types",
+        "title": "Annotation Types",
+        "type": "custom",
+        "component": CustomLayout,
+        "props": {
+          "key": "value",
+          "name": "Abo"
+        }
       },
       {
         "name": "Annotation Options",
@@ -40,125 +19,242 @@ export default {
         "type": "viz_options",
         "groups": [
           {
-            "name": "Note",
+            "name": "Color",
             "inputs": [
-              {
-                "type": "dropdown",
-                "label": "Line Type",
-                "name": "selectedLineType",
-                "value": "none",
-                "tooltip": "include a line anchor on your annotation",
-                "values": [
-                  {"value": "none", "text": "None"},
-                  {"value": "left", "text": "Left Anchor"},
-                  {"value": "top", "text": "Top Anchor"}
-                ]
-              },
-              {
-                "type": "dropdown",
-                "label": "Alignment",
-                "name": "selectedLineAlignment",
-                "value": "none",
-                "tooltip": "how to align your annotation anchor",
-                "values": [
-                  {"value": "none", "text": "Default"},
-                  {"value": "left", "text": "Left"},
-                  {"value": "middle", "text": "Middle"},
-                  {"value": "right", "text": "Right"},
-                ]
-              },
               {
                 "type": "color",
                 "label": "Select color",
                 "value": "#C123FA",
-                "name": "aColorThing",
-                "tooltip": "This is a tooltip"
+                "name": "annotationColor",
+                "tooltip": "A color string that will be applied to the annotation."
+              }
+            ]
+          },
+          {
+            "name": "Connector",
+            "inputs": [
+              {
+                "type": "dropdown",
+                "label": "Type",
+                "name": "connectorType",
+                "value": "line",
+                "tooltip": "what kind of connector",
+                "values": [
+                  {"value": "line", "text": "Line"},
+                  {"value": "elbow", "text": "Elbow"},
+                  {"value": "curve", "text": "Curve"}
+                ]
+              },
+              {
+                "type": "dropdown",
+                "label": "End",
+                "name": "connectorEnd",
+                "value": "none",
+                "tooltip": "what kind of connector",
+                "values": [
+                  {"value": "none", "text": "None"},
+                  {"value": "dot", "text": "Dot"},
+                  {"value": "arrow", "text": "Arrow"}
+                ]
               },
               {
                 "type": "text",
-                "label": "Label 1",
-                "placeholder": "Label 1",
-                "value": "Test Text Value",
-                "name": "selectedName",
-                "tooltip": "This is a tooltip"
+                "label": "End Scale",
+                "name": "connectorEndScale",
+                "value": "1",
+                "tooltip": "A multiplying factor for sizing the connector end"
+              },
+            ]
+          },
+          {
+            "name": "Note",
+            "inputs": [
+              {
+                "type": "text",
+                "label": "Title",
+                "placeholder": "Title",
+                "value": "",
+                "name": "annotationNoteTitle",
+                "tooltip": "The title of your annotation"
               },
               {
-                "type": "check",
-                "text": "Check Item 1",
-                "label": "Would you like to check this?",
-                "tooltip": "This is a tooltip",
-                "name": "checkItem1"
+                "type": "color",
+                "label": "Note title color",
+                "value": "#C123FA",
+                "name": "annotationNoteTitleColor",
+                "tooltip": "Color string, inherited from Annotation but can be customized by directly adding to Note as a prop, overrides color property."
+              },
+              {
+                "type": "text",
+                "label": "Label",
+                "placeholder": "Label",
+                "value": "",
+                "name": "annotationNoteLabel",
+                "tooltip": "The label of your annotation"
+              },
+              {
+                "type": "color",
+                "label": "Label color",
+                "value": "#C123FA",
+                "name": "annotationNoteLabelColor",
+                "tooltip": "Color string, inherited from Annotation but can be customized by directly adding to Note as a prop, overrides color property."
+              },
+              {
+                "type": "text",
+                "label": "Note Text Padding",
+                "placeholder": "Padding",
+                "value": "5",
+                "name": "annotationNotePadding",
+                "tooltip": "(Number) Allows for padding of the note within the annotation"
+              },
+              {
+                "type": "text",
+                "label": "Note Text Wrap",
+                "placeholder": "Characters before wrap",
+                "value": "120",
+                "name": "annotationNoteWrap",
+                "tooltip": "(Number) Allows for you to incease/decrease the text on each line before wrap"
+              },
+              {
+                "type": "text",
+                "label": "Note Background Padding",
+                "placeholder": "Background Padding",
+                "value": "0",
+                "name": "annotationNoteBgPadding",
+                "tooltip": "(Number) This allows you to add more of a padding to the rectangle behind the text element, only available in version 1.3.0 and higher."
               },
               {
                 "type": "radio",
-                "name": "selectedRadioOption",
-                "label": "Select one option",
-                "value": "two",
-                "tooltip": "This is a tooltip",
+                "label": "Select the orientation of the note",
+                "value": "topBottom",
+                "name": "annotationNoteOrientation",
+                "tooltip": "Determines based on the dx, and dy, which direction to orient the Note. Default is set to 'topBottom'",
                 "values": [
-                  {"value": "one", "text": "One"},
-                  {"value": "two", "text": "Two"},
-                  {"value": "three", "text": "Three"}
+                  {"value": "topBottom", "text": "Top / Bottom"},
+                  {"value": "leftRight", "text": "Left / Right"}
                 ]
               },
               {
-                "type": "dropdown",
-                "label": "Label 2",
-                "name": "selectedOption",
-                "value": "value4",
-                "tooltip": "This is a tooltip",
+                "type": "radio",
+                "label": "Select the line type for the note",
+                "value": "horizontal",
+                "tooltip": "Creates a line along the edge of the note text. Please Note if you set this to 'vertical' then orientation is fixed at 'leftRight' and vice versa if it is 'horizontal' then orientation is fixed at 'topBottom'",
+                "name": "annotationNoteLineType",
                 "values": [
-                  {"value": "value1", "text": "Value 1"},
-                  {"value": "value2", "disabled": true, "text": "Value 2"},
-                  { "separator": true },
-                  {"value": "value3", "text": "Value 3"},
-                  {"value": "value4", "text": "Value 4"}
+                  {"value": "null", "text": "None"},
+                  {"value": "horizontal", "text": "Horizontal"},
+                  {"value": "vertical", "text": "Vertical"}
                 ]
               },
               {
-                "type": "dropdown",
-                "label": "Label 2",
-                "name": "selectedOption",
-                "value": "value4",
-                "tooltip": "This is a tooltip",
+                "type": "radio",
+                "label": "Select the alignment for the note",
+                "value": "dynamic",
+                "tooltip": "Should be left 'dynamic' most of the time. When the orientation is set to 'topBottom' or lineType is set to 'horiztonal' you can align the note with 'top', 'bottom', 'middle', or 'dynamic'. When the orientation is set to 'leftRight' or lineType is set to 'vertical' you can align the note with 'left', 'right', 'middle', or 'dynamic'.",
+                "name": "annotationNoteAlign",
                 "values": [
-                  {"value": "value1"},
-                  {"value": "value2", "disabled": true},
-                  { "separator": true },
-                  {"value": "value3"},
-                  {"value": "value4"}
+                  {"value": "dynamic", "text": "Dynamic"},
+                  {"value": "top", "text": "Top"},
+                  {"value": "bottom", "text": "Bottom"},
+                  {"value": "middle", "text": "Middle"},
+                  {"value": "left", "text": "Left"},
+                  {"value": "right", "text": "Right"},
                 ]
               },
               {
-                "type": "dropdown",
-                "label": "Label 2",
-                "name": "selectedOption",
-                "value": "value4",
-                "tooltip": "This is a tooltip",
+                "type": "radio",
+                "label": "Select the text alignment for the note",
+                "value": "null",
+                "tooltip": "Set the text alignment for text of the note, leverages inline css text-align.",
+                "name": "annotationNoteTextAnchor",
                 "values": [
-                  {"value": "value1"},
-                  {"value": "value2", "disabled": true},
-                  { "separator": true },
-                  {"value": "value3"},
-                  {"value": "value4"}
+                  {"value": "null", "text": "None"},
+                  {"value": "start", "text": "Start"},
+                  {"value": "middle", "text": "Middle"},
+                  {"value": "end", "text": "End"}
                 ]
               },
               {
+                "type": "color",
+                "label": "Note color",
+                "value": "#C123FA",
+                "name": "annotationColor",
+                "tooltip": "A color string that will be applied to the note, otherwise defaults to annotation."
+              },
+            ]
+          },
+          {
+            "name": "Subject",
+            "inputs": [
+              {
+                "type": "text",
+                "label": "Radius (Callout Circle and Badge Only)",
+                "name": "annotationSubjectRadius",
+                "value": "15",
+                "tooltip": "(Number) Radius of circle"
+              },
+              {
+                "type": "text",
+                "label": "Radius Padding (Callout Circle Only)",
+                "name": "annotationSubjectRadiusPadding",
+                "value": "0",
+                "tooltip": "(Number) Padding outside of circle, affects spacing between the circle and the start of the connector"
+              },
+              {
+                "type": "text",
+                "label": "Inner Radius (Callout Circle Only)",
+                "name": "annotationSubjectInnerRadius",
+                "value": "0",
+                "tooltip": "(Number) Inner radius to make a ring annotation"
+              },
+              {
+                "type": "text",
+                "label": "Outer Radius (Callout Circle Only)",
+                "name": "annotationSubjectOuterRadius",
+                "value": "0",
+                "tooltip": "(Number) Outer radius to make a ring annotation"
+              },
+              {
+                "type": "text",
+                "label": "Width (Rect and Bracket Only)",
+                "name": "annotationSubjectWidth",
+                "value": "50",
+                "tooltip": "(Number) Width of rect or bracket, accepts negative and positive values"
+              },
+              {
+                "type": "text",
+                "label": "Height (Rect and Bracket Only)",
+                "name": "annotationSubjectHeight",
+                "value": "50",
+                "tooltip": "(Number) Height of rect or bracket, accepts negative and positive values"
+              },
+              {
+                "type": "text",
+                "label": "Depth (Bracket Only)",
+                "name": "annotationSubjectDepth",
+                "value": "20",
+                "tooltip": "(Number) How far the bracket pops out from the corners."
+              },
+              {
                 "type": "dropdown",
-                "label": "Label 2",
-                "name": "selectedOption",
-                "value": "value4",
-                "tooltip": "This is a tooltip",
+                "label": "Bracket Type (Bracket Only)",
+                "name": "annotationSubjectBracketType",
+                "value": "curly",
+                "tooltip": "Type of bracket (square or curly).",
                 "values": [
-                  {"value": "value1"},
-                  {"value": "value2", "disabled": true},
-                  { "separator": true },
-                  {"value": "value3"},
-                  {"value": "value4"}
+                  {"value": "square", "text": "Square"},
+                  {"value": "curly", "text": "Curly"}
                 ]
+              },
+              {
+                "type": "text",
+                "label": "Badge Text",
+                "name": "annotationSubjectBadgeText",
+                "value": "",
+                "tooltip": "Text placed in the center of the badge"
               }
             ]
-          }
+          },
         ],
         "overwrites": {}
       },
