@@ -109,6 +109,14 @@ export default {
               },
               {
                 "type": "text",
+                "label": "Note Text Wrap",
+                "placeholder": "Characters before wrap",
+                "value": "120",
+                "name": "annotationNoteWrap",
+                "tooltip": "(Number) Allows for you to incease/decrease the text on each line before wrap"
+              },
+              {
+                "type": "text",
                 "label": "Note Background Padding",
                 "placeholder": "Background Padding",
                 "value": "0",

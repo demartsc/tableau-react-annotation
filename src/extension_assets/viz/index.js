@@ -40,46 +40,47 @@ const Annotations = {
 };
 const annotationStarter = [
   {
-    annotationType: "AnnotationCalloutRect",
-    key: 0,
-    id: 0,
-    x: 100,
-    y: 70,
-    dy: 117,
-    dx: 162,
-    color: "#9610ff",
-    width:-50,
-    height:100,
-    note: {
-        "title":"Annotations :)",
-        "label":"Longer text to show text wrapping",
-        "lineType":"horizontal"
-      },
-  },
-  {
-    annotationType: "AnnotationCalloutCircle",
-    key: 1,
-    id: 1,
-    x: 350,
-    y: 70,
-    dy: 117,
-    dx: 162,
-    color: "#4682b4",
-    radius: 50,
-    radiusPadding: 5,
-    note: {
-      "title":"Annotations :)",
-      "label":"Longer text to show text wrapping",
-      "lineType":"horizontal"
+    "annotationType":"AnnotationCalloutCircle",
+    "color":"#4a90e2",
+    "key":"c6e564aa-65ea-4edc-8c2d-e6dcd744ffa6-starter",
+    "id":"c6e564aa-65ea-4edc-8c2d-e6dcd744ffa6-starter",
+    "x":150,
+    "y":150,
+    "dx":252,
+    "dy":-4,
+    "connector": {
+      "type":"elbow",
+      "end":"none",
+      "endScale":1
     },
+    "note":{
+      "title":"Hi! I am a React-Annotation (in Tableau!)",
+      "titleColor":"#d0021b",
+      "label":"I am a customizable annotation. You can edit me by clicking the pencil, remove me with the trash can or create more of me! Enjoy :)",
+      "labelColor":"#4a4a4a",
+      "padding":5,
+      "wrap":240,
+      "bgPadding":0,
+      "orientation":"leftRight",
+      "lineType":"vertical",
+      "align":"dynamic",
+      "textAnchor":null
+    },
+    "subject":{
+      "radius":89.95331880577405,
+      "radiusPadding":0,
+      "innerRadius":75.05382386916237,
+      "outerRadius":0
+    },
+    "editMode":true
   }
 ]
 
 const Viz = (props) => {
-  console.log('checking initial props', props);
   const tableauExt = window.tableau.extensions;
   const contextValue = useContext(ExtensionContext);
-  const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || JSON.stringify(annotationStarter)); // annotationStarter
+  const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
+  console.log('checking initial props', props, annotationProps); 
 
   const [disableConfig, setDisableConfig] = useState(false);
   const [dragState, setDragState] = useState(null);
@@ -133,13 +134,14 @@ const Viz = (props) => {
 
     // update the array object
     const { className, events, onDrag, onDragEnd, onDragStart, children, ...noFunctionProps} = dragProps;
-    const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type}))(dragProps);
-    const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
+    const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text}))(noFunctionProps);
+    const { width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text, ...noSubjectProps} = noFunctionProps;
+    const newNoteState = {...note, ...noSubjectProps, subject: {...subjectProps} }
     const newAnnotationState = annotationProps.filter(n => { return n.id !== dragState });
     newAnnotationState.push(newNoteState);
     
     // save to tableau settings
-    console.log('drag ended - we are going to stringify', newAnnotationState, JSON.stringify(newAnnotationState));
+    console.log('drag ended - we are going to stringify', note, noSubjectProps, noFunctionProps, newAnnotationState, JSON.stringify(newAnnotationState));
     contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
     contextValue.tableauExt.settings.saveAsync().then(() => {
       props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
@@ -184,6 +186,7 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('annotationNoteLabelColor', (existingAnnotation.note || {}).labelColor || existingAnnotation.color);
 
           contextValue.tableauExt.settings.set('annotationNotePadding', (existingAnnotation.note || {}).padding || "5");
+          contextValue.tableauExt.settings.set('annotationNoteWrap', (existingAnnotation.note || {}).wrap || "120");
           contextValue.tableauExt.settings.set('annotationNoteBgPadding', (existingAnnotation.note || {}).bgPadding || "0");
 
           // note alignment props
@@ -227,6 +230,7 @@ const Viz = (props) => {
                 existingAnnotation.note.labelColor = contextValue.tableauExt.settings.get('annotationNoteLabelColor');
 
                 existingAnnotation.note.padding = parseFloat(contextValue.tableauExt.settings.get('annotationNotePadding'));
+                existingAnnotation.note.wrap = parseFloat(contextValue.tableauExt.settings.get('annotationNoteWrap'));
                 existingAnnotation.note.bgPadding = parseFloat(contextValue.tableauExt.settings.get('annotationNoteBgPadding'));
                 
                 existingAnnotation.note.orientation = contextValue.tableauExt.settings.get('annotationNoteOrientation');
@@ -305,6 +309,7 @@ const Viz = (props) => {
                 label: contextValue.tableauExt.settings.get('annotationNoteLabel'),
                 labelColor: contextValue.tableauExt.settings.get('annotationNoteLabelColor'), 
                 padding: parseFloat(contextValue.tableauExt.settings.get('annotationNotePadding')),
+                wrap: parseFloat(contextValue.tableauExt.settings.get('annotationNoteWrap')),
                 bgPadding: parseFloat(contextValue.tableauExt.settings.get('annotationNoteBgPadding')),
                 orientation: contextValue.tableauExt.settings.get('annotationNoteOrientation'),
                 lineType: contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType'),
@@ -448,7 +453,7 @@ const Viz = (props) => {
           onClick={e => configureAnnotation(e,'new')}
         >
           {annotationProps.map(note => {
-            console.log('checking note', note, note.note, note.note.textAnchor);
+            console.log('checking note', note, note.note, note.note.wrap);
             const NoteType = Annotations[note.annotationType];
             return (
               <React.Fragment key={`fragment-${note.id}`}>

@@ -101,7 +101,7 @@ class App extends Component {
   }
 
   render() {
-    console.log('checking state', this.state, this.props.extensionIcons);
+    console.log('checking state', this.state);
     return (
       <div className="App">
         {
