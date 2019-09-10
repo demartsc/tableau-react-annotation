@@ -190,7 +190,7 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('annotationNoteOrientation', (existingAnnotation.note || {}).orientation || "topBottom");
           contextValue.tableauExt.settings.set('annotationNoteLineType', (existingAnnotation.note || {}).lineType || "null");
           contextValue.tableauExt.settings.set('annotationNoteAlign', (existingAnnotation.note || {}).align || "dynamic");
-          contextValue.tableauExt.settings.set('annotationNoteTextAlign', (existingAnnotation.note || {}).textAlign || "null");
+          contextValue.tableauExt.settings.set('annotationNoteTextAnchor', (existingAnnotation.note || {}).textAnchor || "null");
           
           // subject props
           contextValue.tableauExt.settings.set('annotationSubjectRadius', (existingAnnotation.subject || {}).radius || "15");
@@ -232,7 +232,7 @@ const Viz = (props) => {
                 existingAnnotation.note.orientation = contextValue.tableauExt.settings.get('annotationNoteOrientation');
                 existingAnnotation.note.lineType = contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType');
                 existingAnnotation.note.align = contextValue.tableauExt.settings.get('annotationNoteAlign');
-                existingAnnotation.note.textAlign = contextValue.tableauExt.settings.get('annotationNoteTextAlign') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAlign');
+                existingAnnotation.note.textAnchor = contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor');
                 
                 // update the subject if we got new settings
                 if ( !existingAnnotation.subject ) { existingAnnotation.subject = {}; }
@@ -309,7 +309,7 @@ const Viz = (props) => {
                 orientation: contextValue.tableauExt.settings.get('annotationNoteOrientation'),
                 lineType: contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType'),
                 align: contextValue.tableauExt.settings.get('annotationNoteAlign'),
-                textAlign: contextValue.tableauExt.settings.get('annotationNoteTextAlign') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAlign')
+                textAnchor: contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor')
               },
               subject: {
                 radius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadius')),
@@ -448,10 +448,12 @@ const Viz = (props) => {
           onClick={e => configureAnnotation(e,'new')}
         >
           {annotationProps.map(note => {
+            console.log('checking note', note, note.note, note.note.textAnchor);
             const NoteType = Annotations[note.annotationType];
             return (
               <React.Fragment key={`fragment-${note.id}`}>
                 <NoteType
+                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'}`}
                   events={{
                     // we can use this event to handle when the annotation is clicked
                     // and then when clicked we can update the annotation vs create a new one

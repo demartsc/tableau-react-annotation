@@ -133,7 +133,7 @@ export default {
                 "tooltip": "Creates a line along the edge of the note text. Please Note if you set this to 'vertical' then orientation is fixed at 'leftRight' and vice versa if it is 'horizontal' then orientation is fixed at 'topBottom'",
                 "name": "annotationNoteLineType",
                 "values": [
-                  {"value": "null", "text": "none"},
+                  {"value": "null", "text": "None"},
                   {"value": "horizontal", "text": "Horizontal"},
                   {"value": "vertical", "text": "Vertical"}
                 ]
@@ -158,13 +158,12 @@ export default {
                 "label": "Select the text alignment for the note",
                 "value": "null",
                 "tooltip": "Set the text alignment for text of the note, leverages inline css text-align.",
-                "name": "annotationNoteTextAlign",
+                "name": "annotationNoteTextAnchor",
                 "values": [
                   {"value": "null", "text": "None"},
-                  {"value": "left", "text": "Left"},
-                  {"value": "right", "text": "Right"},
-                  {"value": "center", "text": "Center"},
-                  {"value": "justify", "text": "Justify"},
+                  {"value": "start", "text": "Start"},
+                  {"value": "middle", "text": "Middle"},
+                  {"value": "end", "text": "End"}
                 ]
               },
               {

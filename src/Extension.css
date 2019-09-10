@@ -3,3 +3,15 @@
   height: inherit;
   width: inherit;
 }
+
+.annotation-text-anchor-start {
+  text-anchor: start
+}
+
+.annotation-text-anchor-middle {
+  text-anchor: middle
+}
+
+.annotation-text-anchor-end {
+  text-anchor: end
+}
