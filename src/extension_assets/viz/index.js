@@ -465,10 +465,6 @@ const Viz = (props) => {
                     annotationDragCallback(dragProps, note, hXw);
                   }}
                   {...note}
-                  connector={{
-                    "type": "elbow", 
-                    "end": "dot"
-                  }}
                   editMode={editMode}
                   x={note.x < 0 ? 10 : note.x}
                   y={note.y < 0 ? 10 : note.y}
