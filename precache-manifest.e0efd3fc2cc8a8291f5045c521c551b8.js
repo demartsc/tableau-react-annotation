@@ -12,19 +12,19 @@ self.__precacheManifest = [
     "url": "/tableau-react-annotation/static/js/runtime~main.c484e4a2.js"
   },
   {
-    "revision": "fea91c37e1479d3b4032",
-    "url": "/tableau-react-annotation/static/js/main.fea91c37.chunk.js"
+    "revision": "5e2a69ea4b6f03854c4a",
+    "url": "/tableau-react-annotation/static/js/main.5e2a69ea.chunk.js"
   },
   {
-    "revision": "df138dec6dc002aae284",
-    "url": "/tableau-react-annotation/static/js/2.df138dec.chunk.js"
+    "revision": "f51fb581186344c59ff8",
+    "url": "/tableau-react-annotation/static/js/2.f51fb581.chunk.js"
   },
   {
-    "revision": "fea91c37e1479d3b4032",
-    "url": "/tableau-react-annotation/static/css/main.76f3a03c.chunk.css"
+    "revision": "5e2a69ea4b6f03854c4a",
+    "url": "/tableau-react-annotation/static/css/main.49f92723.chunk.css"
   },
   {
-    "revision": "ec1876e1ce11fa1140244df1293c046f",
+    "revision": "c2391b45cfeab7af50f5de49d458c801",
     "url": "/tableau-react-annotation/index.html"
   }
 ];
