@@ -107,11 +107,9 @@ const Viz = (props) => {
       tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
         if (closePayload === 'false') {
           // we need to do something to re-render the annotation layer here
-          // props.history.push('/viz')
           props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
           console.log('checking props', props, props.history);
-          // (props.history || []).push('/viz')
-          props.history.push('/viz');}
+        }
       }).catch((error) => {
         // One expected error condition is when the popup is closed by the user (meaning the user
         // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
@@ -270,8 +268,6 @@ const Viz = (props) => {
                   // done we can close and move on
                   props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
                   console.log('checking props', props, props.history);
-                  // (props.history || []).push('/viz')
-                  props.history.push('/viz');
                 });
               }
             }).catch((error) => {
@@ -338,7 +334,7 @@ const Viz = (props) => {
             contextValue.tableauExt.settings.saveAsync().then(() => {
               // done we can close and move on
               props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
-              props.history.push('/viz')
+              // props.history.push('/viz')
             });
       }
         }).catch((error) => {

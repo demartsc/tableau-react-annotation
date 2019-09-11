@@ -151,6 +151,7 @@ class App extends Component {
                     tableauExt={this.state.config.tableauExt}
                     updateTableauSettings={this.updateTableauSettings}
                     deleteAnnotation={this.deleteAnnotation}
+                    history={this.props.history}
                   />}
                 />
               </React.Fragment>
