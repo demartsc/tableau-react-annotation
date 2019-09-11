@@ -80,12 +80,12 @@ const Viz = (props) => {
   const tableauExt = window.tableau.extensions;
   const contextValue = useContext(ExtensionContext);
   const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || "[]" !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
-  console.log('checking initial props', props, annotationProps); 
 
   const [disableConfig, setDisableConfig] = useState(false);
   const [dragState, setDragState] = useState(null);
   const [editMode, setEditMode] = useState(true);
 
+  console.log('checking initial props', props, annotationProps); 
 
   const extensionName = window.name;
   const extensionParent = window.parent;
@@ -101,23 +101,28 @@ const Viz = (props) => {
       width: 350,
     };
 
-
-    tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
-      if (closePayload === 'false') {
-        console.log('checking inner delete annotation', annotationID);
-        props.deleteAnnotation(annotationID);
-        props.history.push('/viz')
-      }
-    }).catch((error) => {
-      // One expected error condition is when the popup is closed by the user (meaning the user
-      // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
-      switch(error.errorCode) {
-        case window.tableau.ErrorCodes.DialogClosedByUser:
-          // log("closed by user")
-          break;
-        default:
-          console.error(error.message);
-      }
+    // we need to write the selected annotation to settings so we can get it in the modal callback
+    tableauExt.settings.set('annotationToDelete', annotationID);
+    tableauExt.settings.saveAsync().then(() => {
+      tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+        if (closePayload === 'false') {
+          // we need to do something to re-render the annotation layer here
+          // props.history.push('/viz')
+          props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+          console.log('checking props', props, props.history);
+          // (props.history || []).push('/viz')
+          props.history.push('/viz');}
+      }).catch((error) => {
+        // One expected error condition is when the popup is closed by the user (meaning the user
+        // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+        switch(error.errorCode) {
+          case window.tableau.ErrorCodes.DialogClosedByUser:
+            // log("closed by user")
+            break;
+          default:
+            console.error(error.message);
+        }
+      });
     });
   };
 
@@ -443,7 +448,7 @@ const Viz = (props) => {
             </div>
         <br/>
         <svg
-          id={'tableau-react-annotation-layer'}
+          id={`tableau-react-annotation-layer`}
           height={'95%'}
           width={'100%'}
           style={{

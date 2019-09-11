@@ -35,16 +35,19 @@ class App extends Component {
 
   }
 
-  deleteAnnotation = annotationID => {
+  deleteAnnotation = () => {
     // remove annotation from array
-    const newAnnotationArray = _.remove(JSON.parse(this.state.config.tableauExt.settings.get('annotationData'),(o) => { return o.id === annotationID }));
-    console.log('we are deleting an annotation', annotationID, newAnnotationArray);
+    const annotationToDelete = this.state.config.tableauExt.settings.get('annotationToDelete');
+    const annotationArray = JSON.parse(this.state.config.tableauExt.settings.get('annotationData'));
+    const newAnnotationArray = _.filter(annotationArray,(o) => { console.log('checking object', o.id, annotationToDelete); return o.id !== annotationToDelete });
+    console.log('we are deleting an annotation', annotationToDelete, newAnnotationArray);
 
     // set new array back to settings
     this.state.config.tableauExt.settings.set('annotationData',JSON.stringify(newAnnotationArray));
+    this.state.config.tableauExt.settings.set('annotationToDelete','');
     this.state.config.tableauExt.settings.saveAsync().then(()=>{
       // update internal settings with new tableau settings
-      this.updateTableauSettings(this.state.config.tableauExt.settings.getAll());
+      this.state.config.tableauExt.ui.closeDialog("false");
     });
   }
 
