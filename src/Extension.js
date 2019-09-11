@@ -52,27 +52,35 @@ class App extends Component {
   }
 
   configure = () => {
-    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/configure';
-    const popUpOptions = {
-      height: 625,
-      width: 790,
-    };
-
-    tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
-      if (closePayload === 'false') {
-        this.props.history.push('/viz')
-      }
-    }).catch((error) => {
-      // One expected error condition is when the popup is closed by the user (meaning the user
-      // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
-      switch(error.errorCode) {
-        case window.tableau.ErrorCodes.DialogClosedByUser:
-          // log("closed by user")
-          break;
-        default:
-          console.error(error.message);
-      }
+    // this will bring up the viz
+    this.state.config.tableauExt.settings.set('configState', 'true');
+    this.state.config.tableauExt.settings.saveAsync().then(()=>{
+      this.props.history.push('/viz')
     });
+
+    // may be better to render a config box so that it will display if user clicks config
+
+    // const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/configure';
+    // const popUpOptions = {
+    //   height: 625,
+    //   width: 790,
+    // };
+
+    // tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+    //   if (closePayload === 'false') {
+    //     this.props.history.push('/viz')
+    //   }
+    // }).catch((error) => {
+    //   // One expected error condition is when the popup is closed by the user (meaning the user
+    //   // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+    //   switch(error.errorCode) {
+    //     case window.tableau.ErrorCodes.DialogClosedByUser:
+    //       // log("closed by user")
+    //       break;
+    //     default:
+    //       console.error(error.message);
+    //   }
+    // });
   };
 
   updateTableauSettings = (newSettings) => {
@@ -97,6 +105,9 @@ class App extends Component {
         },
         extensionReady: true
       })
+      if ( this.state.config.tableauSettings.configState === 'true' ) {
+        this.props.history.push('/viz');
+      }
     }, (err) => {
       // Something went wrong in initialization
       console.log('Error while Initializing: ' + err.toString());
