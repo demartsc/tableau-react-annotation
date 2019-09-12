@@ -3,7 +3,6 @@ html {
   background: none transparent;
   height: 100%;
   width: 100%;
-  overflow: hidden;
 }
 
 body {
@@ -16,4 +15,8 @@ body {
 #root {
   height: inherit;
   width: inherit;
+}
+
+.Annotation-Div {
+  overflow: hidden;
 }

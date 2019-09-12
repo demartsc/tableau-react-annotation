@@ -86,7 +86,7 @@ const Viz = (props) => {
   const [disableConfig, setDisableConfig] = useState(false);
   const [dragState, setDragState] = useState(null);
   const [editMode, setEditMode] = useState(true);
-  const [iconViewState, setIconViewState] = useState(false);
+  const [iconViewState, setIconViewState] = useState(true);
 
   console.log('checking initial props', props, annotationProps); 
 
@@ -296,7 +296,7 @@ const Viz = (props) => {
           });
         }
       } else {
-        
+
         // set config state to false so that the config window will show
         console.log('turning config off', contextValue.tableauExt.settings.get('configState'), false);
         contextValue.tableauExt.settings.set('configState', false);

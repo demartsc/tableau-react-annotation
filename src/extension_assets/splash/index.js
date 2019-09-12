@@ -15,11 +15,12 @@ const ButtonInput = (props) => (
  * Front logo styling
  */
 const logoStyle = {
-  position: 'absolute', 
-  bottom: 0,
-  maxWidth: '100px',
-  left: 'calc(50% - 60px)',
-  marginBottom: '12px'
+  display: 'inline-block'
+  // position: 'absolute', 
+  // bottom: 0,
+  // maxWidth: '300px',
+  // left: 'calc(50% - 60px)',
+  // marginBottom: '12px'
 }
 
 /**
@@ -55,23 +56,25 @@ const CustomSplash = (props) => (
       <img style={{maxWidth: "100px", paddingLeft: "10px"}} src={ssLogo} alt="star schema logo" />
     </a>
 
-    <p style={{...logoStyle, marginBottom: "50px", left: 'calc(50% - 32.5px)',}}>Powered by:
-      <br/>
-      <a 
-        href="https://react-annotation.susielu.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ color: "RGB(150, 16, 255)" }}
-      >
-        React Annotation
-      </a><br/>
-      Made with <img alt="A picture of a heart" src="img/heart.png" /> by
-      <a 
-        href="http://www.susielu.com"
-        target="_blank"
-        rel="noopener noreferrer"
-      > Susie Lu</a>
-    </p>
+    <div style={{ width: '100%', textAlign: 'center'}}>
+      <p style={{...logoStyle}}>Powered by:
+        <br/>
+        <a 
+          href="https://react-annotation.susielu.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "RGB(150, 16, 255)" }}
+        >
+          React Annotation
+        </a>{" "}
+        Made with <img alt="A picture of a heart" src="img/heart.png" /> by
+        <a 
+          href="http://www.susielu.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        > Susie Lu</a>
+      </p>
+    </div>
   </div>
 );
 
