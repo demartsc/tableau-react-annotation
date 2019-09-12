@@ -105,7 +105,8 @@ class App extends Component {
         },
         extensionReady: true
       })
-      if ( this.state.config.tableauSettings.configState === 'true' ) {
+      console.log('checking config in did mount', this.state.config.tableauExt.settings.get('configState'));
+      if ( this.state.config.tableauExt.settings.get('configState') === 'true' ) {
         this.props.history.push('/viz');
       }
     }, (err) => {

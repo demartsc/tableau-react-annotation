@@ -5,7 +5,8 @@
   "homepage": "https://demartsc.github.io/tableau-react-annotation",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.1.1",
+    "@material-ui/core": "^4.4.2",
+    "@material-ui/icons": "^4.4.1",
     "@tableau/tableau-ui": "^2.2.0",
     "material-ui": "^0.20.2",
     "react": "^16.8.3",

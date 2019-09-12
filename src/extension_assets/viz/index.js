@@ -16,16 +16,18 @@ import TypesUI  from '../components/annotations/Types';
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { muiTheme } from "../components/annotations/Theme";
-import { relative } from 'upath';
+
+// icons for toggling view options
+//icons
+import Grid from '@material-ui/core/Grid';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import LibraryAdd from '@material-ui/icons/LibraryAdd';
+import Edit from '@material-ui/icons/Edit';
+// import ControlPoint from '@material-ui/icons/ControlPoint';
 
 const ExtensionContext = window.TableauExtension['contexts']['ExtensionContext'];
-const CheckItem = window.TableauExtension['components']['CheckItem'];
-
-const options = {
-  ignoreAliases: false,
-  ignoreSelection: true,
-  maxRows: 0
-};
+// const CheckItem = window.TableauExtension['components']['CheckItem'];
 
 const Annotations = {
   AnnotationLabel: AnnotationLabel,
@@ -84,6 +86,7 @@ const Viz = (props) => {
   const [disableConfig, setDisableConfig] = useState(false);
   const [dragState, setDragState] = useState(null);
   const [editMode, setEditMode] = useState(true);
+  const [iconViewState, setIconViewState] = useState(false);
 
   console.log('checking initial props', props, annotationProps); 
 
@@ -170,6 +173,11 @@ const Viz = (props) => {
 
         // now if we have an annotation found we will pre-populate the settings linked to the config
         if ( existingAnnotation ) { 
+          
+          // set config state to false so that the config window will show
+          console.log('turning config off', contextValue.tableauExt.settings.get('configState'), false);
+          contextValue.tableauExt.settings.set('configState', false);
+
           // first screen is annotation type
           contextValue.tableauExt.settings.set('annotationType', existingAnnotation.annotationType);
 
@@ -264,6 +272,10 @@ const Viz = (props) => {
                 
                 // save to tableau settings
                 contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
+
+                // set config state to false so that the config window will show
+                console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true);
+                contextValue.tableauExt.settings.set('configState', true);
                 contextValue.tableauExt.settings.saveAsync().then(() => {
                   // done we can close and move on
                   props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
@@ -282,72 +294,83 @@ const Viz = (props) => {
               }
             });      
           });
-
         }
       } else {
-        tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
-          if (closePayload === 'false') {
-            const newAnnotationArray = annotationProps;
-            const newAnnotationId = uuid.v4();
-            newAnnotationArray.push({
-              // we can now write the updates back to the annotation array and persist to tableau
-              annotationType: contextValue.tableauExt.settings.get('annotationType'),
-              color: contextValue.tableauExt.settings.get('annotationColor'),
-              key: newAnnotationId, 
-              id: newAnnotationId,
-              x: e.clientX,
-              y: e.clientY,
-              dx: 50,
-              dy: 50,
-              connector: {
-                type: contextValue.tableauExt.settings.get('connectorType'),
-                end: contextValue.tableauExt.settings.get('connectorEnd'),
-                endScale: parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'))
-              },
-              note: { 
-                title: contextValue.tableauExt.settings.get('annotationNoteTitle'), 
-                titleColor: contextValue.tableauExt.settings.get('annotationNoteTitleColor'),
-                label: contextValue.tableauExt.settings.get('annotationNoteLabel'),
-                labelColor: contextValue.tableauExt.settings.get('annotationNoteLabelColor'), 
-                padding: parseFloat(contextValue.tableauExt.settings.get('annotationNotePadding')),
-                wrap: parseFloat(contextValue.tableauExt.settings.get('annotationNoteWrap')),
-                bgPadding: parseFloat(contextValue.tableauExt.settings.get('annotationNoteBgPadding')),
-                orientation: contextValue.tableauExt.settings.get('annotationNoteOrientation'),
-                lineType: contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType'),
-                align: contextValue.tableauExt.settings.get('annotationNoteAlign'),
-                textAnchor: contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor')
-              },
-              subject: {
-                radius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadius')),
-                radiusPadding: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadiusPadding')),
-                innerRadius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectInnerRadius')),
-                outerRadius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectOuterRadius')),
-                width: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectWidth')),
-                height: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectHeight')),
-                depth: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectDepth')),
-                type: contextValue.tableauExt.settings.get('annotationSubjectBracketType'),
-                text: contextValue.tableauExt.settings.get('annotationSubjectBadgeText')
-              }    
-            });
-            // save to tableau settings
-            contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationArray));
-            contextValue.tableauExt.settings.saveAsync().then(() => {
-              // done we can close and move on
-              props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
-              // props.history.push('/viz')
-            });
-      }
-        }).catch((error) => {
-          // One expected error condition is when the popup is closed by the user (meaning the user
-          // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
-          switch(error.errorCode) {
-            case window.tableau.ErrorCodes.DialogClosedByUser:
-              // log("closed by user")
-              break;
-            default:
-              console.error(error.message);
-          }
-        });  
+        
+        // set config state to false so that the config window will show
+        console.log('turning config off', contextValue.tableauExt.settings.get('configState'), false);
+        contextValue.tableauExt.settings.set('configState', false);
+        contextValue.tableauExt.settings.saveAsync().then(() => {
+
+          tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+            if (closePayload === 'false') {
+              const newAnnotationArray = annotationProps;
+              const newAnnotationId = uuid.v4();
+              newAnnotationArray.push({
+                // we can now write the updates back to the annotation array and persist to tableau
+                annotationType: contextValue.tableauExt.settings.get('annotationType'),
+                color: contextValue.tableauExt.settings.get('annotationColor'),
+                key: newAnnotationId, 
+                id: newAnnotationId,
+                x: e.clientX,
+                y: e.clientY,
+                dx: 50,
+                dy: 50,
+                connector: {
+                  type: contextValue.tableauExt.settings.get('connectorType'),
+                  end: contextValue.tableauExt.settings.get('connectorEnd'),
+                  endScale: parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'))
+                },
+                note: { 
+                  title: contextValue.tableauExt.settings.get('annotationNoteTitle'), 
+                  titleColor: contextValue.tableauExt.settings.get('annotationNoteTitleColor'),
+                  label: contextValue.tableauExt.settings.get('annotationNoteLabel'),
+                  labelColor: contextValue.tableauExt.settings.get('annotationNoteLabelColor'), 
+                  padding: parseFloat(contextValue.tableauExt.settings.get('annotationNotePadding')),
+                  wrap: parseFloat(contextValue.tableauExt.settings.get('annotationNoteWrap')),
+                  bgPadding: parseFloat(contextValue.tableauExt.settings.get('annotationNoteBgPadding')),
+                  orientation: contextValue.tableauExt.settings.get('annotationNoteOrientation'),
+                  lineType: contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType'),
+                  align: contextValue.tableauExt.settings.get('annotationNoteAlign'),
+                  textAnchor: contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor')
+                },
+                subject: {
+                  radius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadius')),
+                  radiusPadding: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadiusPadding')),
+                  innerRadius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectInnerRadius')),
+                  outerRadius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectOuterRadius')),
+                  width: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectWidth')),
+                  height: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectHeight')),
+                  depth: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectDepth')),
+                  type: contextValue.tableauExt.settings.get('annotationSubjectBracketType'),
+                  text: contextValue.tableauExt.settings.get('annotationSubjectBadgeText')
+                }    
+              });
+              
+              // save to tableau settings
+              contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationArray));
+              
+              // set config state to false so that the config window will show
+              console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true);
+              contextValue.tableauExt.settings.set('configState', true);
+              contextValue.tableauExt.settings.saveAsync().then(() => {
+                // done we can close and move on
+                props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+                // props.history.push('/viz')
+              });
+        }
+          }).catch((error) => {
+            // One expected error condition is when the popup is closed by the user (meaning the user
+            // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+            switch(error.errorCode) {
+              case window.tableau.ErrorCodes.DialogClosedByUser:
+                // log("closed by user")
+                break;
+              default:
+                console.error(error.message);
+            }
+          });  
+        });
       }
     }
   };
@@ -392,6 +415,12 @@ const Viz = (props) => {
   */
 
   // this function and effect calls get summary data when something changes
+  // const options = {
+  //   ignoreAliases: false,
+  //   ignoreSelection: true,
+  //   maxRows: 0
+  // };
+
   // const getSummaryData = () => {
   //   let sheetObject = contextValue.sheetNames.find(worksheet => worksheet.name === contextValue.tableauSettings.selectedSheet1);
 
@@ -410,45 +439,54 @@ const Viz = (props) => {
   //   }
   // });
 
+  let iconJSX;
+  if ( iconViewState ) {
+    iconJSX =
+      <div style={{position: "absolute", zIndex: 999}} className="annotation-controls" >
+        <Grid container justify="center">
+          <Grid item xs={6}>
+            <Tooltip title={`Toggle Add Annotation Mode`} placement="right">
+              <IconButton onClick={() => setDisableConfig(!disableConfig)} >
+                  <LibraryAdd
+                    color={disableConfig ? "secondary" : "action"}
+                  />
+              </IconButton>
+            </Tooltip>
+            <br />
+            <Tooltip title={`Toggle Edit Mode`} placement="right">
+              <IconButton onClick={() => setEditMode(!editMode)} >
+                  <Edit
+                    color={editMode ? "secondary" : "action"}
+                  />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        </Grid>
+      </div>
+    }
+
+
   return (
     <MuiThemeProvider muiTheme={getMuiTheme(muiTheme)}>
         {/* <TypesUI /> */}
-        <div 
-          className="Annotation-Div"
-          style={{
-            display: "block", 
-            backgroundColor: 'none transparent',
-            width: 'inherit',
-            height: 'inherit'
-          }}>
-            <div 
-              className="Annotation-Controls"
-              style={{
-                height: '5%'
-              }}
-            >
-              <CheckItem
-                isChecked={disableConfig}
-                text={`Toggle SVG onClick()`}
-                onChange={() => setDisableConfig(!disableConfig)}
-              >
-                Toggle Add Annotations
-              </CheckItem>
-              <CheckItem
-                isChecked={editMode}
-                text={`Toggle Edit Mode`}
-                onChange={() => setEditMode(!editMode)}
-              >
-                Toggle Edit Mode
-              </CheckItem>
-            </div>
-        <br/>
+      <div 
+        className="Annotation-Div"
+        onMouseEnter={() => { setIconViewState(true)}}
+        onMouseLeave={() => {setIconViewState(false)}}
+        style={{
+          display: "block", 
+          backgroundColor: 'none transparent',
+          width: 'inherit',
+          height: 'inherit'
+        }}
+      >
+        {iconJSX}
         <svg
           id={`tableau-react-annotation-layer`}
           height={'95%'}
           width={'100%'}
           style={{
-            position: relative,
+            position: 'relative',
             cursor: disableConfig ? "copy" : "default"
           }}
           onClick={e => configureAnnotation(e,'new')}
