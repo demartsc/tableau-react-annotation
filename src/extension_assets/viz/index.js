@@ -475,7 +475,8 @@ const Viz = (props) => {
         onMouseLeave={() => {setIconViewState(false)}}
         style={{
           display: "block", 
-          backgroundColor: 'none transparent',
+          backgroundColor: editMode ? 'rgba(255,255,255,0.4)' : 'none transparent',
+          pointerEvents: editMode ? 'auto' : 'none',
           width: 'inherit',
           height: 'inherit'
         }}
