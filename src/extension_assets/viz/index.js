@@ -479,7 +479,7 @@ const Viz = (props) => {
         style={{
           display: "block", 
           background: editMode ? 'rgba(255,255,255,0.4)' : 'none transparent',
-          pointerEvents: editMode ? 'auto' : 'none',
+          // pointerEvents: editMode ? 'auto' : 'none',
           width: 'inherit',
           height: 'inherit'
         }}
