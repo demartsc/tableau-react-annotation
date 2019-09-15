@@ -442,7 +442,7 @@ const Viz = (props) => {
   let iconJSX;
   if ( iconViewState ) {
     iconJSX =
-      <div style={{position: "absolute", zIndex: 999}} className="annotation-controls" >
+      <div style={{position: "absolute", zIndex: 999, pointerEvents: 'auto'}} className="annotation-controls" >
         <Grid container justify="center">
           <Grid item xs={6}>
             <Tooltip title={`Toggle Add Annotation Mode`} placement="right">
@@ -475,7 +475,7 @@ const Viz = (props) => {
         onMouseLeave={() => {setIconViewState(false)}}
         style={{
           display: "block", 
-          backgroundColor: editMode ? 'rgba(255,255,255,0.4)' : 'none transparent',
+          background: editMode ? 'rgba(255,255,255,0.4)' : 'none transparent',
           pointerEvents: editMode ? 'auto' : 'none',
           width: 'inherit',
           height: 'inherit'
