@@ -183,6 +183,7 @@ const Viz = (props) => {
 
           // screen 2a is annotation color
           contextValue.tableauExt.settings.set('annotationColor', existingAnnotation.color);
+          contextValue.tableauExt.settings.set('annotationStrokeDasharray', existingAnnotation.dashArray || '0');
 
           // screen 2b is connector props
           contextValue.tableauExt.settings.set('connectorType', (existingAnnotation.connector || {}).type || "line");
@@ -226,6 +227,7 @@ const Viz = (props) => {
                 // we can now write the updates back to the annotation array and persist to tableau
                 existingAnnotation.annotationType = contextValue.tableauExt.settings.get('annotationType');
                 existingAnnotation.color = contextValue.tableauExt.settings.get('annotationColor');
+                existingAnnotation.dashArray = contextValue.tableauExt.settings.get('annotationStrokeDasharray');
 
                 // there might be a better way
                 if ( !existingAnnotation.connector ) { existingAnnotation.connector = {}; }
@@ -310,6 +312,7 @@ const Viz = (props) => {
                 // we can now write the updates back to the annotation array and persist to tableau
                 annotationType: contextValue.tableauExt.settings.get('annotationType'),
                 color: contextValue.tableauExt.settings.get('annotationColor'),
+                dashArray: contextValue.tableauExt.settings.get('annotationStrokeDasharray'),
                 key: newAnnotationId, 
                 id: newAnnotationId,
                 x: e.clientX,
@@ -498,7 +501,7 @@ const Viz = (props) => {
             return (
               <React.Fragment key={`fragment-${note.id}`}>
                 <NoteType
-                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'}`}
+                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'} annotation-dash-${contextValue.tableauExt.settings.get('annotationStrokeDasharray')}`}
                   events={{
                     // we can use this event to handle when the annotation is clicked
                     // and then when clicked we can update the annotation vs create a new one

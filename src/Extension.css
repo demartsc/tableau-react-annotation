@@ -5,13 +5,58 @@
 }
 
 .annotation-text-anchor-start {
-  text-anchor: start
+  text-anchor: start;
 }
 
 .annotation-text-anchor-middle {
-  text-anchor: middle
+  text-anchor: middle;
 }
 
 .annotation-text-anchor-end {
-  text-anchor: end
+  text-anchor: end;
 }
+
+.annotation-dash-0 {
+  stroke-dasharray: 0;
+}
+
+.annotation-dash-1 {
+  stroke-dasharray: 1;
+}
+
+.annotation-dash-2 {
+  stroke-dasharray: 2;
+}
+
+.annotation-dash-3 {
+  stroke-dasharray: 3;
+}
+
+.annotation-dash-4 {
+  stroke-dasharray: 4;
+}
+
+.annotation-dash-5 {
+  stroke-dasharray: 5;
+}
+
+.annotation-dash-6 {
+  stroke-dasharray: 6;
+}
+
+.annotation-dash-7 {
+  stroke-dasharray: 7;
+}
+
+.annotation-dash-8 {
+  stroke-dasharray: 8;
+}
+
+.annotation-dash-9 {
+  stroke-dasharray: 9;
+}
+
+.annotation-dash-10 {
+  stroke-dasharray: 10;
+}
+
