@@ -12,6 +12,13 @@ import {
   AnnotationBracket,
   AnnotationBadge
 } from 'react-annotation';
+import {
+  curveCatmullRom,
+  curveLinear,
+  curveStep,
+  curveNatural, 
+  curveBasis
+} from 'd3-shape'
 import TypesUI  from '../components/annotations/Types';
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
@@ -40,6 +47,15 @@ const Annotations = {
   AnnotationBracket: AnnotationBracket,
   AnnotationBadge: AnnotationBadge
 };
+
+const Curves = {
+  curveCatmullRom: curveCatmullRom,
+  curveLinear: curveLinear,
+  curveStep: curveStep,
+  curveNatural: curveNatural, 
+  curveBasis: curveBasis
+};
+
 const annotationStarter = [
   {
     "annotationType":"AnnotationCalloutCircle",
@@ -187,6 +203,8 @@ const Viz = (props) => {
 
           // screen 2b is connector props
           contextValue.tableauExt.settings.set('connectorType', (existingAnnotation.connector || {}).type || "line");
+          contextValue.tableauExt.settings.set('connectorCurveString', (existingAnnotation.connector || {}).curveString || "curveCatmullRom");
+          contextValue.tableauExt.settings.set('connectorCurvePoints', (existingAnnotation.connector || {}).points || "0");
           contextValue.tableauExt.settings.set('connectorEnd', (existingAnnotation.connector || {}).end || "none");
           contextValue.tableauExt.settings.set('connectorEndScale', (existingAnnotation.connector || {}).endScale || "1");
 
@@ -232,6 +250,8 @@ const Viz = (props) => {
                 // there might be a better way
                 if ( !existingAnnotation.connector ) { existingAnnotation.connector = {}; }
                 existingAnnotation.connector.type = contextValue.tableauExt.settings.get('connectorType');
+                existingAnnotation.connector.curveString = contextValue.tableauExt.settings.get('connectorCurveString');
+                existingAnnotation.connector.points = parseFloat(contextValue.tableauExt.settings.get('connectorCurvePoints'));
                 existingAnnotation.connector.end = contextValue.tableauExt.settings.get('connectorEnd');
                 existingAnnotation.connector.endScale = parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'));
 
@@ -321,6 +341,8 @@ const Viz = (props) => {
                 dy: 50,
                 connector: {
                   type: contextValue.tableauExt.settings.get('connectorType'),
+                  curveString: contextValue.tableauExt.settings.get('connectorCurveString'),
+                  points: parseFloat(contextValue.tableauExt.settings.get('connectorCurvePoints')),
                   end: contextValue.tableauExt.settings.get('connectorEnd'),
                   endScale: parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'))
                 },
@@ -496,8 +518,9 @@ const Viz = (props) => {
           onClick={e => configureAnnotation(e,'new')}
         >
           {annotationProps.map(note => {
-            console.log('checking note', note, note.note, note.note.wrap);
             const NoteType = Annotations[note.annotationType];
+            note.connector.curve = note.connector.type === "curve" ? Curves[note.connector.curveString] || curveCatmullRom : null;
+            console.log('checking note', note);
             return (
               <React.Fragment key={`fragment-${note.id}`}>
                 <NoteType
