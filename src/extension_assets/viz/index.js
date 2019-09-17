@@ -191,7 +191,13 @@ const Viz = (props) => {
         if ( existingAnnotation ) { 
           
           // set config state to false so that the config window will show
-          console.log('turning config off', contextValue.tableauExt.settings.get('configState'), false);
+          console.log('turning config off', contextValue.tableauExt.settings.get('configState')
+            , (existingAnnotation.subject || {}).radius || "15"
+            , (existingAnnotation.subject || {}).width
+            , existingAnnotation.subject
+            , existingAnnotation
+            ,  false
+          );
           contextValue.tableauExt.settings.set('configState', false);
 
           // first screen is annotation type
@@ -206,7 +212,7 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('connectorCurveString', (existingAnnotation.connector || {}).curveString || "curveCatmullRom");
           contextValue.tableauExt.settings.set('connectorCurvePoints', (existingAnnotation.connector || {}).points || "0");
           contextValue.tableauExt.settings.set('connectorEnd', (existingAnnotation.connector || {}).end || "none");
-          contextValue.tableauExt.settings.set('connectorEndScale', (existingAnnotation.connector || {}).endScale || "1");
+          contextValue.tableauExt.settings.set('connectorEndScale', (existingAnnotation.connector || {}).endScale || "0");
 
           // screen 2c is note props
           contextValue.tableauExt.settings.set('annotationNoteTitle', (existingAnnotation.note || {}).title || "");
@@ -226,14 +232,14 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('annotationNoteTextAnchor', (existingAnnotation.note || {}).textAnchor || "null");
           
           // subject props
-          contextValue.tableauExt.settings.set('annotationSubjectRadius', (existingAnnotation.subject || {}).radius || "15");
+          contextValue.tableauExt.settings.set('annotationSubjectRadius', (existingAnnotation.subject || {}).radius || "0");
           contextValue.tableauExt.settings.set('annotationSubjectRadiusPadding', (existingAnnotation.subject || {}).radiusPadding || "0");
           contextValue.tableauExt.settings.set('annotationSubjectInnerRadius', (existingAnnotation.subject || {}).innerRadius || "0");
           contextValue.tableauExt.settings.set('annotationSubjectOuterRadius', (existingAnnotation.subject || {}).outerRadius || "0");
 
-          contextValue.tableauExt.settings.set('annotationSubjectWidth', (existingAnnotation.subject || {}).width || "50");
-          contextValue.tableauExt.settings.set('annotationSubjectHeight', (existingAnnotation.subject || {}).height || "50");
-          contextValue.tableauExt.settings.set('annotationSubjectDepth', (existingAnnotation.subject || {}).depth || "20");
+          contextValue.tableauExt.settings.set('annotationSubjectWidth', (existingAnnotation.subject || {}).width || "0");
+          contextValue.tableauExt.settings.set('annotationSubjectHeight', (existingAnnotation.subject || {}).height || "0");
+          contextValue.tableauExt.settings.set('annotationSubjectDepth', (existingAnnotation.subject || {}).depth || "0");
 
           contextValue.tableauExt.settings.set('annotationSubjectBracketType', (existingAnnotation.subject || {}).type || "curly");
           contextValue.tableauExt.settings.set('annotationSubjectBadgeText', (existingAnnotation.subject || {}).text || "");
