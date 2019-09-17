@@ -530,7 +530,8 @@ const Viz = (props) => {
             return (
               <React.Fragment key={`fragment-${note.id}`}>
                 <NoteType
-                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'} annotation-dash-${contextValue.tableauExt.settings.get('annotationStrokeDasharray')}`}
+                  key={`annotation-${note.id}`}
+                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'} annotation-dash-${note.dashArray}`}
                   events={{
                     // we can use this event to handle when the annotation is clicked
                     // and then when clicked we can update the annotation vs create a new one
