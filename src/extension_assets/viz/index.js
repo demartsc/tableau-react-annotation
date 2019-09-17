@@ -114,7 +114,7 @@ const Viz = (props) => {
 
   const deleteAnnotation = annotationID => {
     console.log('checking delete annotation', annotationID);
-    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/deleteAnnotation';
+    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/deleteAnnotation';
     const popUpOptions = {
       height: 250,
       width: 350,
@@ -176,7 +176,7 @@ const Viz = (props) => {
     console.log('checking disable config and drag state', disableConfig, dragState);
     if ( (disableConfig || typ !== "new") && !dragState ) {
       e.persist();
-      const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
+      const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/annotation';
       const popUpOptions = {
         height: 700,
         width: 800,
