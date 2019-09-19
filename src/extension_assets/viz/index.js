@@ -113,7 +113,6 @@ const Viz = (props) => {
   console.log('window', window.TableauExtension, annotationProps);
 
   const deleteAnnotation = annotationID => {
-    console.log('checking delete annotation', annotationID);
     const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/deleteAnnotation';
     const popUpOptions = {
       height: 250,
@@ -123,6 +122,7 @@ const Viz = (props) => {
     // we need to write the selected annotation to settings so we can get it in the modal callback
     tableauExt.settings.set('annotationToDelete', annotationID);
     tableauExt.settings.saveAsync().then(() => {
+      console.log('checking delete annotation', annotationID, popUpUrl);
       tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
         if (closePayload === 'false') {
           // we need to do something to re-render the annotation layer here
@@ -174,14 +174,13 @@ const Viz = (props) => {
 
   const configureAnnotation = (e, typ) => {
     console.log('checking disable config and drag state', disableConfig, dragState);
+    e.persist();
+    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/annotation';
+    const popUpOptions = {
+      height: 700,
+      width: 800,
+    };
     if ( (disableConfig || typ !== "new") && !dragState ) {
-      e.persist();
-      const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/annotation';
-      const popUpOptions = {
-        height: 700,
-        width: 800,
-      };
-
       // now we check whether the annotation is new or exists
       let existingAnnotation;
       if ( typ !== "new" ) {
@@ -302,7 +301,7 @@ const Viz = (props) => {
                 contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
 
                 // set config state to false so that the config window will show
-                console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true);
+                console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true, popUpUrl);
                 contextValue.tableauExt.settings.set('configState', true);
                 contextValue.tableauExt.settings.saveAsync().then(() => {
                   // done we can close and move on
