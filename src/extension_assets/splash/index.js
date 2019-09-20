@@ -32,18 +32,20 @@ const buttonStyle = {}
  * Wrapper custom styling
  */
 const SplashStyle = {
-  textAlign: 'center'
+  textAlign: 'center', 
+  overflow: 'hidden'
 }
 
 const CustomSplash = (props) => (
   <div className="Splash" style={SplashStyle}>
-    <h1>React-Annotation within Tableau</h1>
+    <h1>Annotate All The (Tableau) Things!</h1>
+    <h4>React-Annotation within Tableau</h4>
     <p>Leverage the brilliance of Susie Lu's React-Annotation library, directly within (or on top of) Tableau!</p>
     
     
     {/* Config button. It should have the `onClick={props.onClick}` property and a `value` parameter as well */}
     <ButtonInput 
-      value="Configure"
+      value="Let's Annotate Things!"
       onClick={props.onClick}
       style={buttonStyle}
     />

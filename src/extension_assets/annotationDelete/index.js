@@ -16,7 +16,8 @@ const buttonStyle = {}
  * Wrapper custom styling
  */
 const SplashStyle = {
-  textAlign: 'center'
+  textAlign: 'center',
+  overflow: 'hidden'
 }
 
 const annotationDelete = (props) => (

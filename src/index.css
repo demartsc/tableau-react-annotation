@@ -1,6 +1,7 @@
 html {
   /* pointer-events: none; */
   background: none transparent;
+  overflow: hidden;
   height: 100%;
   width: 100%;
 }

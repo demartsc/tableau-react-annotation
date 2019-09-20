@@ -72,6 +72,35 @@ export default {
               },
               {
                 "type": "dropdown",
+                "label": "Curve",
+                "name": "connectorCurveString",
+                "value": "curveCatmullRom",
+                "tooltip": "what kind of curve on the connector",
+                "values": [
+                  {"value": "curveCatmullRom", "text": "curveCatmullRom"},
+                  {"value": "curveLinear", "text": "curveLinear"},
+                  {"value": "curveStep", "text": "curveStep"},
+                  {"value": "curveNatural", "text": "curveNatural"}, 
+                  {"value": "curveBasis", "text": "curveBasis"}
+                ]
+              },
+              {
+                "type": "dropdown",
+                "label": "Curve Points",
+                "name": "connectorCurvePoints",
+                "value": "0",
+                "tooltip": "how many breaks in the curve?",
+                "values": [
+                  {"value": "0", "text": "0"},
+                  {"value": "1", "text": "1"},
+                  {"value": "2", "text": "2"},
+                  {"value": "3", "text": "3"},
+                  {"value": "4", "text": "4"},
+                  {"value": "5", "text": "5"}
+                ]
+              },
+              {
+                "type": "dropdown",
                 "label": "End",
                 "name": "connectorEnd",
                 "value": "none",

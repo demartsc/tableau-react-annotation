@@ -24,6 +24,211 @@ const Annotations = {
   AnnotationBracket: AnnotationBracket,
   AnnotationBadge: AnnotationBadge
 };
+const AnnotationProps = {
+  AnnotationLabel: {
+    "annotationType":"AnnotationLabel",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":50,"y":80,"dx":100,"dy":100,
+    "connector": {
+      "type":"line",
+    },
+    "note": { 
+      "title": "Hi! I am a 'Line Only' Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you only want a line connecting your point and note",
+      "labelColor": "#4a4a4a",
+      "padding":5,
+      "wrap":240,
+      "align": 'left'
+    },
+    "subject": {},
+    "dashArray":"0"
+  }, 
+  AnnotationCallout: {
+    "annotationType":"AnnotationCallout",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":50,"y":80,"dx":120,"dy":100,
+    "connector": {
+      "type":"line",
+    },
+    "note": { 
+      "title": "Hi! I am a 'Line Text with Line' Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you want a line connecting your point and note with a line border on it",
+      "labelColor": "#4a4a4a",
+      "lineType": "horizontal",
+      "padding":5,
+      "wrap":240,  
+    },
+    "subject": {},
+    "dashArray":"0"
+  },
+  AnnotationCalloutElbow: {
+    "annotationType":"AnnotationCalloutElbow",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":50,"y":80,"dx":120,"dy":50,
+    "connector": {
+      "type":"elbow",
+    },
+    "note": { 
+      "title": "Hi! I am a 'Line, Text and Fixed Angle' Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you want a line connecting your point with a fixed angle and note with a line",
+      "labelColor": "#4a4a4a",
+      "lineType": "horizontal",
+      "padding":5,
+      "wrap":240,  
+    },
+    "subject": {},
+    "dashArray":"0"
+  },
+  AnnotationCalloutCurve: {
+    "annotationType":"AnnotationCalloutCurve",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":50,"y":80,"dx":120,"dy":100,
+    "connector": {
+      "type":"curve",
+      "points": 4
+    },
+    "note": { 
+      "title": "Hi! I am a 'Curved Line and Text' Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you want a curved line connecting your point and note with a line on it",
+      "labelColor": "#4a4a4a",
+      "lineType": "horizontal",
+      "padding":5,
+      "wrap":240,  
+    },
+    "subject": {},
+    "dashArray":"0"
+  },
+  AnnotationCalloutCircle: {
+    "annotationType":"AnnotationCalloutCircle",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":80,"y":100,"dx":120,"dy":100,
+    "connector": {
+      "type":"elbow"
+    },
+    "note": { 
+      "title": "Hi! I am a Circle Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you want a circle to focus users on the area you are annotating",
+      "labelColor": "#4a4a4a",
+      "lineType": "horizontal",
+      "padding":5,
+      "wrap":240,  
+    },
+    "subject": {
+      "radius": 50
+    },
+    "dashArray":"0"
+  },
+  AnnotationCalloutRect: {
+    "annotationType":"AnnotationCalloutRect",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":80,"y":50,"dx":120,"dy":150,
+    "connector": {
+      "type":"line"
+    },
+    "note": { 
+      "title": "Hi! I am a Rectangle Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you want a rectangle to focus users on the area you are annotating",
+      "labelColor": "#4a4a4a",
+      "lineType": "horizontal",
+      "padding":5,
+      "wrap":240,  
+    },
+    "subject": {
+      "height": 100,
+      "width": 80
+    },
+    "dashArray":"0"
+  },
+  AnnotationXYThreshold: {
+    "annotationType":"AnnotationXYThreshold",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":80,"y":100,"dx":120,"dy":80,
+    "connector": {
+      "type":"elbow"
+    },
+    "note": { 
+      "title": "Hi! I am a Treshold Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you only want a threshold line across the container with a note.",
+      "labelColor": "#4a4a4a",
+      "lineType": "horizontal",
+      "padding":5,
+      "wrap":240,  
+    },
+    "subject": {
+      "x1": 0,
+      "x2": 1000
+    },
+    "dashArray":"0"
+  },
+  AnnotationBracket: {
+    "annotationType":"AnnotationBracket",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":90,"y":100,"dx":40,"dy":0,
+    "connector": {
+      "type":"elbow"
+    },
+    "note": { 
+      "title": "Hi! I am a Bracket Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you only want to call out an area of your content with a bracket and a note.",
+      "labelColor": "#4a4a4a",
+      "padding":5,
+      "wrap":240,  
+    },
+    "subject": {
+      "depth": 35,
+      "height": 125
+    },
+    "dashArray":"0"
+  },
+  AnnotationBadge: {
+    "annotationType":"AnnotationBadge",
+    "color":"#4a90e2",
+    "key":"demo-annotation",
+    "id":"demo-annotation",
+    "x":90,"y":100,"dx":20,"dy":0,
+    "connector": {
+      "type":"elbow"
+    },
+    "note": { 
+      "title": "Hi! I am a Badge Annotation",
+      "titleColor": "#d0021b",
+      "label": "Use me for when you want a bright callout to a specific point on your content.",
+      "labelColor": "#4a4a4a",
+      "padding":5,
+      "wrap":240,  
+    },
+    "subject": {
+      "radius": 15,
+      "height": 125, 
+      "text": "Hi!"
+    },
+    "dashArray":"0"
+  }
+}
 
 
 const CustomLayout = props => {
@@ -42,7 +247,7 @@ const CustomLayout = props => {
   // Callback setter of dropdown input
   const optionSelected = value => {
     setAnnotationType(value)
-    props.onOptionSelected('annotationType', value)
+    props.onOptionSelected('annotationType', value);
     console.log('annotationType', annotationType, value);
   }
 
@@ -71,15 +276,15 @@ const CustomLayout = props => {
                     tooltip="Select one of the annotations available in react-annotation"
                     radioList={
                       [
-                        {"value": "AnnotationLabel", "text": "annotationLabel"},
-                        {"value": "AnnotationCallout", "text": "annotationCallout"},
-                        {"value": "AnnotationCalloutElbow", "text": "annotationCalloutElbow"},
-                        {"value": "AnnotationCalloutCurve", "text": "annotationCalloutCurve"},
-                        {"value": "AnnotationCalloutCircle", "text": "annotationCalloutCircle"},
-                        {"value": "AnnotationCalloutRect", "text": "annotationCalloutRect"},
-                        {"value": "AnnotationXYThreshold", "text": "annotationXYThreshold"},
-                        {"value": "AnnotationBracket", "text": "annotationBracket"},
-                        {"value": "AnnotationBadge", "text": "annotationBadge"}
+                        {"value": "AnnotationLabel", "text": "Line and Text"},
+                        {"value": "AnnotationCallout", "text": "Line and Text with Line"},
+                        {"value": "AnnotationCalloutElbow", "text": "Line and Text with Fixed Angle Line"},
+                        {"value": "AnnotationCalloutCurve", "text": "Line and Text with 'Curved' Line"},
+                        {"value": "AnnotationCalloutCircle", "text": "Circle, Line and Text"},
+                        {"value": "AnnotationCalloutRect", "text": "Rectangle, Line and Text"},
+                        {"value": "AnnotationXYThreshold", "text": "Threshold, Line and Text"},
+                        {"value": "AnnotationBracket", "text": "Bracket annotation"},
+                        {"value": "AnnotationBadge", "text": "Badge annotation"}
                       ]
                     }
                     value={annotationType}
@@ -89,16 +294,7 @@ const CustomLayout = props => {
                 <div style={{height: "300px", width: "70%", display: "inline-block"}}>
                   <svg height="100%" width="100%">
                     <Annotation
-                      x={150}
-                      y={50}
-                      dx={annotationType === "AnnotationBracket" ? 0 : annotationType === "AnnotationBadge" ? 0 : 150}
-                      dy={annotationType === "AnnotationBracket" ? 0 : annotationType === "AnnotationBadge" ? 0 : 150}
-                      color={"#9610ff"}
-                      editMode={true}
-                      note={{"title":"Annotations :)",
-                        "label":"Longer text to show text wrapping",
-                        "lineType":"horizontal"}}
-                      subject={{"radius":50,"radiusPadding":5, "height": 100, "type": "curly", "width": 50, "x1": 0, "x2": 1000}}
+                      { ...AnnotationProps[annotationType]}
                     />
                   </svg>
                 </div>

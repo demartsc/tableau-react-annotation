@@ -12,6 +12,13 @@ import {
   AnnotationBracket,
   AnnotationBadge
 } from 'react-annotation';
+import {
+  curveCatmullRom,
+  curveLinear,
+  curveStep,
+  curveNatural, 
+  curveBasis
+} from 'd3-shape'
 import TypesUI  from '../components/annotations/Types';
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
@@ -40,6 +47,15 @@ const Annotations = {
   AnnotationBracket: AnnotationBracket,
   AnnotationBadge: AnnotationBadge
 };
+
+const Curves = {
+  curveCatmullRom: curveCatmullRom,
+  curveLinear: curveLinear,
+  curveStep: curveStep,
+  curveNatural: curveNatural, 
+  curveBasis: curveBasis
+};
+
 const annotationStarter = [
   {
     "annotationType":"AnnotationCalloutCircle",
@@ -97,8 +113,7 @@ const Viz = (props) => {
   console.log('window', window.TableauExtension, annotationProps);
 
   const deleteAnnotation = annotationID => {
-    console.log('checking delete annotation', annotationID);
-    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/deleteAnnotation';
+    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/deleteAnnotation';
     const popUpOptions = {
       height: 250,
       width: 350,
@@ -107,6 +122,7 @@ const Viz = (props) => {
     // we need to write the selected annotation to settings so we can get it in the modal callback
     tableauExt.settings.set('annotationToDelete', annotationID);
     tableauExt.settings.saveAsync().then(() => {
+      console.log('checking delete annotation', annotationID, popUpUrl);
       tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
         if (closePayload === 'false') {
           // we need to do something to re-render the annotation layer here
@@ -158,14 +174,13 @@ const Viz = (props) => {
 
   const configureAnnotation = (e, typ) => {
     console.log('checking disable config and drag state', disableConfig, dragState);
+    e.persist();
+    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/annotation';
+    const popUpOptions = {
+      height: 700,
+      width: 800,
+    };
     if ( (disableConfig || typ !== "new") && !dragState ) {
-      e.persist();
-      const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/annotation';
-      const popUpOptions = {
-        height: 700,
-        width: 800,
-      };
-
       // now we check whether the annotation is new or exists
       let existingAnnotation;
       if ( typ !== "new" ) {
@@ -175,7 +190,13 @@ const Viz = (props) => {
         if ( existingAnnotation ) { 
           
           // set config state to false so that the config window will show
-          console.log('turning config off', contextValue.tableauExt.settings.get('configState'), false);
+          console.log('turning config off', contextValue.tableauExt.settings.get('configState')
+            , (existingAnnotation.subject || {}).radius || "15"
+            , (existingAnnotation.subject || {}).width
+            , existingAnnotation.subject
+            , existingAnnotation
+            ,  false
+          );
           contextValue.tableauExt.settings.set('configState', false);
 
           // first screen is annotation type
@@ -187,8 +208,10 @@ const Viz = (props) => {
 
           // screen 2b is connector props
           contextValue.tableauExt.settings.set('connectorType', (existingAnnotation.connector || {}).type || "line");
+          contextValue.tableauExt.settings.set('connectorCurveString', (existingAnnotation.connector || {}).curveString || "curveCatmullRom");
+          contextValue.tableauExt.settings.set('connectorCurvePoints', (existingAnnotation.connector || {}).points || "0");
           contextValue.tableauExt.settings.set('connectorEnd', (existingAnnotation.connector || {}).end || "none");
-          contextValue.tableauExt.settings.set('connectorEndScale', (existingAnnotation.connector || {}).endScale || "1");
+          contextValue.tableauExt.settings.set('connectorEndScale', (existingAnnotation.connector || {}).endScale || "0");
 
           // screen 2c is note props
           contextValue.tableauExt.settings.set('annotationNoteTitle', (existingAnnotation.note || {}).title || "");
@@ -208,14 +231,14 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('annotationNoteTextAnchor', (existingAnnotation.note || {}).textAnchor || "null");
           
           // subject props
-          contextValue.tableauExt.settings.set('annotationSubjectRadius', (existingAnnotation.subject || {}).radius || "15");
+          contextValue.tableauExt.settings.set('annotationSubjectRadius', (existingAnnotation.subject || {}).radius || "0");
           contextValue.tableauExt.settings.set('annotationSubjectRadiusPadding', (existingAnnotation.subject || {}).radiusPadding || "0");
           contextValue.tableauExt.settings.set('annotationSubjectInnerRadius', (existingAnnotation.subject || {}).innerRadius || "0");
           contextValue.tableauExt.settings.set('annotationSubjectOuterRadius', (existingAnnotation.subject || {}).outerRadius || "0");
 
-          contextValue.tableauExt.settings.set('annotationSubjectWidth', (existingAnnotation.subject || {}).width || "50");
-          contextValue.tableauExt.settings.set('annotationSubjectHeight', (existingAnnotation.subject || {}).height || "50");
-          contextValue.tableauExt.settings.set('annotationSubjectDepth', (existingAnnotation.subject || {}).depth || "20");
+          contextValue.tableauExt.settings.set('annotationSubjectWidth', (existingAnnotation.subject || {}).width || "0");
+          contextValue.tableauExt.settings.set('annotationSubjectHeight', (existingAnnotation.subject || {}).height || "0");
+          contextValue.tableauExt.settings.set('annotationSubjectDepth', (existingAnnotation.subject || {}).depth || "0");
 
           contextValue.tableauExt.settings.set('annotationSubjectBracketType', (existingAnnotation.subject || {}).type || "curly");
           contextValue.tableauExt.settings.set('annotationSubjectBadgeText', (existingAnnotation.subject || {}).text || "");
@@ -232,6 +255,8 @@ const Viz = (props) => {
                 // there might be a better way
                 if ( !existingAnnotation.connector ) { existingAnnotation.connector = {}; }
                 existingAnnotation.connector.type = contextValue.tableauExt.settings.get('connectorType');
+                existingAnnotation.connector.curveString = contextValue.tableauExt.settings.get('connectorCurveString');
+                existingAnnotation.connector.points = parseFloat(contextValue.tableauExt.settings.get('connectorCurvePoints'));
                 existingAnnotation.connector.end = contextValue.tableauExt.settings.get('connectorEnd');
                 existingAnnotation.connector.endScale = parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'));
 
@@ -276,7 +301,7 @@ const Viz = (props) => {
                 contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
 
                 // set config state to false so that the config window will show
-                console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true);
+                console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true, popUpUrl);
                 contextValue.tableauExt.settings.set('configState', true);
                 contextValue.tableauExt.settings.saveAsync().then(() => {
                   // done we can close and move on
@@ -321,6 +346,8 @@ const Viz = (props) => {
                 dy: 50,
                 connector: {
                   type: contextValue.tableauExt.settings.get('connectorType'),
+                  curveString: contextValue.tableauExt.settings.get('connectorCurveString'),
+                  points: parseFloat(contextValue.tableauExt.settings.get('connectorCurvePoints')),
                   end: contextValue.tableauExt.settings.get('connectorEnd'),
                   endScale: parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'))
                 },
@@ -496,12 +523,14 @@ const Viz = (props) => {
           onClick={e => configureAnnotation(e,'new')}
         >
           {annotationProps.map(note => {
-            console.log('checking note', note, note.note, note.note.wrap);
             const NoteType = Annotations[note.annotationType];
+            note.connector.curve = note.connector.type === "curve" ? Curves[note.connector.curveString] || curveCatmullRom : null;
+            console.log('checking note', note);
             return (
               <React.Fragment key={`fragment-${note.id}`}>
                 <NoteType
-                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'} annotation-dash-${contextValue.tableauExt.settings.get('annotationStrokeDasharray')}`}
+                  key={`annotation-${note.id}`}
+                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'} annotation-dash-${note.dashArray}`}
                   events={{
                     // we can use this event to handle when the annotation is clicked
                     // and then when clicked we can update the annotation vs create a new one
