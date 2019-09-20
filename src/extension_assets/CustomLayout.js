@@ -246,9 +246,33 @@ const CustomLayout = props => {
 
   // Callback setter of dropdown input
   const optionSelected = value => {
-    setAnnotationType(value)
-    props.onOptionSelected('annotationType', value);
-    console.log('annotationType', annotationType, value);
+    // first based on the type selected we default some of the options to keep the annotations clean
+    // first we go through and replace the subject related stuff based on the type of annotation
+    // subject props
+    extensionContext.tableauExt.settings.set('annotationSubjectRadius', ( ['AnnotationBadge', 'AnnotationCalloutCircle'].indexOf(value) >= 0 ? "25" : "0" ));
+    extensionContext.tableauExt.settings.set('annotationSubjectRadiusPadding', "0");
+    extensionContext.tableauExt.settings.set('annotationSubjectInnerRadius', "0");
+    extensionContext.tableauExt.settings.set('annotationSubjectOuterRadius', "0");
+
+    extensionContext.tableauExt.settings.set('annotationSubjectWidth', ( ['AnnotationCalloutRect'].indexOf(value) >= 0 ? "80" : "0" ));
+    extensionContext.tableauExt.settings.set('annotationSubjectHeight', ( ['AnnotationCalloutRect', 'AnnotationBracket'].indexOf(value) >= 0 ? "100" : "0" ));
+    extensionContext.tableauExt.settings.set('annotationSubjectDepth', ( ['AnnotationBracket'].indexOf(value) >= 0 ? "25" : "0" ));
+
+    extensionContext.tableauExt.settings.set('annotationSubjectBracketType', "square" );
+    extensionContext.tableauExt.settings.set('annotationSubjectBadgeText', "");
+
+    if ( extensionContext.tableauExt.settings.get('configNewAnnotation') === "true" ) {
+      console.log('checking configNewAnnotation', extensionContext.tableauExt.settings.get('configNewAnnotation'), extensionContext.tableauExt.settings.get('configNewAnnotation') === "true");
+      // new annotation, revert descriptions
+      extensionContext.tableauExt.settings.set('annotationNoteTitle', "A New Annotation!");
+      extensionContext.tableauExt.settings.set('annotationNoteLabel', "You should update this with the content you want. Click my pencil to edit me!");
+    }
+
+    extensionContext.tableauExt.settings.saveAsync().then(() => {
+      setAnnotationType(value)
+      props.onOptionSelected('annotationType', value);
+      console.log('annotationType', annotationType, value, extensionContext.tableauExt.settings.getAll());
+    });
   }
 
   useEffect(() => {

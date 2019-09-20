@@ -333,6 +333,7 @@ const Viz = (props) => {
         // set config state to false so that the config window will show
         console.log('turning config off', contextValue.tableauExt.settings.get('configState'), false);
         contextValue.tableauExt.settings.set('configState', false);
+        contextValue.tableauExt.settings.set('configNewAnnotation', true);
         contextValue.tableauExt.settings.saveAsync().then(() => {
 
           tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
@@ -348,8 +349,8 @@ const Viz = (props) => {
                 id: newAnnotationId,
                 x: e.clientX,
                 y: e.clientY,
-                dx: 50,
-                dy: 50,
+                dx: 100,
+                dy: 100,
                 connector: {
                   type: contextValue.tableauExt.settings.get('connectorType'),
                   curveString: contextValue.tableauExt.settings.get('connectorCurveString'),
@@ -389,6 +390,7 @@ const Viz = (props) => {
               // set config state to false so that the config window will show
               console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true);
               contextValue.tableauExt.settings.set('configState', true);
+              contextValue.tableauExt.settings.set('configNewAnnotation', false);
               contextValue.tableauExt.settings.saveAsync().then(() => {
                 // done we can close and move on
                 props.history.push('/viz')
