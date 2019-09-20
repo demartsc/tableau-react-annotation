@@ -120,14 +120,19 @@ const Viz = (props) => {
     };
 
     // we need to write the selected annotation to settings so we can get it in the modal callback
-    tableauExt.settings.set('annotationToDelete', annotationID);
-    tableauExt.settings.saveAsync().then(() => {
+    contextValue.tableauExt.settings.set('configState', false);
+    contextValue.tableauExt.settings.set('annotationToDelete', annotationID);
+    contextValue.tableauExt.settings.saveAsync().then(() => {
       console.log('checking delete annotation', annotationID, popUpUrl);
       tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
         if (closePayload === 'false') {
-          // we need to do something to re-render the annotation layer here
-          props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
-          console.log('checking props', props, props.history);
+          contextValue.tableauExt.settings.set('configState', true);
+          contextValue.tableauExt.settings.saveAsync().then(() => {
+            // done we can close and move on
+            props.history.push('/viz');
+            props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+            console.log('checking props', props, props.history);
+          });
         }
       }).catch((error) => {
         // One expected error condition is when the popup is closed by the user (meaning the user
@@ -305,6 +310,7 @@ const Viz = (props) => {
                 contextValue.tableauExt.settings.set('configState', true);
                 contextValue.tableauExt.settings.saveAsync().then(() => {
                   // done we can close and move on
+                  props.history.push('/viz');
                   props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
                   console.log('checking props', props, props.history);
                 });
@@ -385,8 +391,8 @@ const Viz = (props) => {
               contextValue.tableauExt.settings.set('configState', true);
               contextValue.tableauExt.settings.saveAsync().then(() => {
                 // done we can close and move on
+                props.history.push('/viz')
                 props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
-                // props.history.push('/viz')
               });
         }
           }).catch((error) => {
@@ -464,15 +470,23 @@ const Viz = (props) => {
 
   // useEffect(() => {
   //   // Get summary data when tableauSettings are available
-  //   if (Object.keys(contextValue.tableauSettings).length > 0) {
-  //     getSummaryData()
+  //   if ( props.tableauSettings.annotationShowControls === "no" ) {
+  //     if ( editMode ) setEditMode(false);
   //   }
   // });
 
   let iconJSX;
-  if ( iconViewState ) {
+  if ( iconViewState && props.tableauSettings.annotationShowControls === "yes" ) {
     iconJSX =
-      <div style={{position: "absolute", zIndex: 999, pointerEvents: 'auto'}} className="annotation-controls" >
+      <div
+        style={{
+          top: '5px',
+          position: "absolute",
+          zIndex: 999,
+          pointerEvents: 'auto'
+        }} 
+        className="annotation-controls"
+      >
         <Grid container justify="center">
           <Grid item xs={6}>
             <Tooltip title={`Toggle Add Annotation Mode`} placement="right">
@@ -495,6 +509,11 @@ const Viz = (props) => {
       </div>
     }
 
+    if ( props.tableauSettings.annotationShowControls === "no" ) {
+      // if we are not showing controls, don't enable edit mode
+      if ( editMode ) setEditMode(false);
+    }
+
 
   return (
     <MuiThemeProvider muiTheme={getMuiTheme(muiTheme)}>
@@ -514,7 +533,7 @@ const Viz = (props) => {
         {iconJSX}
         <svg
           id={`tableau-react-annotation-layer`}
-          height={'95%'}
+          height={'100%'}
           width={'100%'}
           style={{
             position: 'relative',

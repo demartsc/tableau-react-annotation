@@ -55,6 +55,7 @@ class App extends Component {
     // this will bring up the viz
     if ( this.state.config.tableauExt.settings.get('configState') === "true" ) {
       this.state.config.tableauExt.settings.set('configState', 'false');
+      this.state.config.tableauExt.settings.set('annotationShowControls', 'yes');
       this.state.config.tableauExt.settings.saveAsync().then(()=>{
         this.props.history.push('/')
       });
@@ -113,6 +114,7 @@ class App extends Component {
         extensionReady: true
       })
       if ( this.state.config.tableauExt.settings.get('configState') === 'true' ) {
+        console.log('we are mounting now', this.state.config.tableauExt.settings.get('configState'));
         this.props.history.push('/viz');
       }
     }, (err) => {

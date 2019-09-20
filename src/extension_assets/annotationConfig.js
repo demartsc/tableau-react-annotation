@@ -19,7 +19,7 @@ export default {
         "type": "viz_options",
         "groups": [
           {
-            "name": "Color",
+            "name": "Color and Dash",
             "inputs": [
               {
                 "type": "color",
@@ -27,12 +27,7 @@ export default {
                 "value": "#C123FA",
                 "name": "annotationColor",
                 "tooltip": "A color string that will be applied to the annotation."
-              }
-            ]
-          },
-          {
-            "name": "Dash Effect",
-            "inputs": [
+              },
               {
                 "type": "dropdown",
                 "label": "Storke Dasharray",
@@ -306,6 +301,22 @@ export default {
                 "name": "annotationSubjectBadgeText",
                 "value": "",
                 "tooltip": "Text placed in the center of the badge"
+              }
+            ]
+          },
+          {
+            "name": "Configuration",
+            "inputs": [
+              {
+                "type": "dropdown",
+                "label": "Show Controls?",
+                "value": "yes",
+                "name": "annotationShowControls",
+                "tooltip": "Toggle whether to show the icon controls for CRUD operations.",
+                "values": [
+                  {"value": "yes", "text": "Yes"},
+                  {"value": "no", "text": "No"}
+                ]
               }
             ]
           },

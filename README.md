@@ -136,7 +136,7 @@ You can define your own color schemes as well by editing the `src/extension_asse
 
 You are able to use your own brand logo inside the extension. The only thing you have to do is edit the `src/index.js` file, and import your logo like so:
 ```js
-import brandLogo from './extension_assets/apple_logo.png';
+import brandLogo from './extension_assets/logo.png';
 ```
 
 ## Hosting

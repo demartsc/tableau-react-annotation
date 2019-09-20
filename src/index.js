@@ -7,7 +7,7 @@ import { HashRouter } from 'react-router-dom';
 
 // Custom styling
 import './extension_assets/extension.css';
-import brandLogo from './extension_assets/logo.png';
+import brandLogo from './extension_assets/a-custom.png';
 
 import stepperConfig from './extension_assets/stepperConfig';
 import annotationConfig from './extension_assets/annotationConfig';
