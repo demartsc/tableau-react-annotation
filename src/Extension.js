@@ -53,10 +53,17 @@ class App extends Component {
 
   configure = () => {
     // this will bring up the viz
-    this.state.config.tableauExt.settings.set('configState', 'true');
-    this.state.config.tableauExt.settings.saveAsync().then(()=>{
-      this.props.history.push('/viz')
-    });
+    if ( this.state.config.tableauExt.settings.get('configState') === "true" ) {
+      this.state.config.tableauExt.settings.set('configState', 'false');
+      this.state.config.tableauExt.settings.saveAsync().then(()=>{
+        this.props.history.push('/')
+      });
+    } else {
+      this.state.config.tableauExt.settings.set('configState', 'true');
+      this.state.config.tableauExt.settings.saveAsync().then(()=>{
+        this.props.history.push('/viz')
+      });  
+    }
 
     // may be better to render a config box so that it will display if user clicks config
 

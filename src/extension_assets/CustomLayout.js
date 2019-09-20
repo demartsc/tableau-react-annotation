@@ -56,9 +56,9 @@ const AnnotationProps = {
       "type":"line",
     },
     "note": { 
-      "title": "Hi! I am a 'Line Only' Annotation",
+      "title": "Hi! I am a 'Line Text with Line' Annotation",
       "titleColor": "#d0021b",
-      "label": "Use me for when you only want a line connecting your point and note with a line on it",
+      "label": "Use me for when you want a line connecting your point and note with a line border on it",
       "labelColor": "#4a4a4a",
       "lineType": "horizontal",
       "padding":5,
@@ -77,9 +77,9 @@ const AnnotationProps = {
       "type":"elbow",
     },
     "note": { 
-      "title": "Hi! I am a 'Line Only' Annotation",
+      "title": "Hi! I am a 'Line, Text and Fixed Angle' Annotation",
       "titleColor": "#d0021b",
-      "label": "Use me for when you only want a line connecting your point and note with a line on it",
+      "label": "Use me for when you want a line connecting your point with a fixed angle and note with a line",
       "labelColor": "#4a4a4a",
       "lineType": "horizontal",
       "padding":5,
@@ -99,9 +99,9 @@ const AnnotationProps = {
       "points": 4
     },
     "note": { 
-      "title": "Hi! I am a 'Line Only' Annotation",
+      "title": "Hi! I am a 'Curved Line and Text' Annotation",
       "titleColor": "#d0021b",
-      "label": "Use me for when you only want a line connecting your point and note with a line on it",
+      "label": "Use me for when you want a curved line connecting your point and note with a line on it",
       "labelColor": "#4a4a4a",
       "lineType": "horizontal",
       "padding":5,
@@ -120,9 +120,9 @@ const AnnotationProps = {
       "type":"elbow"
     },
     "note": { 
-      "title": "Hi! I am a 'Line Only' Annotation",
+      "title": "Hi! I am a Circle Annotation",
       "titleColor": "#d0021b",
-      "label": "Use me for when you only want a line connecting your point and note with a line on it",
+      "label": "Use me for when you want a circle to focus users on the area you are annotating",
       "labelColor": "#4a4a4a",
       "lineType": "horizontal",
       "padding":5,
@@ -143,9 +143,9 @@ const AnnotationProps = {
       "type":"line"
     },
     "note": { 
-      "title": "Hi! I am a 'Line Only' Annotation",
+      "title": "Hi! I am a Rectangle Annotation",
       "titleColor": "#d0021b",
-      "label": "Use me for when you only want a line connecting your point and note with a line on it",
+      "label": "Use me for when you want a rectangle to focus users on the area you are annotating",
       "labelColor": "#4a4a4a",
       "lineType": "horizontal",
       "padding":5,
@@ -167,9 +167,9 @@ const AnnotationProps = {
       "type":"elbow"
     },
     "note": { 
-      "title": "Hi! I am a 'Line Only' Annotation",
+      "title": "Hi! I am a Treshold Annotation",
       "titleColor": "#d0021b",
-      "label": "Use me for when you only want a line connecting your point and note with a line on it",
+      "label": "Use me for when you only want a threshold line across the container with a note.",
       "labelColor": "#4a4a4a",
       "lineType": "horizontal",
       "padding":5,
@@ -191,9 +191,9 @@ const AnnotationProps = {
       "type":"elbow"
     },
     "note": { 
-      "title": "Hi! I am a 'Line Only' Annotation",
+      "title": "Hi! I am a Bracket Annotation",
       "titleColor": "#d0021b",
-      "label": "Use me for when you only want a line connecting your point and note with a line on it",
+      "label": "Use me for when you only want to call out an area of your content with a bracket and a note.",
       "labelColor": "#4a4a4a",
       "padding":5,
       "wrap":240,  
@@ -214,9 +214,9 @@ const AnnotationProps = {
       "type":"elbow"
     },
     "note": { 
-      "title": "Hi! I am a 'Line Only' Annotation",
+      "title": "Hi! I am a Badge Annotation",
       "titleColor": "#d0021b",
-      "label": "Use me for when you only want a line connecting your point and note with a line on it",
+      "label": "Use me for when you want a bright callout to a specific point on your content.",
       "labelColor": "#4a4a4a",
       "padding":5,
       "wrap":240,  
@@ -276,15 +276,15 @@ const CustomLayout = props => {
                     tooltip="Select one of the annotations available in react-annotation"
                     radioList={
                       [
-                        {"value": "AnnotationLabel", "text": "annotationLabel"},
-                        {"value": "AnnotationCallout", "text": "annotationCallout"},
-                        {"value": "AnnotationCalloutElbow", "text": "annotationCalloutElbow"},
-                        {"value": "AnnotationCalloutCurve", "text": "annotationCalloutCurve"},
-                        {"value": "AnnotationCalloutCircle", "text": "annotationCalloutCircle"},
-                        {"value": "AnnotationCalloutRect", "text": "annotationCalloutRect"},
-                        {"value": "AnnotationXYThreshold", "text": "annotationXYThreshold"},
-                        {"value": "AnnotationBracket", "text": "annotationBracket"},
-                        {"value": "AnnotationBadge", "text": "annotationBadge"}
+                        {"value": "AnnotationLabel", "text": "Line and Text"},
+                        {"value": "AnnotationCallout", "text": "Line and Text with Line"},
+                        {"value": "AnnotationCalloutElbow", "text": "Line and Text with Fixed Angle Line"},
+                        {"value": "AnnotationCalloutCurve", "text": "Line and Text with 'Curved' Line"},
+                        {"value": "AnnotationCalloutCircle", "text": "Circle, Line and Text"},
+                        {"value": "AnnotationCalloutRect", "text": "Rectangle, Line and Text"},
+                        {"value": "AnnotationXYThreshold", "text": "Threshold, Line and Text"},
+                        {"value": "AnnotationBracket", "text": "Bracket annotation"},
+                        {"value": "AnnotationBadge", "text": "Badge annotation"}
                       ]
                     }
                     value={annotationType}
