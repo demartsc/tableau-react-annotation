@@ -247,6 +247,8 @@ const CustomLayout = props => {
   // Callback setter of dropdown input
   const optionSelected = value => {
     setAnnotationType(value)
+    localStorage.setItem('annotationType', annotationType);
+    window.TableauExtension.annotationType = value;
     props.onOptionSelected('annotationType', value);
     console.log('annotationType', annotationType, value);
   }
