@@ -243,6 +243,7 @@ const Viz = (props) => {
           }
           contextValue.tableauExt.settings.set('connectorEnd', (existingAnnotation.connector || {}).end || "none");
           contextValue.tableauExt.settings.set('connectorEndScale', (existingAnnotation.connector || {}).endScale || "0");
+          contextValue.tableauExt.settings.set('connectorDisable', (existingAnnotation.connector || {}).disable || "no");
 
           // screen 2c is note props
           contextValue.tableauExt.settings.set('annotationNoteTitle', (existingAnnotation.note || {}).title || "");
@@ -260,6 +261,7 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('annotationNoteLineType', (existingAnnotation.note || {}).lineType || "null");
           contextValue.tableauExt.settings.set('annotationNoteAlign', (existingAnnotation.note || {}).align || "dynamic");
           contextValue.tableauExt.settings.set('annotationNoteTextAnchor', (existingAnnotation.note || {}).textAnchor || "null");
+          contextValue.tableauExt.settings.set('annotationNoteDisable', (existingAnnotation.note || {}).disable || "no");
           
           // subject props
           contextValue.tableauExt.settings.set('annotationSubjectFill', (existingAnnotation.subject || {}).fill || "#FFF");
@@ -275,6 +277,7 @@ const Viz = (props) => {
 
           contextValue.tableauExt.settings.set('annotationSubjectBracketType', (existingAnnotation.subject || {}).type || "curly");
           contextValue.tableauExt.settings.set('annotationSubjectBadgeText', (existingAnnotation.subject || {}).text || "");
+          contextValue.tableauExt.settings.set('annotationSubjectDisable', (existingAnnotation.subject || {}).disable || "no");
 
           contextValue.tableauExt.settings.saveAsync().then(() => {
             console.log('existing annotations writter to settings', props.tableauSettings);
@@ -296,6 +299,7 @@ const Viz = (props) => {
                 }
                 existingAnnotation.connector.end = contextValue.tableauExt.settings.get('connectorEnd');
                 existingAnnotation.connector.endScale = parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'));
+                existingAnnotation.connector.disable = contextValue.tableauExt.settings.get('connectorDisable');
 
                 // update the note if we got new settings
                 if ( !existingAnnotation.note ) { existingAnnotation.note = {}; }
@@ -312,6 +316,7 @@ const Viz = (props) => {
                 existingAnnotation.note.lineType = contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType');
                 existingAnnotation.note.align = contextValue.tableauExt.settings.get('annotationNoteAlign');
                 existingAnnotation.note.textAnchor = contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor');
+                existingAnnotation.note.disable = contextValue.tableauExt.settings.get('annotationNoteDisable');
                 
                 // update the subject if we got new settings
                 if ( !existingAnnotation.subject ) { existingAnnotation.subject = {}; }                
@@ -328,6 +333,7 @@ const Viz = (props) => {
 
                 existingAnnotation.subject.type = contextValue.tableauExt.settings.get('annotationSubjectBracketType');
                 existingAnnotation.subject.text = contextValue.tableauExt.settings.get('annotationSubjectBadgeText');
+                existingAnnotation.subject.disable = contextValue.tableauExt.settings.get('annotationSubjectDisable');
 
                 // this should be equal to existingAnnotation which is now updates
                 // const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
@@ -392,7 +398,8 @@ const Viz = (props) => {
                   curveString: contextValue.tableauExt.settings.get('connectorCurveString'),
                   points: parseFloat(contextValue.tableauExt.settings.get('connectorCurvePoints')),
                   end: contextValue.tableauExt.settings.get('connectorEnd'),
-                  endScale: parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'))
+                  endScale: parseFloat(contextValue.tableauExt.settings.get('connectorEndScale')),
+                  disable: contextValue.tableauExt.settings.get('connectorDisable')
                 },
                 note: { 
                   title: contextValue.tableauExt.settings.get('annotationNoteTitle'), 
@@ -405,7 +412,8 @@ const Viz = (props) => {
                   orientation: contextValue.tableauExt.settings.get('annotationNoteOrientation'),
                   lineType: contextValue.tableauExt.settings.get('annotationNoteLineType') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteLineType'),
                   align: contextValue.tableauExt.settings.get('annotationNoteAlign'),
-                  textAnchor: contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor')
+                  textAnchor: contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor'),
+                  disable: contextValue.tableauExt.settings.get('annotationNoteDisable')
                 },
                 subject: {
                   fill: contextValue.tableauExt.settings.get('annotationSubjectFill'),
@@ -418,7 +426,8 @@ const Viz = (props) => {
                   height: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectHeight')),
                   depth: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectDepth')),
                   type: contextValue.tableauExt.settings.get('annotationSubjectBracketType'),
-                  text: contextValue.tableauExt.settings.get('annotationSubjectBadgeText')
+                  text: contextValue.tableauExt.settings.get('annotationSubjectBadgeText'),
+                  disable: contextValue.tableauExt.settings.get('annotationSubjectDisable')
                 }    
               });
               
@@ -583,8 +592,12 @@ const Viz = (props) => {
         >
           {annotationProps.map(note => {
             const NoteType = Annotations[note.annotationType];
+            const disableArray = [];
+            if ( note.connector.disable === "yes" ) disableArray.push('connector');
+            if ( note.note.disable === "yes" ) disableArray.push('note');
+            if ( note.subject.disable === "yes" ) disableArray.push('subject');
             note.connector.curve = note.connector.type === "curve" ? Curves[note.connector.curveString] || curveCatmullRom : null;
-            // console.log('checking note', note, dragXY[note.id]);
+            console.log('checking note', note, disableArray);
             return (
               <React.Fragment key={`fragment-${note.id}`}>
                 {((note.visibiity || "yes") === "yes" || editMode) && 
@@ -615,7 +628,7 @@ const Viz = (props) => {
                   y={dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][1] : note.y}
                   dx={dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][2] : note.dx}
                   dy={dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][3] : note.dy}
-
+                  disable={disableArray}
                 />
                 }
                 { // edit icon obtained from material ui

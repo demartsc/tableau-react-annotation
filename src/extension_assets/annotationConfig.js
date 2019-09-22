@@ -148,6 +148,17 @@ export default {
                 "value": "1",
                 "tooltip": "A multiplying factor for sizing the connector end"
               },
+              {
+                "type": "dropdown",
+                "label": "Disable?",
+                "name": "connectorDisable",
+                "value": "no",
+                "tooltip": "remove the connector from the annotation, but keep props",
+                "values": [
+                  {"value": "no", "text": "No"},
+                  {"value": "yes", "text": "Yes"}
+                ]
+              },
             ]
           },
           {
@@ -259,11 +270,15 @@ export default {
                 ]
               },
               {
-                "type": "color",
-                "label": "Note color",
-                "value": "#C123FA",
-                "name": "annotationColor",
-                "tooltip": "A color string that will be applied to the note, otherwise defaults to annotation."
+                "type": "dropdown",
+                "label": "Disable?",
+                "name": "annotationNoteDisable",
+                "value": "no",
+                "tooltip": "remove the note from the annotation, but keep props",
+                "values": [
+                  {"value": "no", "text": "No"},
+                  {"value": "yes", "text": "Yes"}
+                ]
               },
             ]
           },
@@ -350,7 +365,18 @@ export default {
                 "name": "annotationSubjectBadgeText",
                 "value": "",
                 "tooltip": "Text placed in the center of the badge"
-              }
+              },
+              {
+                "type": "dropdown",
+                "label": "Disable?",
+                "name": "annotationSubjectDisable",
+                "value": "no",
+                "tooltip": "remove the subject from the annotation, but keep props",
+                "values": [
+                  {"value": "no", "text": "No"},
+                  {"value": "yes", "text": "Yes"}
+                ]
+              },
             ]
           },
           {
