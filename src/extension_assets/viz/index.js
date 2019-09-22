@@ -99,14 +99,15 @@ const Viz = (props) => {
   const contextValue = useContext(ExtensionContext);
   const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || "[]" !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
 
-  const [disableConfig, setDisableConfig] = useState(false);
+  const [disableConfig, setDisableConfig] = useState(contextValue.tableauExt.settings.get('disableConfig'));
+  const [editMode, setEditMode] = useState(contextValue.tableauExt.settings.get('editMode'));
+  const [iconViewState, setIconViewState] = useState(true);
+
   const [dragState, setDragState] = useState(null);
   const [dragPoints, setDragPoints] = useState(null);
   const [dragXY, setDragXY] = useState(null);
-  const [editMode, setEditMode] = useState(true);
-  const [iconViewState, setIconViewState] = useState(true);
 
-  // console.log('checking initial props', props, annotationProps); 
+  console.log('checking initial props', props, annotationProps, contextValue.tableauExt.settings.get('editMode')); 
 
   const extensionName = window.name;
   const extensionParent = window.parent;
@@ -539,7 +540,12 @@ const Viz = (props) => {
         <Grid container justify="center">
           <Grid item xs={6}>
             <Tooltip title={`Toggle Add Annotation Mode`} placement="right">
-              <IconButton onClick={() => setDisableConfig(!disableConfig)} >
+              <IconButton onClick={() => {
+                contextValue.tableauExt.settings.set('disableConfig', !disableConfig);
+                contextValue.tableauExt.settings.saveAsync().then(() => {
+                  setDisableConfig(!disableConfig)
+                });
+              }}>
                   <LibraryAdd
                     color={disableConfig ? "secondary" : "action"}
                   />
@@ -547,7 +553,12 @@ const Viz = (props) => {
             </Tooltip>
             <br />
             <Tooltip title={`Toggle Edit Mode`} placement="right">
-              <IconButton onClick={() => setEditMode(!editMode)} >
+              <IconButton onClick={() => {
+                contextValue.tableauExt.settings.set('editMode', !editMode);
+                contextValue.tableauExt.settings.saveAsync().then(() => {
+                  setEditMode(!editMode)
+                });
+              }}>
                   <Edit
                     color={editMode ? "secondary" : "action"}
                   />
