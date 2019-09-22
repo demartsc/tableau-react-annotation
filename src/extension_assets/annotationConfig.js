@@ -19,7 +19,7 @@ export default {
         "type": "viz_options",
         "groups": [
           {
-            "name": "Color and Dash",
+            "name": "Color, Dash  & Visible",
             "inputs": [
               {
                 "type": "color",
@@ -46,6 +46,17 @@ export default {
                   {"value": "8", "text": "8"},
                   {"value": "9", "text": "9"},
                   {"value": "10", "text": "10"}
+                ]
+              },
+              {
+                "type": "dropdown",
+                "label": "Visibility",
+                "value": "yes",
+                "name": "annotationVisibility",
+                "tooltip": "Toggle whether to show the annotation outside of edit mode.",
+                "values": [
+                  {"value": "yes", "text": "Yes"},
+                  {"value": "no", "text": "No"}
                 ]
               }
             ]

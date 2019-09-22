@@ -102,7 +102,7 @@ const Viz = (props) => {
   const [disableConfig, setDisableConfig] = useState(false);
   const [dragState, setDragState] = useState(null);
   const [dragPoints, setDragPoints] = useState(null);
-  // const [dragXY, setDragXY] = useState(null);
+  const [dragXY, setDragXY] = useState(null);
   const [editMode, setEditMode] = useState(true);
   const [iconViewState, setIconViewState] = useState(true);
 
@@ -113,6 +113,21 @@ const Viz = (props) => {
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
   // console.log('window', window.TableauExtension['components'], window, extensionName, extensionParent, extensionZoneId, contextValue.config);
   // console.log('window', window.TableauExtension, annotationProps);
+
+  const toggleVisibility = annotationID => {
+    const existingAnnotation = _.find(annotationProps, (o) => { return o.id === annotationID });
+    existingAnnotation.visibiity = existingAnnotation.visibiity === "yes" ? "no" : "yes";
+    const newAnnotationState = annotationProps.filter(o => { return o.id !== existingAnnotation.id });
+    newAnnotationState.splice(existingAnnotation.id, 0, existingAnnotation);
+       // save to tableau settings
+    contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
+    // set config state to false so that the config window will show
+    contextValue.tableauExt.settings.saveAsync().then(() => {
+      // done we can close and move on
+      props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+      console.log('toggle', annotationID, existingAnnotation);
+    });
+  }
 
   const deleteAnnotation = annotationID => {
     const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/deleteAnnotation';
@@ -178,6 +193,7 @@ const Viz = (props) => {
       props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
       setDragState(null);
       setDragPoints(null);
+      setDragXY(null);
       console.log('dragProps', contextValue.tableauExt.settings.getAll(), dragState, props.tableauSettings);
     });
   }
@@ -215,7 +231,8 @@ const Viz = (props) => {
           // screen 2a is annotation color
           contextValue.tableauExt.settings.set('annotationColor', existingAnnotation.color);
           contextValue.tableauExt.settings.set('annotationStrokeDasharray', existingAnnotation.dashArray || '0');
-
+          contextValue.tableauExt.settings.set('annotationVisibility', existingAnnotation.visibility || 'yes');
+          
           // screen 2b is connector props
           contextValue.tableauExt.settings.set('connectorType', (existingAnnotation.connector || {}).type || "line");
           contextValue.tableauExt.settings.set('connectorCurveString', (existingAnnotation.connector || {}).curveString || "curveCatmullRom");
@@ -265,6 +282,7 @@ const Viz = (props) => {
                 existingAnnotation.annotationType = contextValue.tableauExt.settings.get('annotationType');
                 existingAnnotation.color = contextValue.tableauExt.settings.get('annotationColor');
                 existingAnnotation.dashArray = contextValue.tableauExt.settings.get('annotationStrokeDasharray');
+                existingAnnotation.visibility = contextValue.tableauExt.settings.get('annotationVisibility');
 
                 // there might be a better way
                 if ( !existingAnnotation.connector ) { existingAnnotation.connector = {}; }
@@ -358,6 +376,7 @@ const Viz = (props) => {
                 annotationType: contextValue.tableauExt.settings.get('annotationType'),
                 color: contextValue.tableauExt.settings.get('annotationColor'),
                 dashArray: contextValue.tableauExt.settings.get('annotationStrokeDasharray'),
+                visibility: contextValue.tableauExt.settings.get('annotationVisibility'),
                 key: newAnnotationId, 
                 id: newAnnotationId,
                 x: e.clientX,
@@ -561,9 +580,10 @@ const Viz = (props) => {
           {annotationProps.map(note => {
             const NoteType = Annotations[note.annotationType];
             note.connector.curve = note.connector.type === "curve" ? Curves[note.connector.curveString] || curveCatmullRom : null;
-            console.log('checking note', note, dragPoints, note.connector.points);
+            // console.log('checking note', note, dragXY[note.id]);
             return (
               <React.Fragment key={`fragment-${note.id}`}>
+                {((note.visibiity || "yes") === "yes" || editMode) && 
                 <NoteType
                   key={`annotation-${note.id}`}
                   className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'} annotation-dash-${note.dashArray}`}
@@ -578,9 +598,10 @@ const Viz = (props) => {
                   onDrag={(dragProps) => { 
                     if ( dragProps.points ) {
                       setDragPoints({[note.id]:  dragProps.points});
+                    } else {
                       // setDragXY({[note.id]: [dragProps.x, dragProps.y]})
-                      console.log('dragging', dragProps, dragPoints);  
                     }
+                    console.log('dragging', dragProps, dragPoints, dragXY);  
                   }}
                   onDragEnd={(dragProps) => { 
                     const hXw = [document.getElementById('tableau-react-annotation-layer').parentNode.clientHeight, document.getElementById('tableau-react-annotation-layer').parentNode.clientWidth];
@@ -592,65 +613,127 @@ const Viz = (props) => {
                   x={note.x < 0 ? 10 : note.x}
                   y={note.y < 0 ? 10 : note.y}
                 />
+                }
                 { // edit icon obtained from material ui
-                  editMode && <React.Fragment>
-                  <svg 
-                    viewBox="0 0 24 24"
-                    key={`edit-button-${note.id}`}
-                    id={`edit-button-${note.id}`}
-                    fill={note.color || "#767676"}
-                    width="18"
-                    height="18"
-                    x={note.x+15} // +(dragXY && dragXY[note.id] ? dragXY[note.id][0] - note.x : 0)}
-                    y={note.y-11} // +(dragXY && dragXY[note.id] ? dragXY[note.id][1] - note.y : 0)}
-                  >
-                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                    <path d="M0 0h24v24H0z" fill="none"/>
-                    <rect 
+                  editMode && 
+                  <React.Fragment>
+                    <svg 
+                      viewBox="0 0 24 24"
+                      key={`edit-button-${note.id}`}
                       id={`edit-button-${note.id}`}
-                      style={{
-                        cursor: 'pointer',
-                        stroke: '#fff',
-                        fill: '#fff',
-                        fillOpacity: 0,
-                        strokeOpacity: 0
-                      }} 
-                      width="24" height="24" 
-                      onClick={e => {
-                        configureAnnotation(e,'edit');
-                        console.log('you clicked on edit', e, e.target, Number(e.target.id.replace('edit-button-','')));
-                      }}
-                    />      
-                  </svg>
-                  <svg
-                    viewBox="0 0 24 24"
-                    key={`delete-button-${note.id}`}
-                    id={`delete-button-${note.id}`}
-                    fill={note.color || "#767676"}
-                    width="18"
-                    height="18"
-                    x={note.x-32}
-                    y={note.y-10}
-                  >
-                    <path fill="none" d="M0 0h24v24H0V0z"/>
-                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
-                    <path fill="none" d="M0 0h24v24H0z"/>
-                    <rect 
-                      id={`delete-button-${note.id}`} 
-                      style={{
-                        cursor: 'pointer',
-                        stroke: '#fff',
-                        fill: '#fff',
-                        fillOpacity: 0,
-                        strokeOpacity: 0
-                      }} 
-                      width="24" height="24" 
-                      onClick={e => {
-                        console.log('you clicked on delete', e.target.id,  e.target.id.replace('delete-button-',''));
-                        deleteAnnotation(e.target.id.replace('delete-button-',''));
-                      }}                        
-                    />
-                  </svg>
+                      fill={note.color || "#767676"}
+                      width="18"
+                      height="18"
+                      x={note.x+15} // +(dragXY && dragXY[note.id] ? dragXY[note.id][0] - note.x : 0)}
+                      y={note.y-11} // +(dragXY && dragXY[note.id] ? dragXY[note.id][1] - note.y : 0)}
+                    >
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                      <path d="M0 0h24v24H0z" fill="none"/>
+                      <rect 
+                        id={`edit-button-${note.id}`}
+                        style={{
+                          cursor: 'pointer',
+                          stroke: '#fff',
+                          fill: '#fff',
+                          fillOpacity: 0,
+                          strokeOpacity: 0
+                        }} 
+                        width="24" height="24" 
+                        onClick={e => {
+                          configureAnnotation(e,'edit');
+                          console.log('you clicked on edit', e, e.target, Number(e.target.id.replace('edit-button-','')));
+                        }}
+                      />      
+                    </svg>
+                    <svg
+                      viewBox="0 0 24 24"
+                      key={`delete-button-${note.id}`}
+                      id={`delete-button-${note.id}`}
+                      fill={note.color || "#767676"}
+                      width="18"
+                      height="18"
+                      x={note.x-32}
+                      y={note.y-10}
+                    >
+                      <path fill="none" d="M0 0h24v24H0V0z"/>
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
+                      <path fill="none" d="M0 0h24v24H0z"/>
+                      <rect 
+                        id={`delete-button-${note.id}`} 
+                        style={{
+                          cursor: 'pointer',
+                          stroke: '#fff',
+                          fill: '#fff',
+                          fillOpacity: 0,
+                          strokeOpacity: 0
+                        }} 
+                        width="24" height="24" 
+                        onClick={e => {
+                          console.log('you clicked on delete', e.target.id,  e.target.id.replace('delete-button-',''));
+                          deleteAnnotation(e.target.id.replace('delete-button-',''));
+                        }}                        
+                      />
+                    </svg>
+                    { (note.visibiity || "yes") === "yes" &&
+                      <svg
+                        viewBox="0 0 24 24"
+                        key={`visibility-button-${note.id}`}
+                        id={`visibility-button-${note.id}`}
+                        fill={note.color || "#767676"}
+                        width="18"
+                        height="18"
+                        x={note.x-10}
+                        y={note.y+15}
+                      >
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        <rect 
+                          id={`visibility-button-${note.id}`} 
+                          style={{
+                            cursor: 'pointer',
+                            stroke: '#fff',
+                            fill: '#fff',
+                            fillOpacity: 0,
+                            strokeOpacity: 0
+                          }} 
+                          width="24" height="24" 
+                          onClick={e => {
+                            console.log('you clicked on visibiity toggle', e.target.id,  e.target.id.replace('visibility-button-',''));
+                            toggleVisibility(e.target.id.replace('visibility-button-',''));
+                          }}                        
+                        />
+                      </svg>
+                    }
+                    { (note.visibiity || "yes") === "no" &&
+                      <svg
+                      viewBox="0 0 24 24"
+                      key={`no-visibility-button-${note.id}`}
+                      id={`no-visibility-button-${note.id}`}
+                      fill={ "#dc004e" }
+                      width="18"
+                      height="18"
+                      x={note.x-10}
+                      y={note.y+15}
+                    >
+                      <path d="M0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0z" fill="none"/>
+                      <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
+                      <rect 
+                          id={`no-visibility-button-${note.id}`} 
+                          style={{
+                            cursor: 'pointer',
+                            stroke: '#fff',
+                            fill: '#fff',
+                            fillOpacity: 0,
+                            strokeOpacity: 0
+                          }} 
+                          width="24" height="24" 
+                          onClick={e => {
+                            console.log('you clicked on visibiity toggle', e.target.id,  e.target.id.replace('no-visibility-button-',''));
+                            toggleVisibility(e.target.id.replace('no-visibility-button-',''));
+                          }}                        
+                        />
+                    </svg>
+                    }
                   </React.Fragment>
                 }
               </React.Fragment>
