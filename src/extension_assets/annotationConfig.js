@@ -30,6 +30,25 @@ export default {
               },
               {
                 "type": "dropdown",
+                "label": "Storke Width",
+                "value": ".5",
+                "name": "annotationStrokeWidth",
+                "tooltip": "The stroke-width of the annotation lines (subject, note, connectors).",
+                "values": [
+                  {"value": "0-25", "text": "0.25"},
+                  {"value": "0-5", "text": "0.5"},
+                  {"value": "0-75", "text": "0.75"},
+                  {"value": "1", "text": "1"},
+                  {"value": "1-5", "text": "1.5"},
+                  {"value": "2", "text": "2"},
+                  {"value": "2-5", "text": "2.5"},
+                  {"value": "3", "text": "3"},
+                  {"value": "4", "text": "4"},
+                  {"value": "5", "text": "5"}
+                ]
+              },
+              {
+                "type": "dropdown",
                 "label": "Storke Dasharray",
                 "value": "0",
                 "name": "annotationStrokeDasharray",
@@ -252,7 +271,7 @@ export default {
             "name": "Subject",
             "inputs": [
               {
-                "type": "text",
+                "type": "color",
                 "label": "Fill (Callout Circle and Rect Only)",
                 "name": "annotationSubjectFill",
                 "value": "#FFFFFF",

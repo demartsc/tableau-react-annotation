@@ -60,3 +60,42 @@
   stroke-dasharray: 10;
 }
 
+.annotation-stroke-0-25 { 
+  stroke-width: 0.25;
+}
+
+.annotation-stroke-0-5 { 
+  stroke-width: 0.5;
+}
+
+.annotation-stroke-0-75 { 
+  stroke-width: 0.75;
+}
+
+.annotation-stroke-1 { 
+  stroke-width: 1;
+}
+
+.annotation-stroke-1-5 { 
+  stroke-width: 1.5;
+}
+
+.annotation-stroke-2 { 
+  stroke-width: 2;
+}
+
+.annotation-stroke-2-5 { 
+  stroke-width: 2.5;
+}
+
+.annotation-stroke-3 { 
+  stroke-width: 3;
+}
+
+.annotation-stroke-4 { 
+  stroke-width: 4;
+}
+
+.annotation-stroke-5 { 
+  stroke-width: 5;
+}

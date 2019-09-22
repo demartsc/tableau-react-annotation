@@ -116,7 +116,7 @@ const Viz = (props) => {
 
   const toggleVisibility = annotationID => {
     const existingAnnotation = _.find(annotationProps, (o) => { return o.id === annotationID });
-    existingAnnotation.visibiity = existingAnnotation.visibiity === "yes" ? "no" : "yes";
+    existingAnnotation.visibiity = ( existingAnnotation.visibiity || "yes" ) === "yes" ? "no" : "yes";
     const newAnnotationState = annotationProps.filter(o => { return o.id !== existingAnnotation.id });
     newAnnotationState.splice(existingAnnotation.id, 0, existingAnnotation);
        // save to tableau settings
@@ -231,6 +231,7 @@ const Viz = (props) => {
 
           // screen 2a is annotation color
           contextValue.tableauExt.settings.set('annotationColor', existingAnnotation.color);
+          contextValue.tableauExt.settings.set('annotationStrokeWidth', existingAnnotation.strokeWidth || '1');
           contextValue.tableauExt.settings.set('annotationStrokeDasharray', existingAnnotation.dashArray || '0');
           contextValue.tableauExt.settings.set('annotationVisibility', existingAnnotation.visibility || 'yes');
           
@@ -282,6 +283,7 @@ const Viz = (props) => {
                 // we can now write the updates back to the annotation array and persist to tableau
                 existingAnnotation.annotationType = contextValue.tableauExt.settings.get('annotationType');
                 existingAnnotation.color = contextValue.tableauExt.settings.get('annotationColor');
+                existingAnnotation.strokeWidth = contextValue.tableauExt.settings.get('annotationStrokeWidth');
                 existingAnnotation.dashArray = contextValue.tableauExt.settings.get('annotationStrokeDasharray');
                 existingAnnotation.visibility = contextValue.tableauExt.settings.get('annotationVisibility');
 
@@ -376,6 +378,7 @@ const Viz = (props) => {
                 // we can now write the updates back to the annotation array and persist to tableau
                 annotationType: contextValue.tableauExt.settings.get('annotationType'),
                 color: contextValue.tableauExt.settings.get('annotationColor'),
+                strokeWidth: contextValue.tableauExt.settings.get('annotationStrokeWidth'),
                 dashArray: contextValue.tableauExt.settings.get('annotationStrokeDasharray'),
                 visibility: contextValue.tableauExt.settings.get('annotationVisibility'),
                 key: newAnnotationId, 
@@ -587,7 +590,7 @@ const Viz = (props) => {
                 {((note.visibiity || "yes") === "yes" || editMode) && 
                 <NoteType
                   key={`annotation-${note.id}`}
-                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'} annotation-dash-${note.dashArray}`}
+                  className={`annotation-text-anchor-${(note.note || {}).textAnchor || 'none'} annotation-dash-${note.dashArray} annotation-stroke-${note.strokeWidth}`}
                   events={{
                     // we can use this event to handle when the annotation is clicked
                     // and then when clicked we can update the annotation vs create a new one
