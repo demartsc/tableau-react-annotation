@@ -15,7 +15,8 @@ const ButtonInput = (props) => (
  * Front logo styling
  */
 const logoStyle = {
-  display: 'inline-block'
+  display: 'inline-block',
+  background: 'rgba(255,255,255,.25)'
   // position: 'absolute', 
   // bottom: 0,
   // maxWidth: '300px',

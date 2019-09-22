@@ -167,6 +167,7 @@ const Viz = (props) => {
 
   const annotationDragCallback = (dragProps, note, hXw) => {
     // fix placement of note or annotation if it is off screen
+    console.log('we are in annotation drag end callback', dragProps, note, hXw);
     if ( dragProps.x < 0 ) { dragProps.x = 10 }
     if ( dragProps.y < 0 ) { dragProps.y = 10 }
     if ( dragProps.x > hXw[1] ) { dragProps.x = hXw[1]-10 }
@@ -607,10 +608,10 @@ const Viz = (props) => {
                   {...note}
                   editMode={editMode}
                   connector={{...note.connector, points: dragPoints && dragPoints instanceof Object && dragPoints[note.id] ? dragPoints[note.id] : note.connector.points || 0 }}
-                  x={note.x < 0 ? 10 : dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][0] : note.x}
-                  y={note.y < 0 ? 10 : dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][1] : note.y}
-                  dx={note.dx < 0 ? 10 : dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][2] : note.dx}
-                  dy={note.dy < 0 ? 10 : dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][3] : note.dy}
+                  x={dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][0] : note.x}
+                  y={dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][1] : note.y}
+                  dx={dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][2] : note.dx}
+                  dy={dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][3] : note.dy}
 
                 />
                 }
