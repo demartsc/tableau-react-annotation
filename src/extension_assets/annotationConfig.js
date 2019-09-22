@@ -84,14 +84,19 @@ export default {
                 "label": "Curve Points",
                 "name": "connectorCurvePoints",
                 "value": "0",
-                "tooltip": "how many breaks in the curve?",
+                "tooltip": "How many breaks in the curve?",
                 "values": [
                   {"value": "0", "text": "0"},
                   {"value": "1", "text": "1"},
                   {"value": "2", "text": "2"},
                   {"value": "3", "text": "3"},
                   {"value": "4", "text": "4"},
-                  {"value": "5", "text": "5"}
+                  {"value": "5", "text": "5"},
+                  {"value": "6", "text": "6"},
+                  {"value": "7", "text": "7"},
+                  {"value": "8", "text": "8"},
+                  {"value": "9", "text": "9"},
+                  {"value": "10", "text": "10"}
                 ]
               },
               {
@@ -235,6 +240,20 @@ export default {
           {
             "name": "Subject",
             "inputs": [
+              {
+                "type": "text",
+                "label": "Fill (Callout Circle and Rect Only)",
+                "name": "annotationSubjectFill",
+                "value": "#FFFFFF",
+                "tooltip": "Hex code of the color to fill circle/rect with"
+              },
+              {
+                "type": "text",
+                "label": "Fill Opacity (Callout Circle and Rect Only)",
+                "name": "annotationSubjectFillOpacity",
+                "value": "0",
+                "tooltip": "Decimal from 0.00 (transparent) to 1.00 (solid color) for the fill circle/rect with"
+              },
               {
                 "type": "text",
                 "label": "Radius (Callout Circle and Badge Only)",

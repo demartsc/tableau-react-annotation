@@ -101,16 +101,18 @@ const Viz = (props) => {
 
   const [disableConfig, setDisableConfig] = useState(false);
   const [dragState, setDragState] = useState(null);
+  const [dragPoints, setDragPoints] = useState(null);
+  // const [dragXY, setDragXY] = useState(null);
   const [editMode, setEditMode] = useState(true);
   const [iconViewState, setIconViewState] = useState(true);
 
-  console.log('checking initial props', props, annotationProps); 
+  // console.log('checking initial props', props, annotationProps); 
 
   const extensionName = window.name;
   const extensionParent = window.parent;
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
   // console.log('window', window.TableauExtension['components'], window, extensionName, extensionParent, extensionZoneId, contextValue.config);
-  console.log('window', window.TableauExtension, annotationProps);
+  // console.log('window', window.TableauExtension, annotationProps);
 
   const deleteAnnotation = annotationID => {
     const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/deleteAnnotation';
@@ -123,7 +125,7 @@ const Viz = (props) => {
     contextValue.tableauExt.settings.set('configState', false);
     contextValue.tableauExt.settings.set('annotationToDelete', annotationID);
     contextValue.tableauExt.settings.saveAsync().then(() => {
-      console.log('checking delete annotation', annotationID, popUpUrl);
+      // console.log('checking delete annotation', annotationID, popUpUrl);
       tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
         if (closePayload === 'false') {
           contextValue.tableauExt.settings.set('configState', true);
@@ -131,7 +133,7 @@ const Viz = (props) => {
             // done we can close and move on
             props.history.push('/viz');
             props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
-            console.log('checking props', props, props.history);
+            // console.log('checking props', props, props.history);
           });
         }
       }).catch((error) => {
@@ -161,9 +163,11 @@ const Viz = (props) => {
 
     // update the array object
     const { className, events, onDrag, onDragEnd, onDragStart, children, ...noFunctionProps} = dragProps;
-    const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text}))(noFunctionProps);
-    const { width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text, ...noSubjectProps} = noFunctionProps;
-    const newNoteState = {...note, ...noSubjectProps, subject: {...subjectProps} }
+    const subjectProps = (({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text, fill, fillOpacity}) => ({width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text, fill, fillOpacity}))(noFunctionProps);
+    let connectorProps = {};
+    if ( noFunctionProps.points ) { connectorProps = (({points}) => ({points}))(noFunctionProps); }
+    const { width, height, radius, radiusPadding, innerRadius, outerRadius, depth, type, text, fill, fillOpacity, points, ...noSubjectProps} = noFunctionProps;
+    const newNoteState = {...note, ...noSubjectProps, subject: {...subjectProps}, connector: {...note.connector, ...connectorProps}};
     const newAnnotationState = annotationProps.filter(n => { return n.id !== dragState });
     newAnnotationState.push(newNoteState);
     
@@ -173,6 +177,7 @@ const Viz = (props) => {
     contextValue.tableauExt.settings.saveAsync().then(() => {
       props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
       setDragState(null);
+      setDragPoints(null);
       console.log('dragProps', contextValue.tableauExt.settings.getAll(), dragState, props.tableauSettings);
     });
   }
@@ -214,7 +219,9 @@ const Viz = (props) => {
           // screen 2b is connector props
           contextValue.tableauExt.settings.set('connectorType', (existingAnnotation.connector || {}).type || "line");
           contextValue.tableauExt.settings.set('connectorCurveString', (existingAnnotation.connector || {}).curveString || "curveCatmullRom");
-          contextValue.tableauExt.settings.set('connectorCurvePoints', (existingAnnotation.connector || {}).points || "0");
+          if ( !((( existingAnnotation.connector || {}).points) instanceof Array) ) {
+            contextValue.tableauExt.settings.set('connectorCurvePoints', (existingAnnotation.connector || {}).points || "0");
+          }
           contextValue.tableauExt.settings.set('connectorEnd', (existingAnnotation.connector || {}).end || "none");
           contextValue.tableauExt.settings.set('connectorEndScale', (existingAnnotation.connector || {}).endScale || "0");
 
@@ -236,6 +243,8 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('annotationNoteTextAnchor', (existingAnnotation.note || {}).textAnchor || "null");
           
           // subject props
+          contextValue.tableauExt.settings.set('annotationSubjectFill', (existingAnnotation.subject || {}).fill || "#FFF");
+          contextValue.tableauExt.settings.set('annotationSubjectFillOpacity', (existingAnnotation.subject || {}).fillOpacity || "0");
           contextValue.tableauExt.settings.set('annotationSubjectRadius', (existingAnnotation.subject || {}).radius || "0");
           contextValue.tableauExt.settings.set('annotationSubjectRadiusPadding', (existingAnnotation.subject || {}).radiusPadding || "0");
           contextValue.tableauExt.settings.set('annotationSubjectInnerRadius', (existingAnnotation.subject || {}).innerRadius || "0");
@@ -261,7 +270,9 @@ const Viz = (props) => {
                 if ( !existingAnnotation.connector ) { existingAnnotation.connector = {}; }
                 existingAnnotation.connector.type = contextValue.tableauExt.settings.get('connectorType');
                 existingAnnotation.connector.curveString = contextValue.tableauExt.settings.get('connectorCurveString');
-                existingAnnotation.connector.points = parseFloat(contextValue.tableauExt.settings.get('connectorCurvePoints'));
+                if ( !((( existingAnnotation.connector || {}).points) instanceof Array) || ((( existingAnnotation.connector || {}).points) instanceof Array && existingAnnotation.connector.points.length !== parseFloat(contextValue.tableauExt.settings.get('connectorCurvePoints')))) {
+                  existingAnnotation.connector.points = parseFloat(contextValue.tableauExt.settings.get('connectorCurvePoints'));
+                }
                 existingAnnotation.connector.end = contextValue.tableauExt.settings.get('connectorEnd');
                 existingAnnotation.connector.endScale = parseFloat(contextValue.tableauExt.settings.get('connectorEndScale'));
 
@@ -282,7 +293,9 @@ const Viz = (props) => {
                 existingAnnotation.note.textAnchor = contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor');
                 
                 // update the subject if we got new settings
-                if ( !existingAnnotation.subject ) { existingAnnotation.subject = {}; }
+                if ( !existingAnnotation.subject ) { existingAnnotation.subject = {}; }                
+                existingAnnotation.subject.fill = contextValue.tableauExt.settings.get('annotationSubjectFill');
+                existingAnnotation.subject.fillOpacity = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectFillOpacity'));      
                 existingAnnotation.subject.radius = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadius'));
                 existingAnnotation.subject.radiusPadding = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadiusPadding'));
                 existingAnnotation.subject.innerRadius = parseFloat(contextValue.tableauExt.settings.get('annotationSubjectInnerRadius'));
@@ -372,6 +385,8 @@ const Viz = (props) => {
                   textAnchor: contextValue.tableauExt.settings.get('annotationNoteTextAnchor') === "null" ? null : contextValue.tableauExt.settings.get('annotationNoteTextAnchor')
                 },
                 subject: {
+                  fill: contextValue.tableauExt.settings.get('annotationSubjectFill'),
+                  fillOpacity: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectFillOpacity')),
                   radius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadius')),
                   radiusPadding: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectRadiusPadding')),
                   innerRadius: parseFloat(contextValue.tableauExt.settings.get('annotationSubjectInnerRadius')),
@@ -546,7 +561,7 @@ const Viz = (props) => {
           {annotationProps.map(note => {
             const NoteType = Annotations[note.annotationType];
             note.connector.curve = note.connector.type === "curve" ? Curves[note.connector.curveString] || curveCatmullRom : null;
-            console.log('checking note', note);
+            console.log('checking note', note, dragPoints, note.connector.points);
             return (
               <React.Fragment key={`fragment-${note.id}`}>
                 <NoteType
@@ -560,12 +575,20 @@ const Viz = (props) => {
                     }
                   }}
                   onDragStart={() => setDragState(note.id)}
+                  onDrag={(dragProps) => { 
+                    if ( dragProps.points ) {
+                      setDragPoints({[note.id]:  dragProps.points});
+                      // setDragXY({[note.id]: [dragProps.x, dragProps.y]})
+                      console.log('dragging', dragProps, dragPoints);  
+                    }
+                  }}
                   onDragEnd={(dragProps) => { 
                     const hXw = [document.getElementById('tableau-react-annotation-layer').parentNode.clientHeight, document.getElementById('tableau-react-annotation-layer').parentNode.clientWidth];
                     annotationDragCallback(dragProps, note, hXw);
                   }}
                   {...note}
                   editMode={editMode}
+                  connector={{...note.connector, points: dragPoints && dragPoints instanceof Object && dragPoints[note.id] ? dragPoints[note.id] : note.connector.points || 0 }}
                   x={note.x < 0 ? 10 : note.x}
                   y={note.y < 0 ? 10 : note.y}
                 />
@@ -578,8 +601,8 @@ const Viz = (props) => {
                     fill={note.color || "#767676"}
                     width="18"
                     height="18"
-                    x={note.x+15}
-                    y={note.y-11}
+                    x={note.x+15} // +(dragXY && dragXY[note.id] ? dragXY[note.id][0] - note.x : 0)}
+                    y={note.y-11} // +(dragXY && dragXY[note.id] ? dragXY[note.id][1] - note.y : 0)}
                   >
                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                     <path d="M0 0h24v24H0z" fill="none"/>

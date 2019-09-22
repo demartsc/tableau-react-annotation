@@ -129,7 +129,9 @@ const AnnotationProps = {
       "wrap":240,  
     },
     "subject": {
-      "radius": 50
+      "radius": 50,
+      "fill": "#4a90e2",
+      "fillOpacity": .15
     },
     "dashArray":"0"
   },
@@ -153,7 +155,9 @@ const AnnotationProps = {
     },
     "subject": {
       "height": 100,
-      "width": 80
+      "width": 80, 
+      "fill": "#4a90e2",
+      "fillOpacity": .25
     },
     "dashArray":"0"
   },

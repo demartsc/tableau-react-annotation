@@ -11,7 +11,7 @@
     "d3-shape": "^1.3.5",
     "material-ui": "^0.20.2",
     "react": "^16.8.3",
-    "react-annotation": "^2.1.6",
+    "react-annotation": "^2.2.1",
     "react-beautiful-dnd": "^10.0.4",
     "react-dom": "^16.8.3",
     "react-router": "^4.3.1",
