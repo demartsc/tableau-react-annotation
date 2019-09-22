@@ -597,10 +597,7 @@ const Viz = (props) => {
                   onDragStart={() => setDragState(note.id)}
                   onDrag={(dragProps) => { 
                     setDragPoints({[note.id]:  dragProps.points});
-                    setDragXY({[note.id]: [dragProps.x, dragProps.y]})
-                    // if ( dragProps.points ) {
-                    // } else {
-                    // }
+                    setDragXY({[note.id]: [dragProps.x, dragProps.y, dragProps.dx, dragProps.dy]})
                     console.log('dragging', dragProps, dragPoints, dragXY);  
                   }}
                   onDragEnd={(dragProps) => { 
@@ -612,6 +609,9 @@ const Viz = (props) => {
                   connector={{...note.connector, points: dragPoints && dragPoints instanceof Object && dragPoints[note.id] ? dragPoints[note.id] : note.connector.points || 0 }}
                   x={note.x < 0 ? 10 : dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][0] : note.x}
                   y={note.y < 0 ? 10 : dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][1] : note.y}
+                  dx={note.dx < 0 ? 10 : dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][2] : note.dx}
+                  dy={note.dy < 0 ? 10 : dragXY && dragXY instanceof Object && dragXY[note.id] ? dragXY[note.id][3] : note.dy}
+
                 />
                 }
                 { // edit icon obtained from material ui
