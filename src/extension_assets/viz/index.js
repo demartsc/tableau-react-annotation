@@ -99,8 +99,8 @@ const Viz = (props) => {
   const contextValue = useContext(ExtensionContext);
   const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || "[]" !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
 
-  const [disableConfig, setDisableConfig] = useState(contextValue.tableauExt.settings.get('disableConfig'));
-  const [editMode, setEditMode] = useState(contextValue.tableauExt.settings.get('editMode'));
+  const [disableConfig, setDisableConfig] = useState(contextValue.tableauExt.settings.get('disableConfig') === "true");
+  const [editMode, setEditMode] = useState(contextValue.tableauExt.settings.get('editMode') === "true");
   const [iconViewState, setIconViewState] = useState(true);
 
   const [dragState, setDragState] = useState(null);
