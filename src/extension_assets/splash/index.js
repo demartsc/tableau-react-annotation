@@ -34,7 +34,8 @@ const buttonStyle = {}
  */
 const SplashStyle = {
   textAlign: 'center', 
-  overflow: 'hidden'
+  overflow: 'hidden',
+  background: 'rgb(255,255,255,1)'
 }
 
 const CustomSplash = (props) => (

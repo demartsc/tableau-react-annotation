@@ -526,7 +526,7 @@ const Viz = (props) => {
   // });
 
   let iconJSX;
-  if ( iconViewState && props.tableauSettings.annotationShowControls === "yes" ) {
+  if ( iconViewState && contextValue.tableauExt.settings.get('annotationShowControls') === "yes" ) {
     iconJSX =
       <div
         style={{
