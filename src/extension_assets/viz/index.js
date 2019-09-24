@@ -392,8 +392,8 @@ const Viz = (props) => {
                 id: newAnnotationId,
                 x: e.clientX,
                 y: e.clientY,
-                dx: 100,
-                dy: 100,
+                dx: contextValue.tableauExt.settings.get('annotationType') === 'AnnotationBracket' ? 0 : 100,
+                dy: contextValue.tableauExt.settings.get('annotationType') === 'AnnotationBracket' ? 0 : 100,
                 connector: {
                   type: contextValue.tableauExt.settings.get('connectorType'),
                   curveString: contextValue.tableauExt.settings.get('connectorCurveString'),
