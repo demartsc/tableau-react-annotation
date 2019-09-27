@@ -392,6 +392,17 @@ export default {
                   {"value": "yes", "text": "Yes"},
                   {"value": "no", "text": "No"}
                 ]
+              },
+              {
+                "type": "dropdown",
+                "label": "Turbo Mode",
+                "value": "no",
+                "name": "annotationPassThroughMode",
+                "tooltip": "Toggle whether to allow the extension to try and effect parent dom elements of extension.",
+                "values": [
+                  {"value": "no", "text": "No"},
+                  {"value": "yes", "text": "Yes"}
+                ]
               }
             ]
           },

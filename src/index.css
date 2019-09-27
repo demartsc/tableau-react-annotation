@@ -1,12 +1,11 @@
 html {
-  /* pointer-events: none; */
-  background: none transparent;
-  overflow: hidden;
   height: 100%;
   width: 100%;
 }
 
 body {
+  background: none transparent;
+  overflow: hidden;
   margin: 0;
   padding: 0;
   height: inherit;

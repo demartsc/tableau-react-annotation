@@ -4,6 +4,11 @@
   width: inherit;
 }
 
+.annotation-pass-through {
+  pointer-events: none;
+  background: none transparent;
+}
+
 .annotation-text-anchor-start {
   text-anchor: start;
 }

@@ -107,13 +107,26 @@ const Viz = (props) => {
   const [dragPoints, setDragPoints] = useState(null);
   const [dragXY, setDragXY] = useState(null);
 
+  const [dashboardSize, setDashboardSize] = useState({});
+
   console.log('checking initial props', props, annotationProps, contextValue.tableauExt.settings.get('editMode')); 
 
-  const extensionName = window.name;
+  // this section will actually set the background to click through if you want
   const extensionParent = window.parent;
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
-  // console.log('window', window.TableauExtension['components'], window, extensionName, extensionParent, extensionZoneId, contextValue.config);
-  // console.log('window', window.TableauExtension, annotationProps);
+  if ( contextValue.tableauExt.settings.get('annotationPassThroughMode') || "no" === "yes" ) {
+    setDashboardSize(contextValue.tableauExt.dashboardContent.dashboard.size);
+    console.log('checking this size', dashboardSize);
+    
+    // we are in a place where we can try to change the parent divs
+    // this works if we don't have cors
+    const extensionParentDiv = extensionParent.document.getElementById(`tabZoneId${extensionZoneId}`);
+    extensionParentDiv.classList.add('annotation-pass-through');
+    window.document.body.style.pointerEvents = "none";
+    console.log('window', extensionParent, extensionZoneId, contextValue.config, "%PUBLIC_URL%");
+  } else {
+    window.document.body.style.pointerEvents = "auto";
+  }
 
   const toggleVisibility = annotationID => {
     const existingAnnotation = _.find(annotationProps, (o) => { return o.id === annotationID });
