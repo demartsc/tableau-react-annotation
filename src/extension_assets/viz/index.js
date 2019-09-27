@@ -576,7 +576,7 @@ const Viz = (props) => {
       </div>
     }
 
-    if ( props.tableauSettings.annotationShowControls === "no" || props.tableauSettings.annotationPassThroughMode === "yes" ) {
+    if ( contextValue.tableauExt.settings.get('annotationShowControls') === "no" || contextValue.tableauExt.settings.get('annotationShowControls') === "yes" ) {
       // if we are not showing controls, don't enable edit mode
       if ( editMode ) setEditMode(false);
     }
