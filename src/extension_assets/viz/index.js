@@ -115,7 +115,8 @@ const Viz = (props) => {
     // we are in a place where we can try to change the parent divs
     // this works if we don't have cors
     const extensionParentDiv = extensionParent.document.getElementById(`tabZoneId${extensionZoneId}`);
-    extensionParentDiv.classList.add('annotation-pass-through');
+    // extensionParentDiv.classList.add('annotation-pass-through');
+    extensionParentDiv.style.pointerEvents = "none";
     window.document.body.style.pointerEvents = "none";
     console.log('window', extensionParent, extensionZoneId, contextValue.config, "%PUBLIC_URL%");
   } else {
