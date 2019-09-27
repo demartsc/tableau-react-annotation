@@ -111,7 +111,7 @@ const Viz = (props) => {
   // this section will actually set the background to click through if you want
   const extensionParent = window.parent;
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
-  if ( contextValue.tableauExt.settings.get('annotationPassThroughMode') || "no" === "yes" ) {    
+  if ( contextValue.tableauExt.settings.get('annotationPassThroughMode') === "yes" ) {    
     // we are in a place where we can try to change the parent divs
     // this works if we don't have cors
     const extensionParentDiv = extensionParent.document.getElementById(`tabZoneId${extensionZoneId}`);
