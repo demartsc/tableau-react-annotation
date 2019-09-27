@@ -55,6 +55,16 @@ class App extends Component {
     // this will bring up the viz
     if ( this.state.config.tableauExt.settings.get('configState') === "true" ) {
       this.state.config.tableauExt.settings.set('configState', 'false');
+      // if we are in pass through mode we need to revert if configured
+      // this is really our only escape from pass through mode
+      if ( this.state.config.tableauExt.settings.get('annotationPassThroughMode') === "yes" ) {
+        const extensionParent = window.parent;
+        const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
+        const extensionParentDiv = extensionParent.document.getElementById(`tabZoneId${extensionZoneId}`);
+        extensionParentDiv.style.pointerEvents = "auto";
+        window.document.body.style.pointerEvents = "auto";
+        this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
+      }
       this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
       this.state.config.tableauExt.settings.set('annotationShowControls', 'yes');
       this.state.config.tableauExt.settings.saveAsync().then(()=>{
