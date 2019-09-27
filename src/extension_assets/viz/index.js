@@ -106,18 +106,12 @@ const Viz = (props) => {
   const [dragState, setDragState] = useState(null);
   const [dragPoints, setDragPoints] = useState(null);
   const [dragXY, setDragXY] = useState(null);
-
-  const [dashboardSize, setDashboardSize] = useState({});
-
   console.log('checking initial props', props, annotationProps, contextValue.tableauExt.settings.get('editMode')); 
 
   // this section will actually set the background to click through if you want
   const extensionParent = window.parent;
   const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
-  if ( contextValue.tableauExt.settings.get('annotationPassThroughMode') || "no" === "yes" ) {
-    setDashboardSize(contextValue.tableauExt.dashboardContent.dashboard.size);
-    console.log('checking this size', dashboardSize);
-    
+  if ( contextValue.tableauExt.settings.get('annotationPassThroughMode') || "no" === "yes" ) {    
     // we are in a place where we can try to change the parent divs
     // this works if we don't have cors
     const extensionParentDiv = extensionParent.document.getElementById(`tabZoneId${extensionZoneId}`);
