@@ -109,13 +109,12 @@ const Viz = (props) => {
   console.log('checking initial props', props, annotationProps, contextValue.tableauExt.settings.get('editMode')); 
 
   // this section will actually set the background to click through if you want
-  const extensionParent = window.parent;
-  const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
   if ( contextValue.tableauExt.settings.get('annotationPassThroughMode') === "yes" ) {    
     // we are in a place where we can try to change the parent divs
     // this works if we don't have cors
+    const extensionParent = window.parent;
+    const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
     const extensionParentDiv = extensionParent.document.getElementById(`tabZoneId${extensionZoneId}`);
-    // extensionParentDiv.classList.add('annotation-pass-through');
     extensionParentDiv.style.pointerEvents = "none";
     window.document.body.style.pointerEvents = "none";
     console.log('window', extensionParent, extensionZoneId, contextValue.config, "%PUBLIC_URL%");
@@ -577,7 +576,7 @@ const Viz = (props) => {
       </div>
     }
 
-    if ( props.tableauSettings.annotationShowControls === "no" ) {
+    if ( props.tableauSettings.annotationShowControls === "no" || props.tableauSettings.annotationPassThroughMode === "yes" ) {
       // if we are not showing controls, don't enable edit mode
       if ( editMode ) setEditMode(false);
     }
