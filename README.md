@@ -3,7 +3,7 @@
 
 ## Introduction
 
-![React Annotation in Tableau](./docs/D1 Annotations.gif)
+![React Annotation in Tableau Image](./docs/D1 Annotations.gif)
 
 This is the tableau extension that allows you to layer [Susie Lu's](https://twitter.com/datatoviz?lang=en) [react-annotation](https://react-annotation.susielu.com/) library on top of Tableau. When you add this to your dashboard (you will likely want to cover your entire dashboard with it) you can leverage the majority of annotation types and options available in [react-annotation](https://react-annotation.susielu.com/) directly within Tableau. We have built a simple configuration UI that you can take advantage of to be able annotate your viz to your heart's delight. 
 
@@ -19,7 +19,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 #### Step 2: Click ‘Allow’ to permit the extension to run.
 
-![Allow Extension](./docs/Allow Extension.png)
+![Allow Extension in Desktop Image](./docs/Allow extension.png)
 
 ## Creating a Tableau Extension via `create-tableau-extension`
 The easiest way to create a new Tableau Extension is by using `create-tableau-extension` tool from NPM.
