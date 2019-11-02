@@ -17,6 +17,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Quick Start
 #### Step 1: Locate Annotate All The (Tableau) Things on the community extensions page
 
+Note: If you want the best experience, you should deploy a compiled version of this code directly to your Tableau Server and point your .trex file to that deployment of the extension. 
+
 #### Step 2: Click ‘Allow’ to permit the extension to run.
 
 ![Allow Extension in Desktop Image](./docs/Allow-extension.png)
