@@ -1,3 +1,23 @@
+// Copyright (c) 2019 Chris DeMartini
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 import CustomLayout from './CustomLayout';
 
 export default {
@@ -395,10 +415,10 @@ export default {
               },
               {
                 "type": "dropdown",
-                "label": "Turbo Mode",
+                "label": "Click Through Mode (Caution!)",
                 "value": "no",
                 "name": "annotationPassThroughMode",
-                "tooltip": "Toggle whether to allow the extension to try and effect parent dom elements of extension.",
+                "tooltip": "Proceed with Caution! This will cause our extension to error if not deployed directly to your Tableau Server! It will toggle whether to allow the extension to try and effect parent dom elements of extension.",
                 "values": [
                   {"value": "no", "text": "No"},
                   {"value": "yes", "text": "Yes"}
