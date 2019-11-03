@@ -47,7 +47,7 @@ Note: If you want to hide the annotation, but not delete it (e.g., save it for l
 
 ![Tableau React Annotation Add Annotation Screen](./docs/Add-Annotation.png)
 
-#### Step 7: Once you have added all of your extensions you can hide the ability to modify the annotations from the end user by toggling these two configurations in the add/edit annotation config (these settings are global even though they are accessed in the add/edit annotation config).
+#### Step 7: Once you have added all of your annotations you can hide the ability to modify the annotations from the end user by toggling these two configurations in the add/edit annotation config (these settings are global even though they are accessed in the add/edit annotation config).
 
 ![Tableau React Annotation Global Config Screen](./docs/Global-Config.png)
 
