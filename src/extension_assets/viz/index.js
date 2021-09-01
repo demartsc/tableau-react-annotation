@@ -115,6 +115,7 @@ const annotationStarter = [
 
 const Viz = (props) => {
   const tableauExt = window.tableau.extensions;
+  const baseURL = window.location.origin.includes('localhost:3000') ? window.location.origin : '.';
   const contextValue = useContext(ExtensionContext);
   const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || "[]" !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
 
@@ -157,7 +158,7 @@ const Viz = (props) => {
   }
 
   const deleteAnnotation = annotationID => {
-    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/deleteAnnotation';
+    const popUpUrl = `${baseURL}/delete.html`;
     const popUpOptions = {
       height: 250,
       width: 350,
@@ -173,7 +174,7 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('configState', true);
           contextValue.tableauExt.settings.saveAsync().then(() => {
             // done we can close and move on
-            props.history.push('/viz');
+            // props.history.push('/viz');
             props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
             // console.log('checking props', props, props.history);
           });
@@ -229,7 +230,7 @@ const Viz = (props) => {
   const configureAnnotation = (e, typ) => {
     console.log('checking disable config and drag state', disableConfig, dragState);
     e.persist();
-    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/annotation';
+    const popUpUrl = `${baseURL}/config.html`;
     const popUpOptions = {
       height: 700,
       width: 800,
@@ -377,7 +378,7 @@ const Viz = (props) => {
                 contextValue.tableauExt.settings.set('configState', true);
                 contextValue.tableauExt.settings.saveAsync().then(() => {
                   // done we can close and move on
-                  props.history.push('/viz');
+                  // props.history.push('/viz');
                   props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
                   console.log('checking props', props, props.history);
                 });
@@ -467,7 +468,7 @@ const Viz = (props) => {
               contextValue.tableauExt.settings.set('configNewAnnotation', false);
               contextValue.tableauExt.settings.saveAsync().then(() => {
                 // done we can close and move on
-                props.history.push('/viz')
+                // props.history.push('/viz')
                 props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
               });
         }

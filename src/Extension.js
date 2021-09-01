@@ -23,12 +23,10 @@
 import React, { Component } from 'react';
 import './Extension.css';
 
-import { Route } from "react-router-dom";
 import _ from 'lodash';
 
 import {tableau} from './tableau-extensions-1.latest';
 
-import { withRouter } from 'react-router-dom'
 import Viz from './extension_assets/viz';
 import Splash from './extension_assets/splash';
 import DeleteAnnotation from './extension_assets/annotationDelete';
@@ -46,6 +44,7 @@ class App extends Component {
     this.state = {
       config: {},
       disableConfig: false,
+      fakeRoute: this.props.fakeRoute,
       settings: {
         logo: props.logo,
         colors: props.colors,
@@ -88,12 +87,12 @@ class App extends Component {
       this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
       this.state.config.tableauExt.settings.set('annotationShowControls', 'yes');
       this.state.config.tableauExt.settings.saveAsync().then(()=>{
-        this.props.history.push('/')
+        this.setState({ fakeRoute: '/' });
       });
     } else {
       this.state.config.tableauExt.settings.set('configState', 'true');
       this.state.config.tableauExt.settings.saveAsync().then(()=>{
-        this.props.history.push('/viz')
+        this.setState({ fakeRoute: '/viz' });
       });  
     }
 
@@ -107,7 +106,7 @@ class App extends Component {
 
     // tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
     //   if (closePayload === 'false') {
-    //     this.props.history.push('/viz')
+    //     this.setState({ fakeRoute: '/viz' });
     //   }
     // }).catch((error) => {
     //   // One expected error condition is when the popup is closed by the user (meaning the user
@@ -146,7 +145,7 @@ class App extends Component {
       })
       if ( this.state.config.tableauExt.settings.get('configState') === 'true' ) {
         console.log('we are mounting now', this.state.config.tableauExt.settings.get('configState'));
-        this.props.history.push('/viz');
+        this.setState({ fakeRoute: '/viz' });
       }
     }, (err) => {
       // Something went wrong in initialization
@@ -164,47 +163,46 @@ class App extends Component {
           <SettingsContext.Provider value={this.state.settings}>
             <ExtensionContext.Provider value={this.state.config}>
               <React.Fragment>
-                <Route exact path="/" render={(props) =>
-                  <Splash
-                    onClick={this.configure}
-                    logo={this.props.logo}
-                  />}
-                />
-                <Route exact path="/configure" render={(props) => 
-                  <Configuration 
-                    extensionIcons={this.props.extensionIcons} 
-                    colors={this.props.colors} 
-                    stepperConfig={this.props.stepperConfig} 
-                    tableauExt={tableauExt}
-                    saveAsync={true}
-                  />}
-                />
-                <Route exact path="/annotation" render={(props) => 
-                  <Configuration 
-                    extensionIcons={this.props.extensionIcons} 
-                    colors={this.props.colors} 
-                    stepperConfig={this.props.annotationConfig} 
-                    tableauExt={tableauExt}
-                    saveAsync={true}
-                  />} 
-                />
-                <Route exact path="/deleteAnnotation" render={(props) => 
-                  <DeleteAnnotation
-                    onClick={this.deleteAnnotation}
-                    logo={this.props.logo}
-                  />}
-              />
-                <Route exact path="/viz" render={(props) =>
-                  <Viz
-                    extensionIcons={this.props.extensionIcons} 
-                    sheetNames={this.state.config.sheetNames}
-                    tableauSettings={this.state.config.tableauSettings}
-                    tableauExt={this.state.config.tableauExt}
-                    updateTableauSettings={this.updateTableauSettings}
-                    deleteAnnotation={this.deleteAnnotation}
-                    history={this.props.history}
-                  />}
-                />
+                  { this.state.fakeRoute === '/' && 
+                    <Splash
+                      onClick={this.configure}
+                      logo={this.props.logo}
+                    />
+                  }
+                  { this.props.fakeRoute === '/config' &&
+                    <Configuration 
+                      extensionIcons={this.props.extensionIcons} 
+                      colors={this.props.colors} 
+                      stepperConfig={this.props.stepperConfig} 
+                      tableauExt={tableauExt}
+                      saveAsync={true}
+                    />
+                  }
+                  { this.props.fakeRoute === '/annotation' &&
+                    <Configuration 
+                      extensionIcons={this.props.extensionIcons} 
+                      colors={this.props.colors} 
+                      stepperConfig={this.props.annotationConfig} 
+                      tableauExt={tableauExt}
+                      saveAsync={true}
+                    />
+                  } 
+                  { this.props.fakeRoute === "/deleteAnnotation" &&
+                    <DeleteAnnotation
+                      onClick={this.deleteAnnotation}
+                      logo={this.props.logo}
+                    />
+                  }
+                  { this.state.fakeRoute ==="/viz" &&
+                    <Viz
+                      extensionIcons={this.props.extensionIcons} 
+                      sheetNames={this.state.config.sheetNames}
+                      tableauSettings={this.state.config.tableauSettings}
+                      tableauExt={this.state.config.tableauExt}
+                      updateTableauSettings={this.updateTableauSettings}
+                      deleteAnnotation={this.deleteAnnotation}
+                    />
+                  }
               </React.Fragment>
             </ExtensionContext.Provider>
           </SettingsContext.Provider>
@@ -214,4 +212,4 @@ class App extends Component {
   }
 }
 
-export default withRouter(App);
+export default App;

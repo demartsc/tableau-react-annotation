@@ -18,4 +18,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-export { }
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import Extension from './Extension';
+import * as serviceWorker from './serviceWorker';
+
+// Custom styling
+import './extension_assets/extension.css';
+import brandLogo from './extension_assets/a-custom.png';
+
+import stepperConfig from './extension_assets/stepperConfig';
+import annotationConfig from './extension_assets/annotationConfig';
+import { colors, extensionIcons } from './extension_assets/style'
+
+
+ReactDOM.render(
+    <Extension 
+      logo={brandLogo}
+      stepperConfig={stepperConfig}
+      annotationConfig={annotationConfig}
+      colors={colors}
+      extensionIcons={extensionIcons}
+      fakeRoute={'/deleteAnnotation'}
+    />, 
+document.getElementById('root'));
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: http://bit.ly/CRA-PWA
+serviceWorker.unregister();

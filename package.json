@@ -2,7 +2,7 @@
   "name": "tableau-react-annotation",
   "description": "react-annotation in tableau",
   "version": "1.0.0",
-  "homepage": "https://demartsc.github.io/tableau-react-annotation",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.4.2",
@@ -12,6 +12,7 @@
     "material-ui": "^0.20.2",
     "react": "^16.8.3",
     "react-annotation": "^2.2.1",
+    "react-app-polyfill": "^2.0.0",
     "react-beautiful-dnd": "^10.0.4",
     "react-dom": "^16.8.3",
     "react-router": "^4.3.1",
@@ -33,14 +34,16 @@
     "eslint-plugin-react-hooks": "^2.0.1",
     "gh-pages": "2.0",
     "imgurify": "^2.0.1",
+    "react-app-rewire-multiple-entry": "^2.2.1",
+    "react-app-rewired": "^2.1.8",
     "react-scripts": "2.1.5"
   },
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject",
     "create": "browserify -t imgurify src/lib/splash/Splash.js -g browserify-css -o build/Splash.min.js -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] --plugins [ @babel/plugin-proposal-class-properties ] ]"
   },
