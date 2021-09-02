@@ -36,7 +36,6 @@ const ExtensionContext = window.TableauExtension['contexts']['ExtensionContext']
 const SettingsContext = window.TableauExtension['contexts']['SettingsContext'];
 const tableauExt = window.tableau.extensions;
 
-
 class App extends Component {
   constructor (props) {
     super(props);
@@ -167,15 +166,6 @@ class App extends Component {
                     <Splash
                       onClick={this.configure}
                       logo={this.props.logo}
-                    />
-                  }
-                  { this.props.fakeRoute === '/config' &&
-                    <Configuration 
-                      extensionIcons={this.props.extensionIcons} 
-                      colors={this.props.colors} 
-                      stepperConfig={this.props.stepperConfig} 
-                      tableauExt={tableauExt}
-                      saveAsync={true}
                     />
                   }
                   { this.props.fakeRoute === '/annotation' &&
