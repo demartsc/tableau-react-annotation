@@ -170,15 +170,6 @@ class App extends Component {
                     logo={this.props.logo}
                   />}
                 />
-                <Route exact path="/configure" render={(props) => 
-                  <Configuration 
-                    extensionIcons={this.props.extensionIcons} 
-                    colors={this.props.colors} 
-                    stepperConfig={this.props.stepperConfig} 
-                    tableauExt={tableauExt}
-                    saveAsync={true}
-                  />}
-                />
                 <Route exact path="/annotation" render={(props) => 
                   <Configuration 
                     extensionIcons={this.props.extensionIcons} 

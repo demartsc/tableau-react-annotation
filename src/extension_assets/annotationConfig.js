@@ -428,12 +428,6 @@ export default {
           },
         ],
         "overwrites": {}
-      },
-      {
-        "name": "Summary",
-        "title": "Summary",
-        "type": "summary",
-        "overwrites": {}
       }
     ]
   }
