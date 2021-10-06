@@ -418,7 +418,7 @@ export default {
                 "label": "Click Through Mode (Caution!)",
                 "value": "no",
                 "name": "annotationPassThroughMode",
-                "tooltip": "Proceed with Caution! This will cause our extension to error if not deployed directly to your Tableau Server! It will toggle whether to allow the extension to try and effect parent dom elements of extension.",
+                "tooltip": "Proceed with Caution! This will cause our extension to be completely pass through to mouse/keyboard interactions. NOTE: the only way to re-enable interaction is to re-configure the extension.",
                 "values": [
                   {"value": "no", "text": "No"},
                   {"value": "yes", "text": "Yes"}

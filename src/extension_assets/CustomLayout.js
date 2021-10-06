@@ -286,7 +286,7 @@ const CustomLayout = props => {
     extensionContext.tableauExt.settings.set('annotationSubjectBadgeText', "");
 
     if ( extensionContext.tableauExt.settings.get('configNewAnnotation') === "true" ) {
-      console.log('checking configNewAnnotation', extensionContext.tableauExt.settings.get('configNewAnnotation'), extensionContext.tableauExt.settings.get('configNewAnnotation') === "true");
+      // console.log('checking configNewAnnotation', extensionContext.tableauExt.settings.get('configNewAnnotation'), extensionContext.tableauExt.settings.get('configNewAnnotation') === "true");
       // new annotation, revert descriptions
       extensionContext.tableauExt.settings.set('annotationNoteTitle', "A New Annotation!");
       extensionContext.tableauExt.settings.set('annotationNoteLabel', "You should update this with the content you want. Click my pencil to edit me!");
@@ -295,12 +295,12 @@ const CustomLayout = props => {
     extensionContext.tableauExt.settings.saveAsync().then(() => {
       setAnnotationType(value)
       props.onOptionSelected('annotationType', value);
-      console.log('annotationType', annotationType, value, extensionContext.tableauExt.settings.getAll());
+      // console.log('annotationType', annotationType, value, extensionContext.tableauExt.settings.getAll());
     });
   }
 
   useEffect(() => {
-    console.log('checking effect', props);
+    // console.log('checking effect', props);
     if (annotationType === "") {
       props.enableNext(false)
     } else {
@@ -309,7 +309,7 @@ const CustomLayout = props => {
   }, [annotationType]);
 
   const Annotation = Annotations[annotationType];
-  console.log('checking annotation in custom', annotationType, Annotations, Annotation);
+  // console.log('checking annotation in custom', annotationType, Annotations, Annotation);
   return (
     <div style={layoutStyle}>
       <h1>Select an Annotation Type</h1>

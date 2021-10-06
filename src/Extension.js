@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Chris DeMartini
+// Copyright (c) 2019, 2021 Chris DeMartini
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -59,8 +59,11 @@ class App extends Component {
     // remove annotation from array
     const annotationToDelete = this.state.config.tableauExt.settings.get('annotationToDelete');
     const annotationArray = JSON.parse(this.state.config.tableauExt.settings.get('annotationData'));
-    const newAnnotationArray = _.filter(annotationArray,(o) => { console.log('checking object', o.id, annotationToDelete); return o.id !== annotationToDelete });
-    console.log('we are deleting an annotation', annotationToDelete, newAnnotationArray);
+    const newAnnotationArray = _.filter(annotationArray,(o) => { 
+      // console.log('checking object', o.id, annotationToDelete); 
+      return o.id !== annotationToDelete 
+    });
+    // console.log('we are deleting an annotation', annotationToDelete, newAnnotationArray);
 
     // set new array back to settings
     this.state.config.tableauExt.settings.set('annotationData',JSON.stringify(newAnnotationArray));
@@ -75,51 +78,23 @@ class App extends Component {
     // this will bring up the viz
     if ( this.state.config.tableauExt.settings.get('configState') === "true" ) {
       this.state.config.tableauExt.settings.set('configState', 'false');
+      this.state.config.tableauExt.settings.set('annotationShowControls', 'yes');
       // if we are in pass through mode we need to revert if configured
       // this is really our only escape from pass through mode
       if ( this.state.config.tableauExt.settings.get('annotationPassThroughMode') === "yes" ) {
-        const extensionParent = window.parent;
-        const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
-        const extensionParentDiv = extensionParent.document.getElementById(`tabZoneId${extensionZoneId}`);
-        extensionParentDiv.style.pointerEvents = "auto";
-        window.document.body.style.pointerEvents = "auto";
-        this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
+        this.state.config.tableauExt.setClickThroughAsync(false).then(() => {
+          this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
+          this.state.config.tableauExt.settings.saveAsync().then(()=>{
+            this.props.history.push('/')
+          });    
+        });
       }
-      this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
-      this.state.config.tableauExt.settings.set('annotationShowControls', 'yes');
-      this.state.config.tableauExt.settings.saveAsync().then(()=>{
-        this.props.history.push('/')
-      });
     } else {
       this.state.config.tableauExt.settings.set('configState', 'true');
       this.state.config.tableauExt.settings.saveAsync().then(()=>{
         this.props.history.push('/viz')
       });  
     }
-
-    // may be better to render a config box so that it will display if user clicks config
-
-    // const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '#/configure';
-    // const popUpOptions = {
-    //   height: 625,
-    //   width: 790,
-    // };
-
-    // tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
-    //   if (closePayload === 'false') {
-    //     this.props.history.push('/viz')
-    //   }
-    // }).catch((error) => {
-    //   // One expected error condition is when the popup is closed by the user (meaning the user
-    //   // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
-    //   switch(error.errorCode) {
-    //     case window.tableau.ErrorCodes.DialogClosedByUser:
-    //       // log("closed by user")
-    //       break;
-    //     default:
-    //       console.error(error.message);
-    //   }
-    // });
   };
 
   updateTableauSettings = (newSettings) => {
@@ -145,17 +120,17 @@ class App extends Component {
         extensionReady: true
       })
       if ( this.state.config.tableauExt.settings.get('configState') === 'true' ) {
-        console.log('we are mounting now', this.state.config.tableauExt.settings.get('configState'));
+        // console.log('we are mounting now', this.state.config.tableauExt.settings.get('configState'));
         this.props.history.push('/viz');
       }
     }, (err) => {
       // Something went wrong in initialization
-      console.log('Error while Initializing: ' + err.toString());
+      // console.log('Error while Initializing: ' + err.toString());
     });
   }
 
   render() {
-    console.log('checking state', this.state);
+    // console.log('checking state', this.state);
     return (
       <div className="App">
         {

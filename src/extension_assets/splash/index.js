@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Chris DeMartini
+// Copyright (c) 2019, 2021 Chris DeMartini
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -60,14 +60,14 @@ const SplashStyle = {
 
 const CustomSplash = (props) => (
   <div className="Splash" style={SplashStyle}>
-    <h1>Annotate All The (Tableau) Things!</h1>
+    <h1>Let's Annotate!</h1>
     <h4>React-Annotation within Tableau</h4>
     <p>Leverage the brilliance of Susie Lu's React-Annotation library, directly within (or on top of) Tableau!</p>
     
     
     {/* Config button. It should have the `onClick={props.onClick}` property and a `value` parameter as well */}
     <ButtonInput 
-      value="Let's Annotate Things!"
+      value="Let's Annotate!"
       onClick={props.onClick}
       style={buttonStyle}
     />
