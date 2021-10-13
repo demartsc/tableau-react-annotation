@@ -544,7 +544,7 @@ const Viz = (props) => {
         }} 
         className="annotation-controls"
       >
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <Grid item xs={6}>
             <Tooltip title={`Set CRUD Configurations`} placement="right">
               <IconButton onClick={(e) => {
