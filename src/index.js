@@ -30,6 +30,7 @@ import './extension_assets/extension.css';
 import brandLogo from './extension_assets/a-custom.png';
 
 import annotationConfig from './extension_assets/annotationConfig';
+import crudConfig from './extension_assets/crudConfig';
 import { colors, extensionIcons } from './extension_assets/style'
 
 
@@ -38,6 +39,7 @@ ReactDOM.render(
     <Extension 
       logo={brandLogo}
       annotationConfig={annotationConfig}
+      crudConfig={crudConfig}
       colors={colors}
       extensionIcons={extensionIcons}
     />
