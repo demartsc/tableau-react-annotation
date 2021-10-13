@@ -76,19 +76,21 @@ class App extends Component {
 
   configure = () => {
     // this will bring up the viz
+    this.state.config.tableauExt.settings.set('annotationShowControls', 'yes');    
     if ( this.state.config.tableauExt.settings.get('configState') === "true" ) {
       this.state.config.tableauExt.settings.set('configState', 'false');
-      this.state.config.tableauExt.settings.set('annotationShowControls', 'yes');
       // if we are in pass through mode we need to revert if configured
       // this is really our only escape from pass through mode
-      if ( this.state.config.tableauExt.settings.get('annotationPassThroughMode') === "yes" ) {
-        this.state.config.tableauExt.setClickThroughAsync(false).then(() => {
-          this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
-          this.state.config.tableauExt.settings.saveAsync().then(()=>{
-            this.props.history.push('/')
-          });    
-        });
-      }
+      this.state.config.tableauExt.settings.saveAsync().then(()=>{
+        if ( this.state.config.tableauExt.settings.get('annotationPassThroughMode') === "yes" ) {
+          this.state.config.tableauExt.setClickThroughAsync(false).then(() => {
+            this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
+            this.state.config.tableauExt.settings.saveAsync().then(()=>{
+              this.props.history.push('/')
+            });    
+          });
+        }
+      });  
     } else {
       this.state.config.tableauExt.settings.set('configState', 'true');
       this.state.config.tableauExt.settings.saveAsync().then(()=>{
@@ -150,6 +152,15 @@ class App extends Component {
                     extensionIcons={this.props.extensionIcons} 
                     colors={this.props.colors} 
                     stepperConfig={this.props.annotationConfig} 
+                    tableauExt={tableauExt}
+                    saveAsync={true}
+                  />} 
+                />
+                <Route exact path="/crudConfig" render={(props) => 
+                  <Configuration 
+                    extensionIcons={this.props.extensionIcons} 
+                    colors={this.props.colors} 
+                    stepperConfig={this.props.crudConfig} 
                     tableauExt={tableauExt}
                     saveAsync={true}
                   />} 

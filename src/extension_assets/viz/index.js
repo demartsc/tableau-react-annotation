@@ -49,6 +49,7 @@ import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import LibraryAdd from '@material-ui/icons/LibraryAdd';
+import SettingsIcon from '@material-ui/icons/Settings';
 import Edit from '@material-ui/icons/Edit';
 // import ControlPoint from '@material-ui/icons/ControlPoint';
 
@@ -119,6 +120,7 @@ const Viz = (props) => {
   const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || "[]" !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
 
   const [disableConfig, setDisableConfig] = useState(contextValue.tableauExt.settings.get('disableConfig') === "true");
+  const [crudConfigState, setCrudConfigState] = useState(contextValue.tableauExt.settings.get('crudConfig') === "true");
   const [editMode, setEditMode] = useState(contextValue.tableauExt.settings.get('editMode') === "true");
   const [iconViewState, setIconViewState] = useState(true);
 
@@ -223,6 +225,49 @@ const Viz = (props) => {
       setDragPoints(null);
       setDragXY(null);
       // console.log('dragProps', contextValue.tableauExt.settings.getAll(), dragState, props.tableauSettings);
+    });
+  }
+
+  const popCRUDConfig = e => { 
+    // console.log('checking disable config and drag state', disableConfig, dragState);
+    e.persist();
+    const popUpUrl = window.location.origin + process.env.PUBLIC_URL + '/#/crudConfig';
+    const popUpOptions = {
+      height: 700,
+      width: 800,
+    };
+
+    contextValue.tableauExt.settings.set('configState', false);
+    contextValue.tableauExt.settings.saveAsync().then(() => {
+      // console.log('existing annotations writter to settings', props.tableauSettings);
+      tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+        if (closePayload === 'false') {
+          // save to tableau settings
+          contextValue.tableauExt.settings.set('configState', true);
+          contextValue.tableauExt.settings.set('crudConfig', false);
+          contextValue.tableauExt.settings.saveAsync().then(() => {
+            setCrudConfigState(false);
+            props.history.push('/viz')
+            props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+          });
+        }
+      }).catch((error) => {
+        // One expected error condition is when the popup is closed by the user (meaning the user
+        // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+        switch(error.errorCode) {
+          case window.tableau.ErrorCodes.DialogClosedByUser:
+            // log("closed by user")
+            contextValue.tableauExt.settings.set('crudConfig', false);
+            contextValue.tableauExt.settings.saveAsync().then(() => {
+              setCrudConfigState(false);
+              props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+            });
+  
+            break;
+          default:
+            console.error(error.message);
+        }
+      });      
     });
   }
 
@@ -501,6 +546,20 @@ const Viz = (props) => {
       >
         <Grid container justify="center">
           <Grid item xs={6}>
+            <Tooltip title={`Set CRUD Configurations`} placement="right">
+              <IconButton onClick={(e) => {
+                contextValue.tableauExt.settings.set('crudConfig', true);
+                contextValue.tableauExt.settings.saveAsync().then(() => {
+                  setCrudConfigState(true);
+                  popCRUDConfig(e);
+                });
+              }}>
+                  <SettingsIcon
+                    color={crudConfigState ? "secondary" : "action"}
+                  /> 
+              </IconButton>
+            </Tooltip>
+            <br />
             <Tooltip title={`Toggle Add Annotation Mode`} placement="right">
               <IconButton onClick={() => {
                 contextValue.tableauExt.settings.set('disableConfig', !disableConfig);

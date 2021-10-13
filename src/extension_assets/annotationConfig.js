@@ -399,33 +399,6 @@ export default {
               },
             ]
           },
-          {
-            "name": "Configuration",
-            "inputs": [
-              {
-                "type": "dropdown",
-                "label": "Show Controls?",
-                "value": "yes",
-                "name": "annotationShowControls",
-                "tooltip": "Toggle whether to show the icon controls for CRUD operations.",
-                "values": [
-                  {"value": "yes", "text": "Yes"},
-                  {"value": "no", "text": "No"}
-                ]
-              },
-              {
-                "type": "dropdown",
-                "label": "Click Through Mode (Caution!)",
-                "value": "no",
-                "name": "annotationPassThroughMode",
-                "tooltip": "Proceed with Caution! This will cause our extension to be completely pass through to mouse/keyboard interactions. NOTE: the only way to re-enable interaction is to re-configure the extension.",
-                "values": [
-                  {"value": "no", "text": "No"},
-                  {"value": "yes", "text": "Yes"}
-                ]
-              }
-            ]
-          },
         ],
         "overwrites": {}
       }
