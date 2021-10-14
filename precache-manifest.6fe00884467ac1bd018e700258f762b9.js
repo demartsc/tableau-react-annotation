@@ -1,19 +1,19 @@
 self.__precacheManifest = [
   {
-    "revision": "2a9219c9d820349ea201",
+    "revision": "d1cff3e027afc9cd8baa",
     "url": "/tableau-react-annotation/static/css/main.954047f6.chunk.css"
   },
   {
-    "revision": "2a9219c9d820349ea201",
-    "url": "/tableau-react-annotation/static/js/main.2a9219c9.chunk.js"
+    "revision": "d1cff3e027afc9cd8baa",
+    "url": "/tableau-react-annotation/static/js/main.d1cff3e0.chunk.js"
   },
   {
     "revision": "c484e4a27916d31874d0",
     "url": "/tableau-react-annotation/static/js/runtime~main.c484e4a2.js"
   },
   {
-    "revision": "e80b425085591e9e99a2",
-    "url": "/tableau-react-annotation/static/js/2.e80b4250.chunk.js"
+    "revision": "305b5cd8caa511e00c5e",
+    "url": "/tableau-react-annotation/static/js/2.305b5cd8.chunk.js"
   },
   {
     "revision": "4533e587ba57915367e5dab7b59b905d",
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/tableau-react-annotation/static/media/a-custom.21a6b73e.png"
   },
   {
-    "revision": "963cf38a0fa83e0c197c92581a61051e",
+    "revision": "6be53842e39a2b78709ae2ac9729115b",
     "url": "/tableau-react-annotation/index.html"
   }
 ];
