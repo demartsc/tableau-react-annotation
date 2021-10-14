@@ -1,7 +1,7 @@
 {
   "name": "tableau-react-annotation",
   "description": "react-annotation in tableau",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage": "https://demartsc.github.io/tableau-react-annotation",
   "private": true,
   "dependencies": {
