@@ -10,6 +10,11 @@ const multipleEntry = require('react-app-rewire-multiple-entry')([
         outPath: '/config.html'
 	  },
     {
+      entry: 'src/index_crud.js',
+      template: 'public/crud.html',
+      outPath: '/crud.html'
+    },
+    {
         entry: 'src/index_delete.js',
         template: 'public/delete.html',
         outPath: '/delete.html'

@@ -399,33 +399,6 @@ export default {
               },
             ]
           },
-          {
-            "name": "Configuration",
-            "inputs": [
-              {
-                "type": "dropdown",
-                "label": "Show Controls?",
-                "value": "yes",
-                "name": "annotationShowControls",
-                "tooltip": "Toggle whether to show the icon controls for CRUD operations.",
-                "values": [
-                  {"value": "yes", "text": "Yes"},
-                  {"value": "no", "text": "No"}
-                ]
-              },
-              {
-                "type": "dropdown",
-                "label": "Click Through Mode (Caution!)",
-                "value": "no",
-                "name": "annotationPassThroughMode",
-                "tooltip": "Proceed with Caution! This will cause our extension to error if not deployed directly to your Tableau Server! It will toggle whether to allow the extension to try and effect parent dom elements of extension.",
-                "values": [
-                  {"value": "no", "text": "No"},
-                  {"value": "yes", "text": "Yes"}
-                ]
-              }
-            ]
-          },
         ],
         "overwrites": {}
       }

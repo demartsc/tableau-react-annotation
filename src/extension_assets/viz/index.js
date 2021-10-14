@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Chris DeMartini
+// Copyright (c) 2019, 2021 Chris DeMartini
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import _ from 'lodash';
 import uuid from 'uuid';
 import { 
@@ -49,6 +49,7 @@ import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import LibraryAdd from '@material-ui/icons/LibraryAdd';
+import SettingsIcon from '@material-ui/icons/Settings';
 import Edit from '@material-ui/icons/Edit';
 // import ControlPoint from '@material-ui/icons/ControlPoint';
 
@@ -120,27 +121,28 @@ const Viz = (props) => {
   const annotationProps = JSON.parse((props.tableauSettings || {}).annotationData || "[]" !== "[]" ? (props.tableauSettings || {}).annotationData : JSON.stringify(annotationStarter)); // annotationStarter
 
   const [disableConfig, setDisableConfig] = useState(contextValue.tableauExt.settings.get('disableConfig') === "true");
+  const [crudConfigState, setCrudConfigState] = useState(contextValue.tableauExt.settings.get('crudConfig') === "true");
   const [editMode, setEditMode] = useState(contextValue.tableauExt.settings.get('editMode') === "true");
   const [iconViewState, setIconViewState] = useState(true);
 
   const [dragState, setDragState] = useState(null);
   const [dragPoints, setDragPoints] = useState(null);
   const [dragXY, setDragXY] = useState(null);
-  console.log('checking initial props', props, annotationProps, contextValue.tableauExt.settings.get('editMode')); 
+  // console.log('checking initial props', props, annotationProps, contextValue.tableauExt.settings.get('editMode')); 
 
-  // this section will actually set the background to click through if you want
-  if ( contextValue.tableauExt.settings.get('annotationPassThroughMode') === "yes" ) {    
-    // we are in a place where we can try to change the parent divs
-    // this works if we don't have cors
-    const extensionParent = window.parent;
-    const extensionZoneId = window.name.substring(window.name.lastIndexOf("_")+1)
-    const extensionParentDiv = extensionParent.document.getElementById(`tabZoneId${extensionZoneId}`);
-    extensionParentDiv.style.pointerEvents = "none";
-    window.document.body.style.pointerEvents = "none";
-    console.log('window', extensionParent, extensionZoneId, contextValue.config, "%PUBLIC_URL%");
-  } else {
-    window.document.body.style.pointerEvents = "auto";
-  }
+  // hook linked to setting will toggle click through mode
+  useEffect(() => {
+    // this section will actually set the background to click through if you want
+    if ( contextValue.tableauExt.settings.get('annotationPassThroughMode') === "yes" ) {    
+        contextValue.tableauExt.settings.set('annotationShowControls', 'no');
+        contextValue.tableauExt.setClickThroughAsync(true).then(() => {
+        // if click through is turned on we might as well hide controls
+        // contextValue.tableauExt.settings.set('annotationShowControls', 'no');
+        props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+        // console.log('click through enabled');
+      });
+    } 
+  }, [props.tableauSettings.annotationPassThroughMode]);
 
   const toggleVisibility = annotationID => {
     const existingAnnotation = _.find(annotationProps, (o) => { return o.id === annotationID });
@@ -153,7 +155,7 @@ const Viz = (props) => {
     contextValue.tableauExt.settings.saveAsync().then(() => {
       // done we can close and move on
       props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
-      console.log('toggle', annotationID, existingAnnotation);
+      // console.log('toggle', annotationID, existingAnnotation);
     });
   }
 
@@ -195,7 +197,7 @@ const Viz = (props) => {
 
   const annotationDragCallback = (dragProps, note, hXw) => {
     // fix placement of note or annotation if it is off screen
-    console.log('we are in annotation drag end callback', dragProps, note, hXw);
+    // console.log('we are in annotation drag end callback', dragProps, note, hXw);
     if ( dragProps.x < 0 ) { dragProps.x = 10 }
     if ( dragProps.y < 0 ) { dragProps.y = 10 }
     if ( dragProps.x > hXw[1] ) { dragProps.x = hXw[1]-10 }
@@ -216,19 +218,63 @@ const Viz = (props) => {
     newAnnotationState.push(newNoteState);
     
     // save to tableau settings
-    console.log('drag ended - we are going to stringify', note, noSubjectProps, noFunctionProps, newAnnotationState, JSON.stringify(newAnnotationState));
+    // console.log('drag ended - we are going to stringify', note, noSubjectProps, noFunctionProps, newAnnotationState, JSON.stringify(newAnnotationState));
     contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
     contextValue.tableauExt.settings.saveAsync().then(() => {
       props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
       setDragState(null);
       setDragPoints(null);
       setDragXY(null);
-      console.log('dragProps', contextValue.tableauExt.settings.getAll(), dragState, props.tableauSettings);
+      // console.log('dragProps', contextValue.tableauExt.settings.getAll(), dragState, props.tableauSettings);
+    });
+  }
+
+  const popCRUDConfig = e => { 
+    // console.log('checking disable config and drag state', disableConfig, dragState);
+    e.persist();
+    const popUpUrl = `${baseURL}/crud.html`;
+    const popUpOptions = {
+      height: 700,
+      width: 800,
+    };
+
+    contextValue.tableauExt.settings.set('configState', false);
+    contextValue.tableauExt.settings.saveAsync().then(() => {
+      // console.log('existing annotations writter to settings', props.tableauSettings);
+      tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
+        if (closePayload === 'false') {
+          // save to tableau settings
+          contextValue.tableauExt.settings.set('configState', true);
+          contextValue.tableauExt.settings.set('crudConfig', false);
+          contextValue.tableauExt.settings.saveAsync().then(() => {
+            setCrudConfigState(false);
+            // props.history.push('/viz')
+            console.log('passThroughMode:', contextValue.tableauExt.settings.get('annotationPassThroughMode'));
+            props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+          });
+        }
+      }).catch((error) => {
+        // One expected error condition is when the popup is closed by the user (meaning the user
+        // clicks the 'X' in the top right of the dialog).  This can be checked for like so:
+        switch(error.errorCode) {
+          case window.tableau.ErrorCodes.DialogClosedByUser:
+            // log("closed by user")
+            contextValue.tableauExt.settings.set('crudConfig', false);
+            contextValue.tableauExt.settings.saveAsync().then(() => {
+              setCrudConfigState(false);
+              props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
+            });
+  
+            break;
+          default:
+            console.error(error.message);
+        }
+      });      
     });
   }
 
   const configureAnnotation = (e, typ) => {
-    console.log('checking disable config and drag state', disableConfig, dragState);
+    // console.log('checking disable config and drag state', disableConfig, dragState);
     e.persist();
     const popUpUrl = `${baseURL}/config.html`;
     const popUpOptions = {
@@ -245,13 +291,13 @@ const Viz = (props) => {
         if ( existingAnnotation ) { 
           
           // set config state to false so that the config window will show
-          console.log('turning config off', contextValue.tableauExt.settings.get('configState')
-            , (existingAnnotation.subject || {}).radius || "15"
-            , (existingAnnotation.subject || {}).width
-            , existingAnnotation.subject
-            , existingAnnotation
-            ,  false
-          );
+          // console.log('turning config off', contextValue.tableauExt.settings.get('configState')
+          //   , (existingAnnotation.subject || {}).radius || "15"
+          //   , (existingAnnotation.subject || {}).width
+          //   , existingAnnotation.subject
+          //   , existingAnnotation
+          //   ,  false
+          // );
           contextValue.tableauExt.settings.set('configState', false);
 
           // first screen is annotation type
@@ -308,7 +354,7 @@ const Viz = (props) => {
           contextValue.tableauExt.settings.set('annotationSubjectDisable', (existingAnnotation.subject || {}).disable || "no");
 
           contextValue.tableauExt.settings.saveAsync().then(() => {
-            console.log('existing annotations writter to settings', props.tableauSettings);
+            // console.log('existing annotations writter to settings', props.tableauSettings);
             tableauExt.ui.displayDialogAsync(popUpUrl, "", popUpOptions).then((closePayload) => {
               if (closePayload === 'false') {
                 // we can now write the updates back to the annotation array and persist to tableau
@@ -367,20 +413,20 @@ const Viz = (props) => {
                 // const newNoteState = {...note, ...noFunctionProps, ...{subject: subjectProps}}
                 const newAnnotationState = annotationProps.filter(n => { return n.id !== existingAnnotation.id });
                 newAnnotationState.splice(existingAnnotation.id, 0, existingAnnotation);
-                console.log('do we get existing annotation', existingAnnotation, existingAnnotation.color, props.tableauSettings.annotationColor, props.tableauExt.settings.get('annotationColor'));
+                // console.log('do we get existing annotation', existingAnnotation, existingAnnotation.color, props.tableauSettings.annotationColor, props.tableauExt.settings.get('annotationColor'));
 
                 
                 // save to tableau settings
                 contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationState));
 
                 // set config state to false so that the config window will show
-                console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true, popUpUrl);
+                // console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true, popUpUrl);
                 contextValue.tableauExt.settings.set('configState', true);
                 contextValue.tableauExt.settings.saveAsync().then(() => {
                   // done we can close and move on
                   // props.history.push('/viz');
                   props.updateTableauSettings(contextValue.tableauExt.settings.getAll());
-                  console.log('checking props', props, props.history);
+                  // console.log('checking props', props, props.history);
                 });
               }
             }).catch((error) => {
@@ -399,7 +445,7 @@ const Viz = (props) => {
       } else {
 
         // set config state to false so that the config window will show
-        console.log('turning config off', contextValue.tableauExt.settings.get('configState'), false);
+        // console.log('turning config off', contextValue.tableauExt.settings.get('configState'), false);
         contextValue.tableauExt.settings.set('configState', false);
         contextValue.tableauExt.settings.set('configNewAnnotation', true);
         contextValue.tableauExt.settings.saveAsync().then(() => {
@@ -463,7 +509,7 @@ const Viz = (props) => {
               contextValue.tableauExt.settings.set('annotationData', JSON.stringify(newAnnotationArray));
               
               // set config state to false so that the config window will show
-              console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true);
+              // console.log('turning config on', contextValue.tableauExt.settings.get('configState'), true);
               contextValue.tableauExt.settings.set('configState', true);
               contextValue.tableauExt.settings.set('configNewAnnotation', false);
               contextValue.tableauExt.settings.saveAsync().then(() => {
@@ -488,70 +534,6 @@ const Viz = (props) => {
     }
   };
 
-  // this goes across iframe to parent and triggers a CORS error
-  // extensionParent.document.getElementById("tabZoneId" + extensionZoneId).style.pointerEvents = 'none');
-
-  /*
-  annotationDragCallBack = annotationInfo => {
-    if ((this.state.tableauSettings || {}).clickAnnotations) {
-      const newAnnotations = JSON.parse(this.state.tableauSettings.clickAnnotations);
-      newAnnotations.map(d => {
-        if (annotationInfo.originalSettings.annotationID === d.annotationID) {
-          d.dx = annotationInfo.updatedSettings.dx;
-          d.dy = annotationInfo.updatedSettings.dy;
-          d.radius = annotationInfo.updatedSettings.radius;
-          d.height = annotationInfo.updatedSettings.height;
-          d.width = annotationInfo.updatedSettings.width;
-        }
-      })
-      
-      console.log('annotation drag ended', annotationInfo, newAnnotations);
-      if (TableauSettings.ShouldUse) {
-        TableauSettings.updateAndSave({
-          clickAnnotations: JSON.stringify(newAnnotations),
-        }, settings => {
-          this.setState({
-            tableauSettings: settings,
-          });
-        });
-    
-      } else {
-        tableauExt.settings.set('clickAnnotations', JSON.stringify(newAnnotations));
-        tableauExt.settings.saveAsync().then(() => {
-          this.setState({
-            tableauSettings: tableauExt.settings.getAll()
-          });
-        });
-      }
-    }
-  }
-  */
-
-  // this function and effect calls get summary data when something changes
-  // const options = {
-  //   ignoreAliases: false,
-  //   ignoreSelection: true,
-  //   maxRows: 0
-  // };
-
-  // const getSummaryData = () => {
-  //   let sheetObject = contextValue.sheetNames.find(worksheet => worksheet.name === contextValue.tableauSettings.selectedSheet1);
-
-  //   //working here on pulling out summmary data
-  //   //may want to limit to a single row when getting column names
-  //   sheetObject.getSummaryDataAsync(options).then(data => {
-  //     // Use data
-  //     console.log(data);
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   // Get summary data when tableauSettings are available
-  //   if ( props.tableauSettings.annotationShowControls === "no" ) {
-  //     if ( editMode ) setEditMode(false);
-  //   }
-  // });
-
   let iconJSX;
   if ( iconViewState && contextValue.tableauExt.settings.get('annotationShowControls') === "yes" ) {
     iconJSX =
@@ -564,8 +546,22 @@ const Viz = (props) => {
         }} 
         className="annotation-controls"
       >
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <Grid item xs={6}>
+            <Tooltip title={`Set CRUD Configurations`} placement="right">
+              <IconButton onClick={(e) => {
+                contextValue.tableauExt.settings.set('crudConfig', true);
+                contextValue.tableauExt.settings.saveAsync().then(() => {
+                  setCrudConfigState(true);
+                  popCRUDConfig(e);
+                });
+              }}>
+                  <SettingsIcon
+                    color={crudConfigState ? "secondary" : "action"}
+                  /> 
+              </IconButton>
+            </Tooltip>
+            <br />
             <Tooltip title={`Toggle Add Annotation Mode`} placement="right">
               <IconButton onClick={() => {
                 contextValue.tableauExt.settings.set('disableConfig', !disableConfig);
@@ -634,7 +630,7 @@ const Viz = (props) => {
             if ( note.note.disable === "yes" ) disableArray.push('note');
             if ( note.subject.disable === "yes" ) disableArray.push('subject');
             note.connector.curve = note.connector.type === "curve" ? Curves[note.connector.curveString] || curveCatmullRom : null;
-            console.log('checking note', note, disableArray);
+            // console.log('checking note', note, disableArray);
             return (
               <React.Fragment key={`fragment-${note.id}`}>
                 {((note.visibiity || "yes") === "yes" || editMode) && 
@@ -645,14 +641,14 @@ const Viz = (props) => {
                     // we can use this event to handle when the annotation is clicked
                     // and then when clicked we can update the annotation vs create a new one
                     onClick: (props, state, event) => {
-                      console.log('annotation onClick event', props, state, event);
+                      // console.log('annotation onClick event', props, state, event);
                     }
                   }}
                   onDragStart={() => setDragState(note.id)}
                   onDrag={(dragProps) => { 
                     setDragPoints({[note.id]:  dragProps.points});
                     setDragXY({[note.id]: [dragProps.x, dragProps.y, dragProps.dx, dragProps.dy]})
-                    console.log('dragging', dragProps, dragPoints, dragXY);  
+                    // console.log('dragging', dragProps, dragPoints, dragXY);  
                   }}
                   onDragEnd={(dragProps) => { 
                     const hXw = [document.getElementById('tableau-react-annotation-layer').parentNode.clientHeight, document.getElementById('tableau-react-annotation-layer').parentNode.clientWidth];
@@ -695,7 +691,7 @@ const Viz = (props) => {
                         width="24" height="24" 
                         onClick={e => {
                           configureAnnotation(e,'edit');
-                          console.log('you clicked on edit', e, e.target, Number(e.target.id.replace('edit-button-','')));
+                          // console.log('you clicked on edit', e, e.target, Number(e.target.id.replace('edit-button-','')));
                         }}
                       />      
                     </svg>
@@ -723,7 +719,7 @@ const Viz = (props) => {
                         }} 
                         width="24" height="24" 
                         onClick={e => {
-                          console.log('you clicked on delete', e.target.id,  e.target.id.replace('delete-button-',''));
+                          // console.log('you clicked on delete', e.target.id,  e.target.id.replace('delete-button-',''));
                           deleteAnnotation(e.target.id.replace('delete-button-',''));
                         }}                        
                       />
@@ -752,7 +748,7 @@ const Viz = (props) => {
                           }} 
                           width="24" height="24" 
                           onClick={e => {
-                            console.log('you clicked on visibiity toggle', e.target.id,  e.target.id.replace('visibility-button-',''));
+                            // console.log('you clicked on visibiity toggle', e.target.id,  e.target.id.replace('visibility-button-',''));
                             toggleVisibility(e.target.id.replace('visibility-button-',''));
                           }}                        
                         />
@@ -782,7 +778,7 @@ const Viz = (props) => {
                           }} 
                           width="24" height="24" 
                           onClick={e => {
-                            console.log('you clicked on visibiity toggle', e.target.id,  e.target.id.replace('no-visibility-button-',''));
+                            // console.log('you clicked on visibiity toggle', e.target.id,  e.target.id.replace('no-visibility-button-',''));
                             toggleVisibility(e.target.id.replace('no-visibility-button-',''));
                           }}                        
                         />

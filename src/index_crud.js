@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Chris DeMartini
+// Copyright (c) 2021 Chris DeMartini
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ ReactDOM.render(
       crudConfig={crudConfig}
       colors={colors}
       extensionIcons={extensionIcons}
-      fakeRoute={'/annotation'}
+      fakeRoute={'/crudConfig'}
     />
   </HashRouter>, 
 document.getElementById('root'));
