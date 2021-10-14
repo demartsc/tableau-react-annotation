@@ -86,7 +86,7 @@ class App extends Component {
           this.state.config.tableauExt.setClickThroughAsync(false).then(() => {
             this.state.config.tableauExt.settings.set('annotationPassThroughMode', 'no');
             this.state.config.tableauExt.settings.saveAsync().then(()=>{
-              this.props.history.push('/')
+              this.props.history.push('/viz')
             });    
           });
         }
@@ -172,7 +172,8 @@ class App extends Component {
                   />}
               />
                 <Route exact path="/viz" render={(props) =>
-                  <Viz
+                  <Viz // pass the click through setting into key to force re-render on change
+                    key={`tableau-react-annotation-${this.state.config.tableauExt.settings.get('annotationPassThroughMode')}`}
                     extensionIcons={this.props.extensionIcons} 
                     sheetNames={this.state.config.sheetNames}
                     tableauSettings={this.state.config.tableauSettings}
