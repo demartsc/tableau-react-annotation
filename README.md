@@ -1,4 +1,4 @@
-# Annotate All The (Tableau)Things!
+# Let's Annotate!
 ### Layering React Annotation on top of Tableau
 
 ## Introduction
@@ -7,10 +7,9 @@
 
 This is the tableau extension that allows you to layer [Susie Lu's](https://twitter.com/datatoviz?lang=en) [react-annotation](https://react-annotation.susielu.com/) library on top of Tableau. When you add this to your dashboard (you will likely want to cover your entire dashboard with it) you can leverage the majority of annotation types and options available in [react-annotation](https://react-annotation.susielu.com/) directly within Tableau. We have built a simple configuration UI that you can take advantage of to be able annotate your viz to your heart's delight. 
 
-This extension is supported on **Tableau Desktop >=2018.2** and **Tableau Server**. It works best when deployed directly on to the Tableau Server you are using and the content of the extensions is also viewable on **Tableau Mobile**.
-
 ## Env Requirements
-Tableau Desktop >= 2018.2 and Tableau Server >= 2018.2
+version 1: Tableau Desktop >= 2018.2 and Tableau Server >= 2018.2, extension api v1.1+
+version 1.1: Tableau Desktop & Server >= 2021.4, extension api v1.7+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) along with [StarSchema](https://starschema.com/) & [DataBlick's](https://www.datablick.com/) **Tableau Extension Framework**.
 
@@ -25,7 +24,7 @@ Note: If you want the best experience, you should deploy a compiled version of t
 
 #### Step 3a: Cover your Dashboard with the Extension Object. The best experience for now is to work with the extension using web edit on Tableau Server. Tableau Desktop is lacking transparency for Extension Objects. You are not required to cover your dashboard, but I found this the easiest way to use React Annotation across your viz. 
 
-#### Step 3b: Click the `Let's Annotate Things!` button. 
+#### Step 3b: Click the `Let's Annotate!` button. 
 
 ![Tableau React Annotation Splash Screen](./docs/Cover-Dashboard.png)
 
@@ -47,13 +46,13 @@ Note: If you want to hide the annotation, but not delete it (e.g., save it for l
 
 ![Tableau React Annotation Add Annotation Screen](./docs/Add-Annotation.png)
 
-#### Step 7: Once you have added all of your annotations you can hide the ability to modify the annotations from the end user by toggling these two configurations in the add/edit annotation config (these settings are global even though they are accessed in the add/edit annotation config).
+#### Step 7: Once you have added all of your annotations you can hide the ability to modify the annotations from the end user by toggling these two configurations in the add/edit annotation config. These settings are global and are accessed through the settings icon on the top left of the extension space.
 
 ![Tableau React Annotation Global Config Screen](./docs/Global-Config.png)
 
 * Show Controls - When no is selected the end user will not be able to toggle add/edit mode on as the icons on the top left will be hidden. This will also default to turning off add/edit mode. 
 
-* Click Through Mode - Use this only when the extension is deployed directly onto your Tableau Server. It allows you to enable the end user to click through the extension layer and still interact with the Tableau Dashboard behind it. 
+* Click Through Mode - As of extension api v1.7+ this leverages the [setClickThroughAsync](https://tableau.github.io/extensions-api/docs/interfaces/extensions.html#setclickthroughasync) api. It allows you to enable the end user to click through the extension layer and still interact with the Tableau Dashboard behind it. 
 
 #### Step 8: If you want your changes to be retained, you **MUST** save your workbook before you close/exit Tableau. This will write the extension changes to your twb/twbx file. 
 
