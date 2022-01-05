@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "d1cff3e027afc9cd8baa",
+    "revision": "10e56be796410289dde0",
     "url": "/tableau-react-annotation/static/css/main.954047f6.chunk.css"
   },
   {
-    "revision": "d1cff3e027afc9cd8baa",
-    "url": "/tableau-react-annotation/static/js/main.d1cff3e0.chunk.js"
+    "revision": "10e56be796410289dde0",
+    "url": "/tableau-react-annotation/static/js/main.10e56be7.chunk.js"
   },
   {
     "revision": "c484e4a27916d31874d0",
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/tableau-react-annotation/static/media/a-custom.21a6b73e.png"
   },
   {
-    "revision": "6be53842e39a2b78709ae2ac9729115b",
+    "revision": "5a2285263f55cdba9fb425cbfeb3d8ab",
     "url": "/tableau-react-annotation/index.html"
   }
 ];
